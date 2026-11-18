@@ -618,10 +618,11 @@ def attacks(ctx):
                 prev = (h, sigs, ops)
                 continue
             _, proofs = C.merkle([C.op_leaf(op) for op in ops])
+            committed = [op[3] for op in ops if op[0] == C.CONSUME and op[1] == parts]   # the state root's total
             for i, op in enumerate(ops):
                 if op[0] == C.CONSUME:
                     attempt(reg.functions.proveOverspend(h, sigs, op, i, proofs[i]))
-                    attempt(reg.functions.proveStateMismatch(h, sigs, op, i, proofs[i], op[3], 0, []))
+                    attempt(reg.functions.proveStateMismatch(h, sigs, op, i, proofs[i], committed[-1], 0, []))
                     if prev is not None:
                         ptotal = None
                         for pop in prev[2]:

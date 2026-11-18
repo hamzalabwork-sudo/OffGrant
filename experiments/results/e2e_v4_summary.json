@@ -1,0 +1,226 @@
+{
+ "params": {
+  "rho_ppm": 150000,
+  "D_s": 60,
+  "A_ms": 69000,
+  "renew_period_s": 4.0,
+  "ckpt_every_s": 6.0,
+  "window_ms": 25000,
+  "g_slack_s": 2,
+  "W_s": 86,
+  "cut_s": 150,
+  "drift": {
+   "1": -0.15,
+   "2": 0.05
+  }
+ },
+ "effect_safety": {
+  "P11": {
+   "path": "slow",
+   "moved_at": 130.899,
+   "old_holder": 1,
+   "old_effects": 6,
+   "last_effect_end": 122.326,
+   "margin_s": 8.57,
+   "effects_ending_after_move": 0,
+   "effects_starting_after_move": 0
+  },
+  "L11": {
+   "path": "acked",
+   "moved_at": 224.874,
+   "old_holder": 1,
+   "old_effects": 1,
+   "last_effect_end": 125.923,
+   "margin_s": 98.95,
+   "effects_ending_after_move": 0,
+   "effects_starting_after_move": 0
+  },
+  "P21": {
+   "path": "acked",
+   "moved_at": 280.01,
+   "old_holder": 2,
+   "old_effects": 9,
+   "last_effect_end": 220.847,
+   "margin_s": 59.16,
+   "effects_ending_after_move": 0,
+   "effects_starting_after_move": 0
+  }
+ },
+ "lapses": {
+  "n": 6,
+  "by_obj": {
+   "P12": 1,
+   "C11": 1,
+   "P11": 1,
+   "P21": 2,
+   "C21": 1
+  }
+ },
+ "exec_n": 73,
+ "grant_to_effect_s": {
+  "median": 9.3,
+  "max": 12.7
+ },
+ "slow_path_P11": {
+  "W_s": 86,
+  "stop_to_reassign_s": 68.9,
+  "allowance_end_after_last_send_s": 81.2,
+  "allowance_end_t": 122.3,
+  "reassigned_t": 130.899,
+  "last_effect_end_t": 122.326,
+  "lapsed_after_cut": 1
+ },
+ "open_hold_L11": {
+  "slow_path": {
+   "t": 114.088,
+   "kind": "reassign_refused",
+   "obj": "L11",
+   "why": "HoldMayBeOpen",
+   "release_at": 1794999325,
+   "g_time": 1794999325
+  },
+  "acked": {
+   "t": 224.874,
+   "kind": "reassign_acked",
+   "site": 1,
+   "obj": "L11",
+   "status": 1,
+   "gas": 224519,
+   "latency_from_stop_seen": 18.394,
+   "ack_reading": 10255230
+  },
+  "ack_after_heal_s": 29.5,
+  "release_ops": [
+   125.923
+  ]
+ },
+ "revocation_C11": {
+  "effects_after_revoke": 3,
+  "max_window_s": 27.8,
+  "bound_W_s": 86
+ },
+ "fast_path_P21": {
+  "stop_to_reassign_s": 53.1,
+  "gas_reassignAcked": 224473
+ },
+ "clock_reset": {
+  "lapsed_old_epoch": 3,
+  "first_effect_after_reset_s": 37.0,
+  "renew_refused_after_reset": 2
+ },
+ "catch_up": {
+  "anchor_after_heal_s": 2.5,
+  "checkpoints_covered": 25,
+  "gas": 122760
+ },
+ "anchors": {
+  "n": 33,
+  "ok": 33,
+  "failed": [],
+  "gas_median": 122728
+ },
+ "checkpoints": {
+  "n": 98,
+  "all_agree": true
+ },
+ "site1_during_cut_recorded": {
+  "use": "6/15",
+  "cred": "6/24",
+  "lock": "0/5",
+  "consume": "14/14",
+  "log": "10/10"
+ },
+ "site1_during_cut_effects": {
+  "executed": 9,
+  "lapsed": 3
+ },
+ "op_latency_s": {
+  "median": 1.97,
+  "max": 3.05
+ },
+ "renewal_latency_s": {
+  "median": 5.79,
+  "max": 8.24,
+  "n": 58
+ },
+ "gas_median": {
+  "log": 30614,
+  "consume": 40659,
+  "use": 51227,
+  "cred": 51219,
+  "lock": 90443,
+  "release": 41812,
+  "renew_G": 70227,
+  "applyRenewal": 57884
+ },
+ "stop_gas": {
+  "P11": 55144,
+  "L11": 55156,
+  "C11": 33052,
+  "P21": 55144
+ },
+ "errors": [],
+ "attacks": {
+  "overspend": {
+   "status": 1,
+   "gas": 145506,
+   "slashed": 3
+  },
+  "understate": {
+   "status": 1,
+   "gas": 149921,
+   "slashed": 3
+  },
+  "understate_parent": {
+   "status": 1,
+   "gas": 151516,
+   "slashed": 3
+  },
+  "state_mismatch": {
+   "status": 1,
+   "gas": 144247,
+   "slashed": 3
+  },
+  "overuse": {
+   "status": 1,
+   "gas": 155052,
+   "slashed": 3
+  },
+  "hold_past_allowance": {
+   "status": 1,
+   "gas": 156161,
+   "slashed": 3
+  },
+  "use_after_reset": {
+   "status": 1,
+   "gas": 147103,
+   "slashed": 3
+  },
+  "use_after_ack": {
+   "status": 1,
+   "gas": 134760,
+   "slashed": 2
+  },
+  "release_after_ack": {
+   "status": 1,
+   "gas": 134911,
+   "slashed": 2
+  },
+  "fork": {
+   "status": 1,
+   "gas": 147465,
+   "slashed": 2
+  },
+  "forged_close": {
+   "rejected": true,
+   "reason": "BadClockSig"
+  },
+  "no_framing": {
+   "proof_attempts_on_honest_ops": 282,
+   "verdicts": {
+    "NotAViolation": 273,
+    "BadProof": 9
+   }
+  }
+ }
+}
