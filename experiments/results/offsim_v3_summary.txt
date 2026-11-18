@@ -1,0 +1,288 @@
+== rho=0.0001 uniform L=2.5h D=1h n=20 offline=0.024 W=1.0008h
+  ours      Xout=0.59¡¾0.03(max 0.67) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.935h VwinMax=0.793h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=27¡¾24(max 153) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 2) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  nodrift   Xout=0.59¡¾0.03(max 0.67) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.935h VwinMax=0.792h overlapMax=0s
+  noepoch   Xout=0.59¡¾0.03(max 0.70) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=6438s
+== rho=0.0001 uniform L=2.5h D=6h n=20 offline=0.024 W=6.0018h
+  ours      Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=27¡¾24(max 153) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 2) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  nodrift   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  noepoch   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+== rho=0.0001 uniform L=2.5h D=24h n=20 offline=0.024 W=24.0054h
+  ours      Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=27¡¾24(max 153) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 2) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  nodrift   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  noepoch   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+== rho=0.0001 uniform L=2.5h D=72h n=20 offline=0.024 W=72.0150h
+  ours      Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=27¡¾24(max 153) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 2) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  nodrift   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  noepoch   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+== rho=0.0001 uniform L=24h D=1h n=20 offline=0.117 W=1.0008h
+  ours      Xout=0.07¡¾0.01(max 0.09) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.935h VwinMax=0.793h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=8577¡¾1580(max 15124) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=54¡¾12(max 114) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  nodrift   Xout=0.07¡¾0.01(max 0.09) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.935h VwinMax=0.792h overlapMax=0s
+  noepoch   Xout=0.07¡¾0.01(max 0.09) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.816h VwinMax=2.098h overlapMax=6438s
+== rho=0.0001 uniform L=24h D=6h n=20 offline=0.117 W=6.0018h
+  ours      Xout=0.33¡¾0.01(max 0.39) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=1.8¡¾1.0(max 8.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=5.936h VwinMax=5.793h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=8577¡¾1580(max 15124) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=54¡¾12(max 114) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  nodrift   Xout=0.33¡¾0.01(max 0.39) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=1.8¡¾1.0(max 8.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=5.935h VwinMax=5.792h overlapMax=1s
+  noepoch   Xout=0.33¡¾0.01(max 0.39) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=1.8¡¾1.0(max 8.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=5.936h VwinMax=5.793h overlapMax=0s
+== rho=0.0001 uniform L=24h D=24h n=20 offline=0.117 W=24.0054h
+  ours      Xout=0.95¡¾0.02(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=25.1¡¾7.6(max 61.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=23.599h VwinMax=22.609h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=8577¡¾1580(max 15124) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=54¡¾12(max 114) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  nodrift   Xout=0.95¡¾0.02(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=25.1¡¾7.6(max 61.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=23.597h VwinMax=22.607h overlapMax=7s
+  noepoch   Xout=0.98¡¾0.02(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=26.6¡¾7.4(max 61.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=23.599h VwinMax=23.086h overlapMax=6826s
+== rho=0.0001 uniform L=24h D=72h n=20 offline=0.117 W=72.0150h
+  ours      Xout=0.97¡¾0.02(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=26.1¡¾7.9(max 65.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=27.085h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=8577¡¾1580(max 15124) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=54¡¾12(max 114) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  nodrift   Xout=0.97¡¾0.02(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=26.1¡¾7.9(max 65.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=27.085h overlapMax=0s
+  noepoch   Xout=1.00¡¾0.00(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=28.6¡¾8.4(max 65.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+== rho=0.0001 uniform L=72h D=1h n=20 offline=0.293 W=1.0008h
+  ours      Xout=0.02¡¾0.00(max 0.03) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.935h VwinMax=0.793h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=41141¡¾5893(max 69805) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=0¡¾0(max 0) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=414¡¾64(max 646) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  nodrift   Xout=0.02¡¾0.00(max 0.03) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.935h VwinMax=0.792h overlapMax=0s
+  noepoch   Xout=0.02¡¾0.00(max 0.03) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.816h VwinMax=2.098h overlapMax=6244s
+== rho=0.0001 uniform L=72h D=6h n=20 offline=0.293 W=6.0018h
+  ours      Xout=0.10¡¾0.01(max 0.12) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=1.4¡¾0.8(max 8.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=5.936h VwinMax=5.793h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=41141¡¾5893(max 69805) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=0¡¾0(max 0) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=414¡¾64(max 646) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  nodrift   Xout=0.10¡¾0.01(max 0.12) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=1.4¡¾0.8(max 8.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=5.935h VwinMax=5.792h overlapMax=1s
+  noepoch   Xout=0.10¡¾0.01(max 0.12) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=1.4¡¾0.8(max 8.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=5.936h VwinMax=5.793h overlapMax=0s
+== rho=0.0001 uniform L=72h D=24h n=20 offline=0.293 W=24.0054h
+  ours      Xout=0.38¡¾0.02(max 0.45) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=33.0¡¾9.2(max 82.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=23.937h VwinMax=23.794h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=41141¡¾5893(max 69805) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=0¡¾0(max 0) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=414¡¾64(max 646) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  nodrift   Xout=0.38¡¾0.02(max 0.45) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=33.0¡¾9.2(max 82.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=23.935h VwinMax=23.792h overlapMax=7s
+  noepoch   Xout=0.40¡¾0.02(max 0.46) Bout=0.81¡¾0.03(max 0.92) Xconf=0.5¡¾0.4(max 3.0) Vstale=35.2¡¾9.1(max 82.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=25.328h VwinMax=23.794h overlapMax=13630s
+== rho=0.0001 uniform L=72h D=72h n=20 offline=0.293 W=72.0150h
+  ours      Xout=0.82¡¾0.04(max 0.94) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=153.7¡¾31.8(max 253.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=69.582h VwinMax=69.698h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=41141¡¾5893(max 69805) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=0¡¾0(max 0) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=414¡¾64(max 646) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  nodrift   Xout=0.82¡¾0.04(max 0.94) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=153.7¡¾31.8(max 253.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=69.575h VwinMax=69.690h overlapMax=24s
+  noepoch   Xout=0.93¡¾0.03(max 1.00) Bout=0.81¡¾0.03(max 0.92) Xconf=0.6¡¾0.4(max 3.0) Vstale=201.4¡¾39.2(max 373.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=73.514h VwinMax=72.004h overlapMax=17253s
+== rho=0.15 slow L=2.5h D=1h n=20 offline=0.024 W=1.3535h
+  ours      Xout=0.76¡¾0.03(max 0.86) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.288h VwinMax=1.145h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=27¡¾24(max 153) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 2) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  nodrift   Xout=0.68¡¾0.03(max 0.78) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.112h VwinMax=0.969h overlapMax=634s
+  noepoch   Xout=0.76¡¾0.03(max 0.86) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=6438s
+== rho=0.15 slow L=2.5h D=6h n=20 offline=0.024 W=8.1182h
+  ours      Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=27¡¾24(max 153) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 2) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  nodrift   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  noepoch   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+== rho=0.15 slow L=2.5h D=24h n=20 offline=0.024 W=32.4711h
+  ours      Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=27¡¾24(max 153) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 2) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  nodrift   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  noepoch   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+== rho=0.15 slow L=2.5h D=72h n=20 offline=0.024 W=97.4123h
+  ours      Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=27¡¾24(max 153) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 2) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  nodrift   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  noepoch   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+== rho=0.15 slow L=24h D=1h n=20 offline=0.117 W=1.3535h
+  ours      Xout=0.09¡¾0.01(max 0.12) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.288h VwinMax=1.145h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=8577¡¾1580(max 15124) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=54¡¾12(max 114) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  nodrift   Xout=0.08¡¾0.01(max 0.11) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.112h VwinMax=0.969h overlapMax=634s
+  noepoch   Xout=0.09¡¾0.01(max 0.12) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.816h VwinMax=2.098h overlapMax=6438s
+== rho=0.15 slow L=24h D=6h n=20 offline=0.117 W=8.1182h
+  ours      Xout=0.44¡¾0.01(max 0.49) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=3.8¡¾1.8(max 16.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=8.053h VwinMax=7.910h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=8577¡¾1580(max 15124) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=54¡¾12(max 114) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  nodrift   Xout=0.38¡¾0.01(max 0.45) Bout=0.84¡¾0.03(max 0.97) Xconf=0.8¡¾0.5(max 4.0) Vstale=2.9¡¾1.4(max 12.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=6.994h VwinMax=6.851h overlapMax=3811s
+  noepoch   Xout=0.44¡¾0.01(max 0.50) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=3.8¡¾1.8(max 16.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=8.053h VwinMax=7.910h overlapMax=1871s
+== rho=0.15 slow L=24h D=24h n=20 offline=0.117 W=32.4711h
+  ours      Xout=0.96¡¾0.02(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=25.6¡¾7.9(max 65.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=32.066h VwinMax=27.085h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=8577¡¾1580(max 15124) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=54¡¾12(max 114) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  nodrift   Xout=0.96¡¾0.02(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.8¡¾0.8(max 6.0) Vstale=25.5¡¾7.8(max 65.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=27.831h VwinMax=26.844h overlapMax=15246s
+  noepoch   Xout=0.99¡¾0.01(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=27.9¡¾8.2(max 65.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=32.066h VwinMax=31.553h overlapMax=13986s
+== rho=0.15 slow L=24h D=72h n=20 offline=0.117 W=97.4123h
+  ours      Xout=0.97¡¾0.02(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=26.1¡¾7.9(max 65.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=27.085h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=8577¡¾1580(max 15124) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=54¡¾12(max 114) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  nodrift   Xout=0.97¡¾0.02(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=26.1¡¾7.9(max 65.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=27.085h overlapMax=0s
+  noepoch   Xout=1.00¡¾0.00(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=28.6¡¾8.4(max 65.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+== rho=0.15 slow L=72h D=1h n=20 offline=0.293 W=1.3535h
+  ours      Xout=0.03¡¾0.00(max 0.04) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.288h VwinMax=1.145h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=41141¡¾5893(max 69805) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=0¡¾0(max 0) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=414¡¾64(max 646) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  nodrift   Xout=0.02¡¾0.00(max 0.03) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.112h VwinMax=0.969h overlapMax=634s
+  noepoch   Xout=0.03¡¾0.00(max 0.04) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.816h VwinMax=2.098h overlapMax=5089s
+== rho=0.15 slow L=72h D=6h n=20 offline=0.293 W=8.1182h
+  ours      Xout=0.13¡¾0.01(max 0.15) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=3.1¡¾1.6(max 16.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=8.053h VwinMax=7.910h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=41141¡¾5893(max 69805) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=0¡¾0(max 0) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=414¡¾64(max 646) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  nodrift   Xout=0.12¡¾0.01(max 0.13) Bout=0.81¡¾0.03(max 0.92) Xconf=0.7¡¾0.5(max 4.0) Vstale=2.5¡¾1.2(max 12.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=6.994h VwinMax=6.851h overlapMax=3811s
+  noepoch   Xout=0.14¡¾0.01(max 0.17) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=3.1¡¾1.6(max 16.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=8.053h VwinMax=7.910h overlapMax=1871s
+== rho=0.15 slow L=72h D=24h n=20 offline=0.293 W=32.4711h
+  ours      Xout=0.50¡¾0.03(max 0.61) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=57.5¡¾14.3(max 124.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=32.406h VwinMax=32.263h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=41141¡¾5893(max 69805) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=0¡¾0(max 0) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=414¡¾64(max 646) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  nodrift   Xout=0.44¡¾0.03(max 0.54) Bout=0.81¡¾0.03(max 0.92) Xconf=7.8¡¾2.0(max 16.0) Vstale=45.3¡¾11.9(max 99.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=28.171h VwinMax=28.028h overlapMax=15246s
+  noepoch   Xout=0.54¡¾0.02(max 0.61) Bout=0.81¡¾0.03(max 0.92) Xconf=0.9¡¾0.6(max 4.0) Vstale=63.4¡¾14.4(max 129.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=33.797h VwinMax=32.263h overlapMax=14273s
+== rho=0.15 slow L=72h D=72h n=20 offline=0.293 W=97.4123h
+  ours      Xout=0.86¡¾0.04(max 1.00) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=174.0¡¾37.1(max 312.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=94.986h VwinMax=84.175h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=41141¡¾5893(max 69805) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=0¡¾0(max 0) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=414¡¾64(max 646) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  nodrift   Xout=0.85¡¾0.04(max 1.00) Bout=0.81¡¾0.03(max 0.92) Xconf=6.8¡¾3.1(max 28.0) Vstale=166.6¡¾35.5(max 280.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=82.281h VwinMax=82.396h overlapMax=45740s
+  noepoch   Xout=0.98¡¾0.02(max 1.00) Bout=0.81¡¾0.03(max 0.92) Xconf=0.2¡¾0.4(max 4.0) Vstale=228.0¡¾44.1(max 432.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=94.986h VwinMax=88.666h overlapMax=10695s
+== rho=0.15 uniform L=2.5h D=1h n=20 offline=0.024 W=1.3535h
+  ours      Xout=0.65¡¾0.04(max 0.80) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.054h VwinMax=0.899h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=27¡¾24(max 153) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 2) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  nodrift   Xout=0.59¡¾0.03(max 0.72) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.908h VwinMax=0.754h overlapMax=515s
+  noepoch   Xout=0.66¡¾0.04(max 0.80) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=6438s
+== rho=0.15 uniform L=2.5h D=6h n=20 offline=0.024 W=8.1182h
+  ours      Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=27¡¾24(max 153) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 2) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  nodrift   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  noepoch   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+== rho=0.15 uniform L=2.5h D=24h n=20 offline=0.024 W=32.4711h
+  ours      Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=27¡¾24(max 153) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 2) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  nodrift   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  noepoch   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+== rho=0.15 uniform L=2.5h D=72h n=20 offline=0.024 W=97.4123h
+  ours      Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=27¡¾24(max 153) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=0.1¡¾0.2(max 2.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.1¡¾0.2(max 2.0) rolled=0¡¾0(max 2) authMax=2.099h VwinMax=2.098h overlapMax=0s
+  nodrift   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.015h VwinMax=1.453h overlapMax=0s
+  noepoch   Xout=1.00¡¾0.00(max 1.00) Bout=0.92¡¾0.02(max 1.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=2.099h VwinMax=2.098h overlapMax=0s
+== rho=0.15 uniform L=24h D=1h n=20 offline=0.117 W=1.3535h
+  ours      Xout=0.08¡¾0.01(max 0.10) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.054h VwinMax=0.899h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=8577¡¾1580(max 15124) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=54¡¾12(max 114) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  nodrift   Xout=0.07¡¾0.01(max 0.09) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.908h VwinMax=0.754h overlapMax=515s
+  noepoch   Xout=0.08¡¾0.01(max 0.10) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.816h VwinMax=2.098h overlapMax=6438s
+== rho=0.15 uniform L=24h D=6h n=20 offline=0.117 W=8.1182h
+  ours      Xout=0.38¡¾0.02(max 0.48) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=2.6¡¾1.4(max 11.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=7.315h VwinMax=6.429h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=8577¡¾1580(max 15124) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=54¡¾12(max 114) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  nodrift   Xout=0.33¡¾0.02(max 0.44) Bout=0.84¡¾0.03(max 0.97) Xconf=0.1¡¾0.1(max 1.0) Vstale=1.8¡¾1.0(max 9.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=6.308h VwinMax=5.564h overlapMax=3094s
+  noepoch   Xout=0.38¡¾0.02(max 0.49) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=2.6¡¾1.4(max 11.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=7.315h VwinMax=6.429h overlapMax=267s
+== rho=0.15 uniform L=24h D=24h n=20 offline=0.117 W=32.4711h
+  ours      Xout=0.96¡¾0.02(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=25.5¡¾7.8(max 62.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=30.472h VwinMax=23.126h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=8577¡¾1580(max 15124) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=54¡¾12(max 114) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  nodrift   Xout=0.94¡¾0.02(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.6¡¾0.7(max 6.0) Vstale=24.8¡¾7.3(max 59.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=26.445h VwinMax=20.380h overlapMax=15090s
+  noepoch   Xout=0.99¡¾0.01(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=27.6¡¾8.0(max 62.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=30.472h VwinMax=29.277h overlapMax=5794s
+== rho=0.15 uniform L=24h D=72h n=20 offline=0.117 W=97.4123h
+  ours      Xout=0.97¡¾0.02(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=26.1¡¾7.9(max 65.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=27.085h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=8577¡¾1580(max 15124) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=19.9¡¾5.8(max 58.0) Vstale=28.6¡¾8.4(max 65.0) Bover=5.0¡¾3.7(max 24.0) rolled=54¡¾12(max 114) authMax=38.682h VwinMax=36.099h overlapMax=0s
+  nodrift   Xout=0.97¡¾0.02(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=26.1¡¾7.9(max 65.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=27.085h overlapMax=0s
+  noepoch   Xout=1.00¡¾0.00(max 1.00) Bout=0.84¡¾0.03(max 0.97) Xconf=0.0¡¾0.0(max 0.0) Vstale=28.6¡¾8.4(max 65.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=38.682h VwinMax=36.099h overlapMax=0s
+== rho=0.15 uniform L=72h D=1h n=20 offline=0.293 W=1.3535h
+  ours      Xout=0.02¡¾0.00(max 0.03) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.054h VwinMax=0.899h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=41141¡¾5893(max 69805) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=0¡¾0(max 0) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=414¡¾64(max 646) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  nodrift   Xout=0.02¡¾0.00(max 0.03) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.908h VwinMax=0.754h overlapMax=515s
+  noepoch   Xout=0.02¡¾0.00(max 0.03) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=1.816h VwinMax=2.098h overlapMax=5089s
+== rho=0.15 uniform L=72h D=6h n=20 offline=0.293 W=8.1182h
+  ours      Xout=0.11¡¾0.01(max 0.14) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=2.1¡¾1.1(max 10.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=6.966h VwinMax=6.429h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=41141¡¾5893(max 69805) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=0¡¾0(max 0) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=414¡¾64(max 646) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  nodrift   Xout=0.10¡¾0.01(max 0.12) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=1.4¡¾0.7(max 6.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=5.937h VwinMax=5.564h overlapMax=3094s
+  noepoch   Xout=0.12¡¾0.01(max 0.14) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=2.1¡¾1.1(max 10.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=6.966h VwinMax=6.429h overlapMax=267s
+== rho=0.15 uniform L=72h D=24h n=20 offline=0.293 W=32.4711h
+  ours      Xout=0.43¡¾0.03(max 0.56) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=42.9¡¾10.6(max 86.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=30.384h VwinMax=28.674h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=41141¡¾5893(max 69805) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=0¡¾0(max 0) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=414¡¾64(max 646) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  nodrift   Xout=0.38¡¾0.02(max 0.50) Bout=0.81¡¾0.03(max 0.92) Xconf=1.8¡¾0.9(max 7.0) Vstale=32.3¡¾8.6(max 73.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=26.516h VwinMax=24.531h overlapMax=15090s
+  noepoch   Xout=0.46¡¾0.02(max 0.56) Bout=0.81¡¾0.03(max 0.92) Xconf=0.3¡¾0.4(max 3.0) Vstale=46.6¡¾10.5(max 86.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=32.635h VwinMax=29.277h overlapMax=11587s
+== rho=0.15 uniform L=72h D=72h n=20 offline=0.293 W=97.4123h
+  ours      Xout=0.85¡¾0.04(max 0.98) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=162.9¡¾33.4(max 265.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=82.262h VwinMax=81.069h overlapMax=0s
+  global    Xout=0.00¡¾0.00(max 0.00) Bout=0.00¡¾0.00(max 0.00) Xconf=0.0¡¾0.0(max 0.0) Vstale=0.0¡¾0.0(max 0.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=0.000h VwinMax=0.000h overlapMax=0s
+  discard   Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=41141¡¾5893(max 69805) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  crdt      Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=0¡¾0(max 0) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  timestamp Xout=1.00¡¾0.00(max 1.00) Bout=0.99¡¾0.01(max 1.00) Xconf=151.3¡¾26.8(max 257.0) Vstale=237.2¡¾44.6(max 452.0) Bover=25.1¡¾10.4(max 62.0) rolled=414¡¾64(max 646) authMax=127.217h VwinMax=145.105h overlapMax=0s
+  nodrift   Xout=0.82¡¾0.04(max 0.95) Bout=0.81¡¾0.03(max 0.92) Xconf=1.9¡¾2.2(max 23.0) Vstale=151.2¡¾30.0(max 243.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=74.203h VwinMax=73.711h overlapMax=45273s
+  noepoch   Xout=0.96¡¾0.02(max 1.00) Bout=0.81¡¾0.03(max 0.92) Xconf=0.0¡¾0.0(max 0.0) Vstale=216.3¡¾41.3(max 378.0) Bover=0.0¡¾0.0(max 0.0) rolled=0¡¾0(max 0) authMax=89.158h VwinMax=88.666h overlapMax=0s

@@ -84,8 +84,8 @@ def checkpoint_digest(registry, header_hash):
     return _h(["string", "address", "bytes32"], ["OFFGRANT-CKPT", registry, header_hash])
 
 
-def clock_digest(site, epoch, reading):
-    return _h(["string", "uint64", "uint64", "uint64"], ["OFFGRANT-CLOCK", site, epoch, reading])
+def clock_digest(site, epoch, reading, tag):
+    return _h(["string", "uint64", "uint64", "uint64", "bytes32"], ["OFFGRANT-CLOCK", site, epoch, reading, tag])
 
 
 def request_digest(site, obj, epoch, cq):
@@ -150,8 +150,8 @@ def merkle(leaves):
 
 
 def header_hash(h):
-    site, height, prev, root, count = h
-    return _h(["uint64", "uint64", "bytes32", "bytes32", "uint64"], [site, height, prev, root, count])
+    site, height, prev, root, count, close = h
+    return _h(["uint64", "uint64", "bytes32", "bytes32", "uint64", "uint64"], [site, height, prev, root, count, close])
 
 
 class Clock:

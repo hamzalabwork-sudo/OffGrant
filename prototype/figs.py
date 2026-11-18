@@ -20,7 +20,7 @@ BOUND_LABEL = "bound $(1+\\rho)/(1-\\rho)$"
 
 def load():
     g = defaultdict(list)
-    for line in open(ROOT / "experiments" / "results" / "offsim_v2.jsonl"):
+    for line in open(ROOT / "experiments" / "results" / "offsim_v3.jsonl"):
         r = json.loads(line)
         c = r["cfg"]
         g[(c["rho"], c["clock"], c["L"], c["D"])].append(r)
@@ -52,19 +52,20 @@ def tradeoff():
     b.text(x[0], (1 + rho) / (1 - rho) + 0.015, BOUND_LABEL, fontsize=6, va="bottom")
     b.axhline(1.0, color=C_NODRIFT, lw=0.8, ls=":")
     b.text(x[0], 1.0 - 0.015, "no-drift wait", fontsize=6, va="top", color=C_NODRIFT)
-    for proto, col, mk in [("ours", C_OURS, "o"), ("nodrift", C_NODRIFT, "x")]:
+    for proto, col, mk in [("ours", C_OURS, "o"), ("nodrift", C_NODRIFT, "x"), ("noepoch", "#8064a2", "^")]:
         y = [max(max(r[proto]["X_authority_after"] or [0]) for L in (24 * H, 72 * H)
                  for r in g[(rho, "slow", L, D)]) / D for D in Ds]
-        b.plot(x, y, mk, color=col, ms=3.4, mew=0.9, label="OffGrant" if proto == "ours" else "no-drift lease")
+        lab = {"ours": "OffGrant", "nodrift": "no-drift lease", "noepoch": "no epochs"}[proto]
+        b.plot(x, y, mk, color=col, ms=3.4, mew=0.9, label=lab)
     b.fill_between([x[0] * 0.8, x[-1] * 1.25], 1.0, 1 / (1 - rho), color=C_NODRIFT, alpha=0.08, lw=0)
-    b.text(x[1] * 1.1, 1.085, "double authority", fontsize=6, color=C_NODRIFT)
+    b.text(x[0] * 0.95, 1.12, "double authority", fontsize=6, color=C_NODRIFT)
     b.set_xscale("log")
     b.set_xlim(x[0] * 0.8, x[-1] * 1.25)
     b.set_ylim(0.9, 1.45)
     b.set_xticks(x)
     b.set_xticklabels([f"{v:g}" for v in x])
     b.set_xlabel("(b) offline tolerance $D$ (h)")
-    b.set_ylabel("authority after decision / $D$")
+    b.set_ylabel("authority after / $D$")
     b.legend(loc="lower right", frameon=True, framealpha=1.0, edgecolor="#bbbbbb", fancybox=False,
              handlelength=1.0, borderaxespad=0.3)
     b.grid(alpha=0.25, lw=0.4)
@@ -74,7 +75,7 @@ def tradeoff():
     print("wrote", OUT / "tradeoff.pdf")
 
 
-def timeline(tag="v1"):
+def timeline(tag="v3"):
     """End-to-end PureChain run: operations per site over time, with the cut and the protocol events."""
     d = json.loads((ROOT / "experiments" / "results" / f"e2e_{tag}.json").read_text())
     ev, p = d["events"], d["params"]
@@ -105,8 +106,9 @@ def timeline(tag="v1"):
              (first("clock_reset", site=2)["t"], "S2 clock\nreset")]
     for i, (t, lab) in enumerate(marks):
         ax.axvline(t, color=C_BOUND, lw=0.5, ls="--")
-        ax.text(t - 1.0, -1.7, lab.replace("\n", " "), fontsize=5, va="bottom", ha="right", rotation=90,
-                color=C_BOUND)
+        right = i == len(marks) - 1   # last label on the right of its line, clear of the previous one
+        ax.text(t + (1.0 if right else -1.0), -1.7, lab.replace("\n", " "), fontsize=5, va="bottom",
+                ha="left" if right else "right", rotation=90, color=C_BOUND)
     ax.set_yticks([3, 2, 1, 0])
     ax.set_yticklabels([l[2] for l in lanes], fontsize=6)
     ax.set_ylim(-1.75, 3.95)

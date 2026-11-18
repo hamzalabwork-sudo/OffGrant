@@ -59,15 +59,16 @@ def main(tag="v1"):
     vkeys2 = ["0x" + secrets.token_hex(32) for _ in range(4)]
     clock = C.Clock("0x" + secrets.token_hex(32), 1, 0.0, time.time())
     t = time.time()
-    reg, r = admin.deploy("RightsRegistry", RHO_PPM, 2)
+    reg, r = admin.deploy("RightsRegistry", RHO_PPM, 2, 60_000)
     out["registry"] = reg.address
     out["gas"]["deploy"] = r.gasUsed
     out["latency_s"]["deploy"] = round(time.time() - t, 2)
     parts, obj = keccak(text="spare-parts"), keccak(text="loto:pump-7")
+    start = clock.read()
     for name, fn in [("registerSite", reg.functions.registerSite(1, 1, Account.from_key(clock.key).address,
-                                                                 [Account.from_key(k).address for k in vkeys])),
+                                                                 [Account.from_key(k).address for k in vkeys], start)),
                      ("registerSite2", reg.functions.registerSite(2, 1, Account.from_key(vkeys[0]).address,
-                                                                  [Account.from_key(k).address for k in vkeys2])),
+                                                                  [Account.from_key(k).address for k in vkeys2], start)),
                      ("setCap", reg.functions.setCap(parts, 100)),
                      ("setShare", reg.functions.setShare(parts, 1, 40)),
                      ("createLease", reg.functions.createLease(obj, True, A_MS)),
@@ -93,9 +94,9 @@ def main(tag="v1"):
     ops = [(C.CONSUME, parts, 1, i + 1, 0, b"") for i in range(8)]
     for i in range(8):
         rd = clock.read()
-        ops.append((C.USE, obj, cq, rd, clock.epoch, clock.attest(C.clock_digest, 1, clock.epoch, rd)))
+        ops.append((C.USE, obj, cq, rd, clock.epoch, clock.attest(C.clock_digest, 1, clock.epoch, rd, obj)))
     root, proofs = C.merkle([C.op_leaf(op) for op in ops])
-    h = (1, 1, b"\x00" * 32, root, len(ops))
+    h = (1, 1, b"\x00" * 32, root, len(ops), clock.read())
     seals = [C.sign(k, C.checkpoint_digest(reg.address, C.header_hash(h))) for k in vkeys[:3]]
     r, dt = timed(relayer, reg.functions.anchor(h, seals))
     out["gas"]["anchor_16ops"] = r.gasUsed
@@ -116,7 +117,7 @@ def main(tag="v1"):
     ra = clock.read()
     acks = [C.sign(k, C.ack_digest(reg.address, 1, obj, clock.epoch, ra)) for k in vkeys[:3]]
     r, dt = timed(relayer, reg.functions.reassignAcked(obj, clock.epoch, ra,
-                                                     clock.attest(C.clock_digest, 1, clock.epoch, ra), acks))
+                                                     clock.attest(C.clock_digest, 1, clock.epoch, ra, obj), acks))
     assert r.status == 1
     out["gas"]["reassignAcked"], out["latency_s"]["reassignAcked"] = r.gasUsed, round(dt, 2)
 
@@ -127,15 +128,15 @@ def main(tag="v1"):
     proofs_out = {}
     bad = [(C.CONSUME, parts, 45, 45, 0, b"")]
     rt, pr = C.merkle([C.op_leaf(op) for op in bad])
-    hb = (2, 1, b"\x00" * 32, rt, 1)   # site 2 has no share: any consumption is an overspend
+    hb = (2, 1, b"\x00" * 32, rt, 1, 0)   # site 2 has no share: any consumption is an overspend
     seals2 = [C.sign(vkeys2[i], C.checkpoint_digest(reg.address, C.header_hash(hb))) for i in (0, 1, 2)]
     r, dt = timed(relayer, reg.functions.proveOverspend(hb, seals2, bad[0], 0, pr[0]), 6_000_000)
     proofs_out["overspend"] = {"gas": r.gasUsed, "latency_s": round(dt, 2),
                                "slashed": len(reg.events.Slashed().process_receipt(r))}
     rd = ra + 5
-    late = [(C.USE, obj, cq, rd, clock.epoch, clock.attest(C.clock_digest, 1, clock.epoch, rd))]
+    late = [(C.USE, obj, cq, rd, clock.epoch, clock.attest(C.clock_digest, 1, clock.epoch, rd, obj))]
     rt, pr = C.merkle([C.op_leaf(op) for op in late])
-    hl = (1, 3, b"\x02" * 32, rt, 1)
+    hl = (1, 3, b"\x02" * 32, rt, 1, 0)
     r, dt = timed(relayer, reg.functions.proveUseAfterAck(hl, seal(hl, [1, 2, 3]), late[0], 0, pr[0]), 6_000_000)
     proofs_out["use_after_ack"] = {"gas": r.gasUsed, "latency_s": round(dt, 2),
                                    "slashed": len(reg.events.Slashed().process_receipt(r))}

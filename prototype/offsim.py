@@ -16,6 +16,9 @@ Protocols:
   crdt      accept everything offline and merge (Vegvisir-style): no exclusivity, no rollback
   timestamp accept offline, on reconnection drop conflicting operations by timestamp (SWORD-style)
   nodrift   leases with A = D and G waiting D + 1 s: absolute clock-error bound, no drift (Chen et al.-style)
+  noepoch   ablation: OffGrant without clock epochs (a TPM clock stops during a power loss, so the allowance
+            resumes afterwards instead of ending)
+Sites also lose power (about weekly, 5 min to 4 h): they are then down and their trusted clock stops.
 """
 from __future__ import annotations
 
@@ -31,7 +34,8 @@ import numpy as np
 
 DAY = 86400.0
 HOUR = 3600.0
-PROTOCOLS = ["ours", "global", "discard", "crdt", "timestamp", "nodrift"]
+PROTOCOLS = ["ours", "global", "discard", "crdt", "timestamp", "nodrift", "noepoch"]
+LEASES = ("ours", "nodrift", "noepoch")
 
 
 @dataclass
@@ -58,6 +62,9 @@ class Cfg:
     cap_factor: float = 0.95               # cap / expected total demand
     share_frac: float = 0.8                # shares issued in advance; rest is an online reserve
     log_rate_day: float = 1440.0           # per site (one per minute)
+    power_rate_per_week: float = 1.0       # site power losses
+    power_min: float = 300.0
+    power_max: float = 4 * 3600.0
 
 
 # ------------------------------------------------------------------------------------------ traces
@@ -118,7 +125,29 @@ class World:
         T = cfg.days * DAY
         S = cfg.sites
         self.T = T
-        self.links = [Link(outages(rng, cfg)) for _ in range(S)]
+        raw = [outages(rng, cfg) for _ in range(S)]
+        self.power = []
+        for _ in range(S):
+            n = rng.poisson(cfg.power_rate_per_week * T / (7 * DAY))
+            iv = sorted([a, a + rng.uniform(cfg.power_min, cfg.power_max)] for a in rng.uniform(0, T, n))
+            merged = []
+            for a, b in iv:
+                if merged and a <= merged[-1][1]:
+                    merged[-1][1] = max(merged[-1][1], b)
+                else:
+                    merged.append([a, b])
+            self.power.append(Link(merged))
+        # A site without power cannot communicate either: its link is down during power losses.
+        self.links = []
+        for s in range(S):
+            iv = sorted([list(x) for x in raw[s]] + [list(x) for x in self.power[s].iv])
+            merged = []
+            for a, b in iv:
+                if merged and a <= merged[-1][1]:
+                    merged[-1][1] = max(merged[-1][1], b)
+                else:
+                    merged.append([a, b])
+            self.links.append(Link(merged))
         self.drift = rng.uniform(-cfg.rho, cfg.rho, S)          # actual clock rate is 1 + drift
         if cfg.clock == "slow":
             self.drift = np.full(S, -cfg.rho)
@@ -150,6 +179,27 @@ class World:
         self.consume_req = [np.sort(rng.uniform(0, T, rng.poisson(cfg.consume_rate_day * cfg.days)))
                             for _ in range(S)]
         self.log_req = [np.sort(rng.uniform(0, T, rng.poisson(cfg.log_rate_day * cfg.days))) for _ in range(S)]
+
+    def powered(self, s, t):
+        return self.power[s].up(t)
+
+    def auth_end(self, s, start, A, epoch=True):
+        """Real time at which an allowance of A clock-seconds counted from `start` ends at site s. The clock
+        runs at 1 + drift and stops during power losses: with epochs, a power loss ends the allowance at once;
+        without, the allowance resumes after power returns."""
+        rate = 1 + self.drift[s]
+        end = start + A / rate
+        pw = self.power[s]
+        k = bisect.bisect_right(pw.starts, start)
+        if pw.down_at(start) is not None:
+            return start
+        while k < len(pw.iv) and pw.iv[k][0] < end:
+            a, b = pw.iv[k]
+            if epoch:
+                return a
+            end += b - a
+            k += 1
+        return end
 
     # Renewal helpers for the lease protocols ---------------------------------------------------
     def last_answered_send(self, s, t, not_after=math.inf):
@@ -194,7 +244,8 @@ def lease_params(cfg: Cfg, proto: str):
 def simulate_permits(w: World, proto: str):
     """Returns per-request outcomes and per-reassignment authority overlap."""
     cfg = w.cfg
-    lease = proto in ("ours", "nodrift")
+    lease = proto in LEASES
+    epoch = proto != "noepoch"
     A, W = lease_params(cfg, proto) if lease else (0.0, 0.0)
     n_obj = len(w.home)
     # Holder timeline per object at G: list of (t_from, site); for leases the switch happens at release.
@@ -218,7 +269,7 @@ def simulate_permits(w: World, proto: str):
             applied = w.links[cur].next_up(t_d) + cfg.rtt / 2
             switch = min(release, applied + cfg.rtt / 2)
             # Real end of the old holder's authority under its actual drift.
-            expiry = (ts + A / (1 + w.drift[cur])) if ts is not None else 0.0
+            expiry = w.auth_end(cur, ts, A, epoch) if ts is not None else 0.0
             end = min(expiry, applied)
             overlap.append(max(0.0, end - switch))
             authority_after.append(max(0.0, end - t_d))
@@ -261,13 +312,13 @@ def simulate_permits(w: World, proto: str):
         if t >= applied:
             return False
         ts = w.last_answered_send(s, t, not_after=b)
-        return ts is not None and ts + cfg.rtt / 2 >= a and t < ts + A / (1 + w.drift[s])
+        return ts is not None and ts + cfg.rtt / 2 >= a and t < w.auth_end(s, ts, A, epoch)
 
     res = dict(req=0, req_out=0, acc=0, acc_out=0, conflicts=0, conflict_sets=[], acc_sets=[])
     for o in range(n_obj):
         for t, s in zip(w.permit_req[o], w.permit_site[o]):
             s = int(s)
-            if not believed_holder(s, o, t):
+            if not w.powered(s, t) or not believed_holder(s, o, t):
                 continue
             offline = not w.links[s].up(t)
             res["req"] += 1
@@ -295,7 +346,8 @@ def simulate_permits(w: World, proto: str):
 # ------------------------------------------------------------------------------------------ V: credentials
 def simulate_auth(w: World, proto: str):
     cfg = w.cfg
-    lease = proto in ("ours", "nodrift")
+    lease = proto in LEASES
+    epoch = proto != "noepoch"
     A, W = lease_params(cfg, proto) if lease else (0.0, 0.0)
     res = dict(req=0, req_out=0, acc=0, acc_out=0, stale_acc=0, stale_max=0.0, conflict_sets=[],
                acc_sets=[], window=[])
@@ -306,7 +358,7 @@ def simulate_auth(w: World, proto: str):
         elif lease:
             ts = w.last_answered_send(s, t_rev, not_after=t_rev)
             applied = w.links[s].next_up(t_rev) + cfg.rtt / 2
-            end = 0.0 if ts is None else min(ts + A / (1 + w.drift[s]), applied)
+            end = 0.0 if ts is None else min(w.auth_end(s, ts, A, epoch), applied)
             res["window"].append(max(0.0, end - t_rev))
         else:
             res["window"].append(w.links[s].next_up(t_rev) - t_rev)
@@ -314,6 +366,8 @@ def simulate_auth(w: World, proto: str):
         s = w.op_site[op]
         t_rev = w.revocations.get(op, math.inf)
         for t in reqs:
+            if not w.powered(s, t):
+                continue
             lk = w.links[s]
             offline = not lk.up(t)
             res["req"] += 1
@@ -323,7 +377,7 @@ def simulate_auth(w: World, proto: str):
             elif lease:
                 ts = w.last_answered_send(s, t, not_after=t_rev)
                 applied = w.links[s].next_up(t_rev) + cfg.rtt / 2 if t_rev < math.inf else math.inf
-                ok = ts is not None and t < ts + A / (1 + w.drift[s]) and t < applied
+                ok = ts is not None and t < w.auth_end(s, ts, A, epoch) and t < applied
             else:
                 # The site learns of the revocation at its first connected moment after it.
                 ok = t < t_rev or t < lk.next_up(t_rev)
@@ -349,7 +403,7 @@ def simulate_consume(w: World, proto: str):
     events = sorted((float(t), s) for s in range(S) for t in w.consume_req[s])
     res = dict(req=0, req_out=0, acc=0, acc_out=0, over=0.0, conflict_sets=[], acc_sets=[])
     used = 0.0                     # globally consumed (truth)
-    shares = proto in ("ours", "nodrift")
+    shares = proto in LEASES
     if shares:
         share = [cfg.share_frac * cap / S] * S
         reserve = cap - sum(share)
@@ -357,6 +411,8 @@ def simulate_consume(w: World, proto: str):
     known = [0.0] * S              # baselines: global consumption known to site s at last contact
     off_used = [0.0] * S
     for t, s in events:
+        if not w.powered(s, t):
+            continue
         lk = w.links[s]
         offline = not lk.up(t)
         res["req"] += 1
@@ -401,7 +457,7 @@ def run(cfg: Cfg):
         pb = simulate_consume(w, proto)
         # C: logs. Available offline for every protocol except the global ledger.
         c_req = sum(len(r) for r in w.log_req)
-        c_out = sum(sum(1 for t in r if not w.links[s].up(t)) for s, r in enumerate(w.log_req))
+        c_out = sum(sum(1 for t in r if w.powered(s, t) and not w.links[s].up(t)) for s, r in enumerate(w.log_req))
         # Offline sets with a conflict: discard rolls back every operation accepted in that outage;
         # timestamp rolls back only the conflicting operations.
         bad_sets = set(px["conflict_sets"]) | set(pv["conflict_sets"]) | set(pb["conflict_sets"])
@@ -441,7 +497,7 @@ def run(cfg: Cfg):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="experiments/results/offsim.jsonl")
-    ap.add_argument("--seeds", type=int, default=10)
+    ap.add_argument("--seeds", type=int, default=20)
     ap.add_argument("--workers", type=int, default=os.cpu_count())
     ap.add_argument("--quick", action="store_true")
     args = ap.parse_args()

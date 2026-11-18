@@ -1,0 +1,3971 @@
+{
+ "params": {
+  "rho_ppm": 150000,
+  "D_s": 60,
+  "A_ms": 69000,
+  "renew_period_s": 4.0,
+  "W_s": 84,
+  "cut_s": 150,
+  "drift": {
+   "1": -0.15,
+   "2": 0.05
+  }
+ },
+ "gas": {
+  "deploy_registry": 3801896,
+  "deploy_site": 1749307
+ },
+ "events": [
+  {
+   "t": 1.3,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 2.849,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.803,
+   "gas": 47388,
+   "block": 1070
+  },
+  {
+   "t": 4.074,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.773,
+   "gas": 72352,
+   "block": 1081
+  },
+  {
+   "t": 6.088,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 2.237,
+   "gas": 30288,
+   "block": 1073
+  },
+  {
+   "t": 6.552,
+   "kind": "uplink_seen",
+   "site": 1,
+   "up": true
+  },
+  {
+   "t": 7.086,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.997,
+   "gas": 38152,
+   "block": 1084
+  },
+  {
+   "t": 7.129,
+   "kind": "uplink_seen",
+   "site": 2,
+   "up": true
+  },
+  {
+   "t": 7.328,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 8.306,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 8.543,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 9.495,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 10.664,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 10.95,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.397,
+   "gas": 55252,
+   "block": 1078
+  },
+  {
+   "t": 11.846,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 12.228,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 1,
+   "ops": 2,
+   "agree": 4,
+   "lo": 1021,
+   "hi": 1086
+  },
+  {
+   "t": 12.267,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 1,
+   "ops": 2,
+   "agree": 4,
+   "lo": 1031,
+   "hi": 1076
+  },
+  {
+   "t": 13.952,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.998,
+   "gas": 38152,
+   "block": 1081
+  },
+  {
+   "t": 15.042,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 15.07,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.214,
+   "gas": 38152,
+   "block": 1092
+  },
+  {
+   "t": 16.223,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 16.248,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 17.3,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 17.472,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 17.977,
+   "kind": "anchor",
+   "site": 1,
+   "height": 1,
+   "ops": 2,
+   "status": 1,
+   "gas": 95078
+  },
+  {
+   "t": 18.467,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 19.565,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 19.97,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.485,
+   "gas": 38152,
+   "block": 1097
+  },
+  {
+   "t": 19.998,
+   "kind": "anchor",
+   "site": 2,
+   "height": 1,
+   "ops": 2,
+   "status": 1,
+   "gas": 95110
+  },
+  {
+   "t": 20.715,
+   "kind": "uplink_cut",
+   "site": 1
+  },
+  {
+   "t": 20.746,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 21.154,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 22.03,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 23.231,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 23.844,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.679,
+   "gas": 38152,
+   "block": 1101
+  },
+  {
+   "t": 24.361,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 2,
+   "ops": 2,
+   "agree": 4,
+   "lo": 1086,
+   "hi": 1098
+  },
+  {
+   "t": 24.459,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 2,
+   "ops": 2,
+   "agree": 4,
+   "lo": 1076,
+   "hi": 1088
+  },
+  {
+   "t": 25.06,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 25.973,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.739,
+   "gas": 38152,
+   "block": 1093
+  },
+  {
+   "t": 26.284,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 28.94,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.963,
+   "gas": 30288,
+   "block": 1096
+  },
+  {
+   "t": 28.957,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.663,
+   "gas": 38152,
+   "block": 1106
+  },
+  {
+   "t": 30.141,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 31.952,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 2.011,
+   "gas": 30288,
+   "block": 1099
+  },
+  {
+   "t": 32.831,
+   "kind": "anchor",
+   "site": 2,
+   "height": 2,
+   "ops": 2,
+   "status": 1,
+   "gas": 78354
+  },
+  {
+   "t": 32.841,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.698,
+   "gas": 30288,
+   "block": 1110
+  },
+  {
+   "t": 33.1,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 34.457,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 35.696,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 35.85,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.998,
+   "gas": 30288,
+   "block": 1113
+  },
+  {
+   "t": 36.481,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 3,
+   "ops": 2,
+   "agree": 4,
+   "lo": 1098,
+   "hi": 1110
+  },
+  {
+   "t": 36.618,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 3,
+   "ops": 3,
+   "agree": 4,
+   "lo": 1088,
+   "hi": 1100
+  },
+  {
+   "t": 37.059,
+   "kind": "stop",
+   "obj": "P11",
+   "next": 2,
+   "release_at": 0,
+   "gas": 53966,
+   "g_time": 1794991429
+  },
+  {
+   "t": 37.084,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 37.172,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 38.34,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 38.386,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 38.825,
+   "kind": "anchor",
+   "site": 2,
+   "height": 3,
+   "ops": 3,
+   "status": 1,
+   "gas": 78382
+  },
+  {
+   "t": 38.883,
+   "kind": "reassigned_slow",
+   "obj": "P11",
+   "release_at": 0,
+   "g_time": 1794991429,
+   "status": 1,
+   "gas": 29482
+  },
+  {
+   "t": 38.909,
+   "kind": "uplink_seen",
+   "site": 1,
+   "up": false
+  },
+  {
+   "t": 39.493,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 39.535,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 40.768,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 41.923,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.424,
+   "gas": 30276,
+   "block": 1119
+  },
+  {
+   "t": 41.967,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 42.824,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 1,
+   "cq": 10112260,
+   "issued": 1794991433,
+   "t_send": 38.932,
+   "latency": 3.892,
+   "gas_g": 86131,
+   "gas_site": 74841
+  },
+  {
+   "t": 43.089,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 44.323,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 44.907,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.934,
+   "gas": 38152,
+   "block": 1112
+  },
+  {
+   "t": 45.503,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 45.988,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 46.76,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 47.002,
+   "kind": "revoke",
+   "obj": "C11",
+   "gas": 31874,
+   "release_at": 0,
+   "g_time": 1794991439
+  },
+  {
+   "t": 47.025,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P21",
+   "epoch": 1,
+   "cq": 10116885,
+   "issued": 1794991437,
+   "t_send": 43.336,
+   "latency": 3.688,
+   "gas_g": 86131,
+   "gas_site": 74837
+  },
+  {
+   "t": 47.098,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 47.934,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 48.602,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 4,
+   "ops": 3,
+   "agree": 4,
+   "lo": 1110,
+   "hi": 1122
+  },
+  {
+   "t": 48.756,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 4,
+   "ops": 0,
+   "agree": 4,
+   "lo": 1100,
+   "hi": 1112
+  },
+  {
+   "t": 49.122,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 50.06,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 1.947,
+   "gas": 42580,
+   "block": 1117
+  },
+  {
+   "t": 50.396,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 50.953,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P22",
+   "epoch": 1,
+   "cq": 10121000,
+   "issued": 1794991441,
+   "t_send": 47.256,
+   "latency": 3.697,
+   "gas_g": 86143,
+   "gas_site": 74833
+  },
+  {
+   "t": 51.603,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 52.871,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 52.963,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 1.893,
+   "gas": 42728,
+   "block": 1120
+  },
+  {
+   "t": 54.095,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 55.012,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "cq": 10125068,
+   "issued": 1794991445,
+   "t_send": 51.13,
+   "latency": 3.882,
+   "gas_g": 88291,
+   "gas_site": 74885
+  },
+  {
+   "t": 55.293,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 55.98,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 2.016,
+   "gas": 42732,
+   "block": 1123
+  },
+  {
+   "t": 56.576,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 57.019,
+   "kind": "anchor",
+   "site": 2,
+   "height": 4,
+   "ops": 0,
+   "status": 1,
+   "gas": 77934
+  },
+  {
+   "t": 57.759,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 58.858,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 1.865,
+   "gas": 42752,
+   "block": 1126
+  },
+  {
+   "t": 60.695,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 5,
+   "ops": 0,
+   "agree": 4,
+   "lo": 1122,
+   "hi": 1134
+  },
+  {
+   "t": 60.876,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 5,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1112,
+   "hi": 1124
+  },
+  {
+   "t": 61.036,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.274,
+   "gas": 38152,
+   "block": 1138
+  },
+  {
+   "t": 61.889,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 2.019,
+   "gas": 42732,
+   "block": 1129
+  },
+  {
+   "t": 62.126,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 62.859,
+   "kind": "anchor",
+   "site": 2,
+   "height": 5,
+   "ops": 4,
+   "status": 1,
+   "gas": 78342
+  },
+  {
+   "t": 63.232,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 64.432,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 64.837,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.941,
+   "gas": 30288,
+   "block": 1132
+  },
+  {
+   "t": 66.884,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.446,
+   "gas": 30288,
+   "block": 1144
+  },
+  {
+   "t": 66.968,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 1,
+   "cq": 10137646,
+   "issued": 1794991457,
+   "t_send": 63.108,
+   "latency": 3.86,
+   "gas_g": 69031,
+   "gas_site": 57888
+  },
+  {
+   "t": 68.041,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 2.19,
+   "gas": 42740,
+   "block": 1135
+  },
+  {
+   "t": 69.848,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.955,
+   "gas": 38152,
+   "block": 1147
+  },
+  {
+   "t": 70.973,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P21",
+   "epoch": 1,
+   "cq": 10142437,
+   "issued": 1794991461,
+   "t_send": 67.671,
+   "latency": 3.302,
+   "gas_g": 69019,
+   "gas_site": 57888
+  },
+  {
+   "t": 70.984,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.936,
+   "gas": 38152,
+   "block": 1138
+  },
+  {
+   "t": 71.025,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 72.321,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 72.796,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 6,
+   "ops": 2,
+   "agree": 4,
+   "lo": 1134,
+   "hi": 1146
+  },
+  {
+   "t": 72.979,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 6,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1124,
+   "hi": 1137
+  },
+  {
+   "t": 74.019,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 2.032,
+   "gas": 30288,
+   "block": 1141
+  },
+  {
+   "t": 75.015,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.68,
+   "gas": 38152,
+   "block": 1152
+  },
+  {
+   "t": 75.037,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P22",
+   "epoch": 1,
+   "cq": 10146094,
+   "issued": 1794991465,
+   "t_send": 71.155,
+   "latency": 3.882,
+   "gas_g": 69031,
+   "gas_site": 57840
+  },
+  {
+   "t": 76.968,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.941,
+   "gas": 38152,
+   "block": 1144
+  },
+  {
+   "t": 77.976,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.95,
+   "gas": 38152,
+   "block": 1155
+  },
+  {
+   "t": 78.986,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "cq": 10150385,
+   "issued": 1794991469,
+   "t_send": 75.241,
+   "latency": 3.744,
+   "gas_g": 71191,
+   "gas_site": 57868
+  },
+  {
+   "t": 79.915,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.943,
+   "gas": 38152,
+   "block": 1147
+  },
+  {
+   "t": 80.918,
+   "kind": "anchor",
+   "site": 2,
+   "height": 6,
+   "ops": 4,
+   "status": 1,
+   "gas": 78378
+  },
+  {
+   "t": 80.945,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.955,
+   "gas": 30288,
+   "block": 1158
+  },
+  {
+   "t": 83.022,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 2.093,
+   "gas": 42740,
+   "block": 1150
+  },
+  {
+   "t": 84.06,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 84.909,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 7,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1146,
+   "hi": 1159
+  },
+  {
+   "t": 85.093,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 7,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1137,
+   "hi": 1149
+  },
+  {
+   "t": 85.92,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 1.889,
+   "gas": 42708,
+   "block": 1153
+  },
+  {
+   "t": 86.99,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.927,
+   "gas": 38152,
+   "block": 1164
+  },
+  {
+   "t": 88.089,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 88.878,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.943,
+   "gas": 38152,
+   "block": 1156
+  },
+  {
+   "t": 89.03,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 1,
+   "cq": 10160800,
+   "issued": 1794991479,
+   "t_send": 85.16,
+   "latency": 3.87,
+   "gas_g": 69031,
+   "gas_site": 57848
+  },
+  {
+   "t": 89.322,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 90.423,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 92.022,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 2.133,
+   "gas": 42732,
+   "block": 1159
+  },
+  {
+   "t": 92.868,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.434,
+   "gas": 38152,
+   "block": 1170
+  },
+  {
+   "t": 94.897,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 1.863,
+   "gas": 42720,
+   "block": 1162
+  },
+  {
+   "t": 96.075,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.202,
+   "gas": 38152,
+   "block": 1173
+  },
+  {
+   "t": 97.008,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 8,
+   "ops": 2,
+   "agree": 4,
+   "lo": 1159,
+   "hi": 1171
+  },
+  {
+   "t": 97.031,
+   "kind": "anchor",
+   "site": 2,
+   "height": 7,
+   "ops": 4,
+   "status": 1,
+   "gas": 78338
+  },
+  {
+   "t": 97.163,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 97.197,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 8,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1149,
+   "hi": 1161
+  },
+  {
+   "t": 97.864,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.958,
+   "gas": 30264,
+   "block": 1165
+  },
+  {
+   "t": 98.268,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 99.428,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 100.608,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 100.886,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 2.01,
+   "gas": 42740,
+   "block": 1168
+  },
+  {
+   "t": 102.833,
+   "kind": "anchor",
+   "site": 2,
+   "height": 8,
+   "ops": 4,
+   "status": 1,
+   "gas": 78322
+  },
+  {
+   "t": 103.032,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.413,
+   "gas": 38152,
+   "block": 1180
+  },
+  {
+   "t": 103.928,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 2.032,
+   "gas": 42752,
+   "block": 1171
+  },
+  {
+   "t": 104.239,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 105.497,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 106.599,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 106.897,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 1,
+   "cq": 10179510,
+   "issued": 1794991497,
+   "t_send": 102.979,
+   "latency": 3.918,
+   "gas_g": 69031,
+   "gas_site": 57816
+  },
+  {
+   "t": 106.916,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.983,
+   "gas": 38152,
+   "block": 1174
+  },
+  {
+   "t": 109.014,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.406,
+   "gas": 38152,
+   "block": 1186
+  },
+  {
+   "t": 109.124,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 9,
+   "ops": 2,
+   "agree": 4,
+   "lo": 1171,
+   "hi": 1183
+  },
+  {
+   "t": 109.312,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 9,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1161,
+   "hi": 1173
+  },
+  {
+   "t": 110.035,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 2.107,
+   "gas": 42740,
+   "block": 1177
+  },
+  {
+   "t": 110.117,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 111.083,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P21",
+   "epoch": 1,
+   "cq": 10184161,
+   "issued": 1794991501,
+   "t_send": 107.408,
+   "latency": 3.674,
+   "gas_g": 69051,
+   "gas_site": 57824
+  },
+  {
+   "t": 111.311,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 112.522,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 112.977,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.939,
+   "gas": 38152,
+   "block": 1180
+  },
+  {
+   "t": 113.6,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 115.039,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P22",
+   "epoch": 1,
+   "cq": 10188208,
+   "issued": 1794991505,
+   "t_send": 111.263,
+   "latency": 3.776,
+   "gas_g": 69063,
+   "gas_site": 57860
+  },
+  {
+   "t": 115.832,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 1.852,
+   "gas": 42720,
+   "block": 1183
+  },
+  {
+   "t": 115.908,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.302,
+   "gas": 38152,
+   "block": 1193
+  },
+  {
+   "t": 117.014,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 118.238,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 119.078,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 2.24,
+   "gas": 42708,
+   "block": 1186
+  },
+  {
+   "t": 119.102,
+   "kind": "anchor",
+   "site": 2,
+   "height": 9,
+   "ops": 4,
+   "status": 1,
+   "gas": 78394
+  },
+  {
+   "t": 119.459,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 120.642,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 121.262,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 10,
+   "ops": 2,
+   "agree": 4,
+   "lo": 1183,
+   "hi": 1195
+  },
+  {
+   "t": 121.464,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 10,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1173,
+   "hi": 1185
+  },
+  {
+   "t": 121.921,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 122.04,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.95,
+   "gas": 30288,
+   "block": 1189
+  },
+  {
+   "t": 124.82,
+   "kind": "anchor",
+   "site": 2,
+   "height": 10,
+   "ops": 4,
+   "status": 1,
+   "gas": 78362
+  },
+  {
+   "t": 124.852,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.923,
+   "gas": 38152,
+   "block": 1202
+  },
+  {
+   "t": 124.984,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.933,
+   "gas": 38152,
+   "block": 1192
+  },
+  {
+   "t": 127.933,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.947,
+   "gas": 38152,
+   "block": 1195
+  },
+  {
+   "t": 128.058,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 2.192,
+   "gas": 30288,
+   "block": 1205
+  },
+  {
+   "t": 128.891,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 1,
+   "cq": 10202599,
+   "issued": 1794991519,
+   "t_send": 124.969,
+   "latency": 3.922,
+   "gas_g": 69051,
+   "gas_site": 57836
+  },
+  {
+   "t": 129.213,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 130.38,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 130.935,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.995,
+   "gas": 38152,
+   "block": 1198
+  },
+  {
+   "t": 131.726,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 132.855,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 133.0,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P21",
+   "epoch": 1,
+   "cq": 10207521,
+   "issued": 1794991523,
+   "t_send": 129.656,
+   "latency": 3.344,
+   "gas_g": 69039,
+   "gas_site": 57876
+  },
+  {
+   "t": 133.379,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 11,
+   "ops": 2,
+   "agree": 4,
+   "lo": 1195,
+   "hi": 1207
+  },
+  {
+   "t": 133.563,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 11,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1185,
+   "hi": 1197
+  },
+  {
+   "t": 134.0,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 2.06,
+   "gas": 42732,
+   "block": 1201
+  },
+  {
+   "t": 135.926,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 2.068,
+   "gas": 30288,
+   "block": 1213
+  },
+  {
+   "t": 136.817,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 1.81,
+   "gas": 42752,
+   "block": 1204
+  },
+  {
+   "t": 137.042,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P22",
+   "epoch": 1,
+   "cq": 10211208,
+   "issued": 1794991527,
+   "t_send": 133.168,
+   "latency": 3.874,
+   "gas_g": 69043,
+   "gas_site": 57848
+  },
+  {
+   "t": 138.871,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.937,
+   "gas": 38152,
+   "block": 1216
+  },
+  {
+   "t": 139.96,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 140.054,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.227,
+   "gas": 38152,
+   "block": 1207
+  },
+  {
+   "t": 140.949,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "cq": 10215355,
+   "issued": 1794991531,
+   "t_send": 137.117,
+   "latency": 3.832,
+   "gas_g": 71191,
+   "gas_site": 57868
+  },
+  {
+   "t": 142.816,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 1.748,
+   "gas": 42732,
+   "block": 1210
+  },
+  {
+   "t": 142.971,
+   "kind": "anchor",
+   "site": 2,
+   "height": 11,
+   "ops": 4,
+   "status": 1,
+   "gas": 78370
+  },
+  {
+   "t": 145.476,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 12,
+   "ops": 2,
+   "agree": 4,
+   "lo": 1207,
+   "hi": 1219
+  },
+  {
+   "t": 145.658,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 12,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1197,
+   "hi": 1209
+  },
+  {
+   "t": 145.887,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 2.064,
+   "gas": 42720,
+   "block": 1213
+  },
+  {
+   "t": 146.34,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 5.378,
+   "gas": 38152,
+   "block": 1220
+  },
+  {
+   "t": 147.497,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 148.586,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 148.885,
+   "kind": "anchor",
+   "site": 2,
+   "height": 12,
+   "ops": 4,
+   "status": 1,
+   "gas": 78362
+  },
+  {
+   "t": 148.989,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 2.097,
+   "gas": 42728,
+   "block": 1216
+  },
+  {
+   "t": 151.015,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.415,
+   "gas": 30288,
+   "block": 1228
+  },
+  {
+   "t": 151.949,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.953,
+   "gas": 30288,
+   "block": 1219
+  },
+  {
+   "t": 152.098,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 152.897,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 1,
+   "cq": 10227877,
+   "issued": 1794991543,
+   "t_send": 149.043,
+   "latency": 3.854,
+   "gas_g": 69051,
+   "gas_site": 57876
+  },
+  {
+   "t": 153.536,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 154.72,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 155.057,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 2.097,
+   "gas": 42720,
+   "block": 1222
+  },
+  {
+   "t": 155.832,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 157.569,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 13,
+   "ops": 2,
+   "agree": 4,
+   "lo": 1219,
+   "hi": 1231
+  },
+  {
+   "t": 157.774,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 13,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1209,
+   "hi": 1221
+  },
+  {
+   "t": 158.001,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.937,
+   "gas": 38152,
+   "block": 1225
+  },
+  {
+   "t": 158.07,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P21",
+   "epoch": 1,
+   "cq": 10233024,
+   "issued": 1794991548,
+   "t_send": 153.945,
+   "latency": 4.125,
+   "gas_g": 69031,
+   "gas_site": 57848
+  },
+  {
+   "t": 159.024,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 2.187,
+   "gas": 30288,
+   "block": 1236
+  },
+  {
+   "t": 160.179,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 160.881,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 1.877,
+   "gas": 42740,
+   "block": 1228
+  },
+  {
+   "t": 161.93,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P22",
+   "epoch": 1,
+   "cq": 10237623,
+   "issued": 1794991552,
+   "t_send": 158.325,
+   "latency": 3.605,
+   "gas_g": 69043,
+   "gas_site": 57848
+  },
+  {
+   "t": 162.87,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.69,
+   "gas": 38152,
+   "block": 1240
+  },
+  {
+   "t": 163.859,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.968,
+   "gas": 30276,
+   "block": 1231
+  },
+  {
+   "t": 165.933,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "cq": 10241600,
+   "issued": 1794991556,
+   "t_send": 162.113,
+   "latency": 3.82,
+   "gas_g": 71171,
+   "gas_site": 57848
+  },
+  {
+   "t": 166.053,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.181,
+   "gas": 38152,
+   "block": 1243
+  },
+  {
+   "t": 166.928,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 2.061,
+   "gas": 42752,
+   "block": 1234
+  },
+  {
+   "t": 167.883,
+   "kind": "anchor",
+   "site": 2,
+   "height": 13,
+   "ops": 4,
+   "status": 1,
+   "gas": 78382
+  },
+  {
+   "t": 168.966,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.907,
+   "gas": 38152,
+   "block": 1246
+  },
+  {
+   "t": 169.677,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 14,
+   "ops": 2,
+   "agree": 4,
+   "lo": 1231,
+   "hi": 1243
+  },
+  {
+   "t": 169.817,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 1.878,
+   "gas": 42752,
+   "block": 1237
+  },
+  {
+   "t": 169.88,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 14,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1221,
+   "hi": 1233
+  },
+  {
+   "t": 170.216,
+   "kind": "uplink_heal",
+   "site": 1
+  },
+  {
+   "t": 171.91,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.932,
+   "gas": 38152,
+   "block": 1249
+  },
+  {
+   "t": 172.839,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 2.017,
+   "gas": 42752,
+   "block": 1240
+  },
+  {
+   "t": 173.946,
+   "kind": "anchor",
+   "site": 2,
+   "height": 14,
+   "ops": 4,
+   "status": 1,
+   "gas": 78382
+  },
+  {
+   "t": 174.837,
+   "kind": "anchor",
+   "site": 1,
+   "height": 2,
+   "ops": 2,
+   "status": 1,
+   "gas": 78370
+  },
+  {
+   "t": 174.848,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.935,
+   "gas": 38152,
+   "block": 1252
+  },
+  {
+   "t": 175.829,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 1.987,
+   "gas": 42752,
+   "block": 1243
+  },
+  {
+   "t": 175.933,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 176.845,
+   "kind": "anchor",
+   "site": 1,
+   "height": 3,
+   "ops": 2,
+   "status": 1,
+   "gas": 78370
+  },
+  {
+   "t": 177.02,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 177.815,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 1,
+   "cq": 10254104,
+   "issued": 1794991568,
+   "t_send": 174.022,
+   "latency": 3.793,
+   "gas_g": 69051,
+   "gas_site": 57832
+  },
+  {
+   "t": 178.18,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 178.884,
+   "kind": "anchor",
+   "site": 1,
+   "height": 4,
+   "ops": 3,
+   "status": 1,
+   "gas": 78330
+  },
+  {
+   "t": 179.031,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.193,
+   "gas": 38152,
+   "block": 1246
+  },
+  {
+   "t": 179.371,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 180.925,
+   "kind": "anchor",
+   "site": 1,
+   "height": 5,
+   "ops": 0,
+   "status": 1,
+   "gas": 77958
+  },
+  {
+   "t": 181.8,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 15,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1243,
+   "hi": 1255
+  },
+  {
+   "t": 181.854,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 1.813,
+   "gas": 42720,
+   "block": 1249
+  },
+  {
+   "t": 181.982,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 15,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1233,
+   "hi": 1246
+  },
+  {
+   "t": 182.033,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.654,
+   "gas": 38152,
+   "block": 1259
+  },
+  {
+   "t": 182.033,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P21",
+   "epoch": 1,
+   "cq": 10258709,
+   "issued": 1794991572,
+   "t_send": 178.407,
+   "latency": 3.626,
+   "gas_g": 69031,
+   "gas_site": 57848
+  },
+  {
+   "t": 182.927,
+   "kind": "anchor",
+   "site": 1,
+   "height": 6,
+   "ops": 2,
+   "status": 1,
+   "gas": 78354
+  },
+  {
+   "t": 183.124,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 184.317,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 184.916,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 2.059,
+   "gas": 42720,
+   "block": 1252
+  },
+  {
+   "t": 184.962,
+   "kind": "anchor",
+   "site": 1,
+   "height": 7,
+   "ops": 4,
+   "status": 1,
+   "gas": 78382
+  },
+  {
+   "t": 185.396,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 186.031,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P22",
+   "epoch": 1,
+   "cq": 10262685,
+   "issued": 1794991576,
+   "t_send": 182.193,
+   "latency": 3.837,
+   "gas_g": 69063,
+   "gas_site": 57900
+  },
+  {
+   "t": 186.617,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 186.932,
+   "kind": "anchor",
+   "site": 1,
+   "height": 8,
+   "ops": 2,
+   "status": 1,
+   "gas": 78362
+  },
+  {
+   "t": 187.776,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 187.865,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.948,
+   "gas": 30288,
+   "block": 1255
+  },
+  {
+   "t": 188.899,
+   "kind": "anchor",
+   "site": 1,
+   "height": 9,
+   "ops": 2,
+   "status": 1,
+   "gas": 78362
+  },
+  {
+   "t": 188.97,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 189.881,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "cq": 10266991,
+   "issued": 1794991580,
+   "t_send": 186.295,
+   "latency": 3.586,
+   "gas_g": 71171,
+   "gas_site": 57856
+  },
+  {
+   "t": 190.066,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 190.985,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 2.113,
+   "gas": 42752,
+   "block": 1258
+  },
+  {
+   "t": 191.022,
+   "kind": "anchor",
+   "site": 1,
+   "height": 10,
+   "ops": 2,
+   "status": 1,
+   "gas": 78354
+  },
+  {
+   "t": 191.155,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 191.872,
+   "kind": "anchor",
+   "site": 2,
+   "height": 15,
+   "ops": 4,
+   "status": 1,
+   "gas": 78358
+  },
+  {
+   "t": 192.238,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 192.891,
+   "kind": "anchor",
+   "site": 1,
+   "height": 11,
+   "ops": 2,
+   "status": 1,
+   "gas": 78390
+  },
+  {
+   "t": 193.392,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 193.905,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 16,
+   "ops": 1,
+   "agree": 4,
+   "lo": 1255,
+   "hi": 1268
+  },
+  {
+   "t": 193.915,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.926,
+   "gas": 38152,
+   "block": 1261
+  },
+  {
+   "t": 194.096,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 16,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1246,
+   "hi": 1258
+  },
+  {
+   "t": 194.562,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 194.894,
+   "kind": "anchor",
+   "site": 1,
+   "height": 12,
+   "ops": 2,
+   "status": 1,
+   "gas": 78370
+  },
+  {
+   "t": 195.731,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 196.856,
+   "kind": "anchor",
+   "site": 1,
+   "height": 13,
+   "ops": 2,
+   "status": 1,
+   "gas": 78350
+  },
+  {
+   "t": 196.889,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 197.013,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 2.094,
+   "gas": 42720,
+   "block": 1264
+  },
+  {
+   "t": 198.0,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 198.005,
+   "kind": "anchor",
+   "site": 2,
+   "height": 16,
+   "ops": 4,
+   "status": 1,
+   "gas": 78342
+  },
+  {
+   "t": 198.893,
+   "kind": "anchor",
+   "site": 1,
+   "height": 14,
+   "ops": 2,
+   "status": 1,
+   "gas": 78362
+  },
+  {
+   "t": 199.843,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 1.819,
+   "gas": 42732,
+   "block": 1267
+  },
+  {
+   "t": 200.92,
+   "kind": "anchor",
+   "site": 1,
+   "height": 15,
+   "ops": 4,
+   "status": 1,
+   "gas": 78362
+  },
+  {
+   "t": 200.926,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.915,
+   "gas": 38152,
+   "block": 1278
+  },
+  {
+   "t": 201.912,
+   "kind": "stop",
+   "obj": "P21",
+   "next": 1,
+   "g_time": 1794991594,
+   "gas": 55021
+  },
+  {
+   "t": 202.06,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 1,
+   "cq": 10279460,
+   "issued": 1794991592,
+   "t_send": 198.17,
+   "latency": 3.891,
+   "gas_g": 69031,
+   "gas_site": 57876
+  },
+  {
+   "t": 202.875,
+   "kind": "anchor",
+   "site": 1,
+   "height": 16,
+   "ops": 1,
+   "status": 1,
+   "gas": 78382
+  },
+  {
+   "t": 202.902,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 2.057,
+   "gas": 42740,
+   "block": 1270
+  },
+  {
+   "t": 203.851,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.916,
+   "gas": 38152,
+   "block": 1281
+  },
+  {
+   "t": 204.046,
+   "kind": "stop_applied",
+   "site": 2,
+   "obj": "P21",
+   "latency_from_seen": 1.441,
+   "gas": 72880
+  },
+  {
+   "t": 205.83,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.922,
+   "gas": 30288,
+   "block": 1273
+  },
+  {
+   "t": 206.002,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 17,
+   "ops": 1,
+   "agree": 4,
+   "lo": 1268,
+   "hi": 1280
+  },
+  {
+   "t": 206.098,
+   "kind": "reassign_acked",
+   "site": 2,
+   "obj": "P21",
+   "status": 1,
+   "gas": 211465,
+   "latency_from_seen": 3.493
+  },
+  {
+   "t": 206.197,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 17,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1258,
+   "hi": 1270
+  },
+  {
+   "t": 206.874,
+   "kind": "renewal",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "cq": 10230677,
+   "issued": 1794991597,
+   "t_send": 203.337,
+   "latency": 3.536,
+   "gas_g": 86163,
+   "gas_site": 74821
+  },
+  {
+   "t": 207.042,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.18,
+   "gas": 38152,
+   "block": 1284
+  },
+  {
+   "t": 208.918,
+   "kind": "stop_applied",
+   "site": 1,
+   "obj": "C11",
+   "latency_from_seen": 1.918,
+   "gas": 54708
+  },
+  {
+   "t": 208.918,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 2.085,
+   "gas": 42708,
+   "block": 1276
+  },
+  {
+   "t": 209.97,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.914,
+   "gas": 38152,
+   "block": 1287
+  },
+  {
+   "t": 210.064,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P22",
+   "epoch": 1,
+   "cq": 10287969,
+   "issued": 1794991600,
+   "t_send": 206.273,
+   "latency": 3.791,
+   "gas_g": 69043,
+   "gas_site": 57848
+  },
+  {
+   "t": 212.019,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 2.101,
+   "gas": 42740,
+   "block": 1279
+  },
+  {
+   "t": 212.826,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.857,
+   "gas": 42592,
+   "block": 1290
+  },
+  {
+   "t": 213.042,
+   "kind": "renewal",
+   "site": 1,
+   "obj": "P21",
+   "epoch": 1,
+   "cq": 10235627,
+   "issued": 1794991603,
+   "t_send": 209.16,
+   "latency": 3.881,
+   "gas_g": 86119,
+   "gas_site": 74853
+  },
+  {
+   "t": 214.07,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "cq": 10292080,
+   "issued": 1794991604,
+   "t_send": 210.189,
+   "latency": 3.881,
+   "gas_g": 71159,
+   "gas_site": 57860
+  },
+  {
+   "t": 214.81,
+   "kind": "anchor",
+   "site": 1,
+   "height": 17,
+   "ops": 1,
+   "status": 1,
+   "gas": 78362
+  },
+  {
+   "t": 214.81,
+   "kind": "uplink_seen",
+   "site": 1,
+   "up": true
+  },
+  {
+   "t": 214.94,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.909,
+   "gas": 38152,
+   "block": 1282
+  },
+  {
+   "t": 215.904,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 2.074,
+   "gas": 42732,
+   "block": 1293
+  },
+  {
+   "t": 216.065,
+   "kind": "anchor",
+   "site": 2,
+   "height": 17,
+   "ops": 4,
+   "status": 1,
+   "gas": 78322
+  },
+  {
+   "t": 218.047,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 2.1,
+   "gas": 42720,
+   "block": 1285
+  },
+  {
+   "t": 218.106,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 18,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1280,
+   "hi": 1292
+  },
+  {
+   "t": 218.305,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 18,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1270,
+   "hi": 1282
+  },
+  {
+   "t": 219.005,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 2.091,
+   "gas": 42740,
+   "block": 1296
+  },
+  {
+   "t": 220.913,
+   "kind": "anchor",
+   "site": 1,
+   "height": 18,
+   "ops": 4,
+   "status": 1,
+   "gas": 78374
+  },
+  {
+   "t": 221.048,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 1.993,
+   "gas": 42732,
+   "block": 1288
+  },
+  {
+   "t": 221.825,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.815,
+   "gas": 42752,
+   "block": 1299
+  },
+  {
+   "t": 222.02,
+   "kind": "anchor",
+   "site": 2,
+   "height": 18,
+   "ops": 4,
+   "status": 1,
+   "gas": 78334
+  },
+  {
+   "t": 223.886,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 1.831,
+   "gas": 42720,
+   "block": 1291
+  },
+  {
+   "t": 224.846,
+   "kind": "renewal",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "cq": 10245851,
+   "issued": 1794991615,
+   "t_send": 221.189,
+   "latency": 3.658,
+   "gas_g": 69063,
+   "gas_site": 57860
+  },
+  {
+   "t": 225.015,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.189,
+   "gas": 38152,
+   "block": 1302
+  },
+  {
+   "t": 226.007,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 1,
+   "cq": 10304678,
+   "issued": 1794991616,
+   "t_send": 222.187,
+   "latency": 3.82,
+   "gas_g": 69051,
+   "gas_site": 57832
+  },
+  {
+   "t": 226.819,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.931,
+   "gas": 38152,
+   "block": 1294
+  },
+  {
+   "t": 227.901,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 1.872,
+   "gas": 42720,
+   "block": 1305
+  },
+  {
+   "t": 229.041,
+   "kind": "renewal",
+   "site": 1,
+   "obj": "P21",
+   "epoch": 1,
+   "cq": 10249214,
+   "issued": 1794991619,
+   "t_send": 225.146,
+   "latency": 3.896,
+   "gas_g": 69051,
+   "gas_site": 57848
+  },
+  {
+   "t": 229.896,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 2.07,
+   "gas": 42708,
+   "block": 1297
+  },
+  {
+   "t": 230.0,
+   "kind": "clock_reset",
+   "site": 2,
+   "epoch": 2
+  },
+  {
+   "t": 230.205,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 19,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1292,
+   "hi": 1304
+  },
+  {
+   "t": 230.418,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 19,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1282,
+   "hi": 1294
+  },
+  {
+   "t": 230.853,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P22",
+   "epoch": 1,
+   "cq": 10309588,
+   "issued": 1794991621,
+   "t_send": 226.863,
+   "latency": 3.991,
+   "gas_g": 69063,
+   "gas_site": 57836
+  },
+  {
+   "t": 230.979,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 2.063,
+   "gas": 42740,
+   "block": 1308
+  },
+  {
+   "t": 231.129,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": false,
+   "why": "('0xfe78b635', '0xfe78b635')"
+  },
+  {
+   "t": 232.349,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": false,
+   "why": "('0xfe78b635', '0xfe78b635')"
+  },
+  {
+   "t": 233.571,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": false,
+   "why": "('0xfe78b635', '0xfe78b635')"
+  },
+  {
+   "t": 234.092,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 2.102,
+   "gas": 42732,
+   "block": 1311
+  },
+  {
+   "t": 234.711,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": false,
+   "why": "('0xfe78b635', '0xfe78b635')"
+  },
+  {
+   "t": 234.888,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 2,
+   "cq": 10313960,
+   "issued": 1794991625,
+   "t_send": 231.028,
+   "latency": 3.86,
+   "gas_g": 71171,
+   "gas_site": 57733
+  },
+  {
+   "t": 234.998,
+   "kind": "anchor",
+   "site": 1,
+   "height": 19,
+   "ops": 4,
+   "status": 1,
+   "gas": 78354
+  },
+  {
+   "t": 235.214,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 236.294,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 236.832,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.115,
+   "gas": 30288,
+   "block": 1304
+  },
+  {
+   "t": 237.065,
+   "kind": "anchor",
+   "site": 2,
+   "height": 19,
+   "ops": 4,
+   "status": 1,
+   "gas": 78318
+  },
+  {
+   "t": 238.882,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 1.584,
+   "gas": 42740,
+   "block": 1316
+  },
+  {
+   "t": 238.963,
+   "kind": "renewal",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "cq": 10257913,
+   "issued": 1794991629,
+   "t_send": 235.38,
+   "latency": 3.583,
+   "gas_g": 69063,
+   "gas_site": 57868
+  },
+  {
+   "t": 240.022,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.188,
+   "gas": 38152,
+   "block": 1307
+  },
+  {
+   "t": 241.987,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 2.099,
+   "gas": 42732,
+   "block": 1319
+  },
+  {
+   "t": 242.311,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 20,
+   "ops": 3,
+   "agree": 4,
+   "lo": 1304,
+   "hi": 1316
+  },
+  {
+   "t": 242.517,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 20,
+   "ops": 3,
+   "agree": 4,
+   "lo": 1294,
+   "hi": 1306
+  },
+  {
+   "t": 242.926,
+   "kind": "renewal",
+   "site": 1,
+   "obj": "P21",
+   "epoch": 1,
+   "cq": 10261198,
+   "issued": 1794991633,
+   "t_send": 239.244,
+   "latency": 3.681,
+   "gas_g": 69031,
+   "gas_site": 57888
+  },
+  {
+   "t": 242.958,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.932,
+   "gas": 38152,
+   "block": 1310
+  },
+  {
+   "t": 244.965,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 2,
+   "cq": 10324791,
+   "issued": 1794991635,
+   "t_send": 241.343,
+   "latency": 3.622,
+   "gas_g": 69031,
+   "gas_site": 57733
+  },
+  {
+   "t": 244.987,
+   "kind": "anchor",
+   "site": 1,
+   "height": 20,
+   "ops": 3,
+   "status": 1,
+   "gas": 78350
+  },
+  {
+   "t": 245.057,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 2.06,
+   "gas": 42740,
+   "block": 1322
+  },
+  {
+   "t": 245.915,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.95,
+   "gas": 38152,
+   "block": 1313
+  },
+  {
+   "t": 247.879,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.809,
+   "gas": 42752,
+   "block": 1325
+  },
+  {
+   "t": 249.002,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 2.078,
+   "gas": 42600,
+   "block": 1316
+  },
+  {
+   "t": 249.829,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P22",
+   "epoch": 2,
+   "cq": 10329613,
+   "issued": 1794991640,
+   "t_send": 245.935,
+   "latency": 3.893,
+   "gas_g": 69043,
+   "gas_site": 57765
+  },
+  {
+   "t": 250.974,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 2.085,
+   "gas": 42708,
+   "block": 1328
+  },
+  {
+   "t": 251.875,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 1.862,
+   "gas": 42752,
+   "block": 1319
+  },
+  {
+   "t": 252.947,
+   "kind": "renewal",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "cq": 10269796,
+   "issued": 1794991643,
+   "t_send": 249.359,
+   "latency": 3.588,
+   "gas_g": 69043,
+   "gas_site": 57860
+  },
+  {
+   "t": 253.952,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.974,
+   "gas": 38152,
+   "block": 1331
+  },
+  {
+   "t": 253.994,
+   "kind": "anchor",
+   "site": 2,
+   "height": 20,
+   "ops": 3,
+   "status": 1,
+   "gas": 78318
+  },
+  {
+   "t": 254.415,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 21,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1316,
+   "hi": 1328
+  },
+  {
+   "t": 254.626,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 21,
+   "ops": 4,
+   "agree": 4,
+   "lo": 1306,
+   "hi": 1318
+  },
+  {
+   "t": 254.858,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.97,
+   "gas": 38152,
+   "block": 1322
+  },
+  {
+   "t": 255.05,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 256.911,
+   "kind": "renewal",
+   "site": 1,
+   "obj": "P21",
+   "epoch": 1,
+   "cq": 10273071,
+   "issued": 1794991647,
+   "t_send": 253.212,
+   "latency": 3.699,
+   "gas_g": 69031,
+   "gas_site": 57828
+  },
+  {
+   "t": 257.918,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 1.856,
+   "gas": 42728,
+   "block": 1335
+  },
+  {
+   "t": 258.043,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 2.182,
+   "gas": 42740,
+   "block": 1325
+  },
+  {
+   "t": 258.935,
+   "kind": "anchor",
+   "site": 1,
+   "height": 21,
+   "ops": 4,
+   "status": 1,
+   "gas": 78362
+  },
+  {
+   "t": 260.116,
+   "kind": "anchor",
+   "site": 2,
+   "height": 21,
+   "ops": 4,
+   "status": 1,
+   "gas": 78394
+  },
+  {
+   "t": 260.873,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.942,
+   "gas": 38152,
+   "block": 1338
+  },
+  {
+   "t": 261.075,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 2.02,
+   "gas": 42752,
+   "block": 1328
+  },
+  {
+   "t": 263.86,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 2,
+   "cq": 10344633,
+   "issued": 1794991654,
+   "t_send": 260.24,
+   "latency": 3.62,
+   "gas_g": 69007,
+   "gas_site": 57816
+  },
+  {
+   "t": 267.914,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "P22",
+   "epoch": 2,
+   "cq": 10349154,
+   "issued": 1794991658,
+   "t_send": 264.546,
+   "latency": 3.368,
+   "gas_g": 69043,
+   "gas_site": 57848
+  },
+  {
+   "t": 271.933,
+   "kind": "renewal",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 2,
+   "cq": 10352832,
+   "issued": 1794991662,
+   "t_send": 268.049,
+   "latency": 3.884,
+   "gas_g": 71179,
+   "gas_site": 57848
+  },
+  {
+   "t": 277.0,
+   "kind": "renewal",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "cq": 10289916,
+   "issued": 1794991667,
+   "t_send": 273.03,
+   "latency": 3.97,
+   "gas_g": 69063,
+   "gas_site": 57856
+  },
+  {
+   "t": 280.912,
+   "kind": "renewal",
+   "site": 1,
+   "obj": "P21",
+   "epoch": 1,
+   "cq": 10293539,
+   "issued": 1794991671,
+   "t_send": 277.292,
+   "latency": 3.619,
+   "gas_g": 69051,
+   "gas_site": 57836
+  }
+ ],
+ "attacks": {
+  "overspend": {
+   "status": 1,
+   "gas": 67572,
+   "slashed": 3
+  },
+  "understate": {
+   "status": 1,
+   "gas": 72793,
+   "slashed": 3
+  },
+  "overuse": {
+   "status": 1,
+   "gas": 77333,
+   "slashed": 3
+  },
+  "use_after_reset": {
+   "status": 1,
+   "gas": 69185,
+   "slashed": 3
+  },
+  "use_after_ack": {
+   "status": 1,
+   "gas": 79854,
+   "slashed": 2
+  },
+  "fork": {
+   "status": 1,
+   "gas": 87296,
+   "slashed": 2
+  },
+  "no_framing": {
+   "proof_attempts_on_honest_ops": 152,
+   "reverted": 152
+  }
+ }
+}

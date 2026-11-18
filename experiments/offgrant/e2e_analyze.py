@@ -15,6 +15,7 @@ def main(tag="v1"):
     cut = first("uplink_cut", site=1)["t"]
     heal = first("uplink_heal", site=1)["t"]
     ops = [e for e in ev if e["kind"] == "op"]
+    rt = lambda o: o["t"] - o.get("latency", 0.0)   # submission time, when the clock was read
     ren = [e for e in ev if e["kind"] == "renewal"]
     out = {"params": p}
 
@@ -22,8 +23,8 @@ def main(tag="v1"):
     stop11 = first("stop", obj="P11")
     rea11 = first("reassigned_slow", obj="P11")
     last_send_1 = max(r["t_send"] for r in ren if r["site"] == 1 and r["obj"] == "P11" and r["t_send"] < cut + 5)
-    use11_s1 = [o["t"] for o in ops if o["site"] == 1 and o["obj"] == "P11" and o.get("ok")]
-    use11_s2 = [o["t"] for o in ops if o["site"] == 2 and o["obj"] == "P11" and o.get("ok")]
+    use11_s1 = [rt(o) for o in ops if o["site"] == 1 and o["obj"] == "P11" and o.get("ok")]
+    use11_s2 = [rt(o) for o in ops if o["site"] == 2 and o["obj"] == "P11" and o.get("ok")]
     t_rea = rea11["t"]
     out["slow_path"] = {
         "W_s": p["W_s"],
@@ -37,7 +38,7 @@ def main(tag="v1"):
     }
     # Revocation of C11 while site 1 is cut off.
     rev = first("revoke", obj="C11")
-    c11 = [o["t"] for o in ops if o["site"] == 1 and o["obj"] == "C11" and o.get("ok")]
+    c11 = [rt(o) for o in ops if o["site"] == 1 and o["obj"] == "C11" and o.get("ok")]
     stale = [t for t in c11 if t >= rev["t"]]
     out["revocation"] = {"accepted_after_revoke": len(stale),
                          "max_window_s": round(max(stale) - rev["t"], 1) if stale else 0.0,
@@ -46,8 +47,8 @@ def main(tag="v1"):
     # Fast path: P21 held by connected site 2, moved to site 1.
     stop21 = first("stop", obj="P21")
     ack = first("reassign_acked", obj="P21")
-    use21_s2 = [o["t"] for o in ops if o["site"] == 2 and o["obj"] == "P21" and o.get("ok")]
-    use21_s1 = [o["t"] for o in ops if o["site"] == 1 and o["obj"] == "P21" and o.get("ok")]
+    use21_s2 = [rt(o) for o in ops if o["site"] == 2 and o["obj"] == "P21" and o.get("ok")]
+    use21_s1 = [rt(o) for o in ops if o["site"] == 1 and o["obj"] == "P21" and o.get("ok")]
     out["fast_path"] = {"stop_to_reassign_s": round(ack["t"] - stop21["t"], 1), "gas_reassignAcked": ack["gas"],
                         "site2_uses_after_ack": sum(1 for t in use21_s2 if t > ack["t"]),
                         "site1_first_use_after_ack_s": round(min(t for t in use21_s1 if t > ack["t"]) - ack["t"], 1)
@@ -67,6 +68,16 @@ def main(tag="v1"):
     out["site1_during_cut"] = av
     lat = [o["latency"] for o in ops if o.get("ok") and "latency" in o]
     out["op_latency_s"] = {"median": round(st.median(lat), 2), "max": round(max(lat), 2)}
+    # Finality: an exclusive use takes effect once the checkpoint covering its block is sealed.
+    cks = [e for e in ev if e["kind"] == "checkpoint"]
+    fin = []
+    for o in ops:
+        if o.get("ok") and o["op"] in ("use", "cred") and "block" in o:
+            c = next((c for c in cks if c["site"] == o["site"] and c.get("lo", 0) <= o["block"] < c.get("hi", -1)), None)
+            if c:
+                fin.append(c["t"] - rt(o))
+    if fin:
+        out["finality_latency_s"] = {"n": len(fin), "median": round(st.median(fin), 1), "max": round(max(fin), 1)}
     rl = [r["latency"] for r in ren]
     out["renewal_latency_s"] = {"median": round(st.median(rl), 2), "max": round(max(rl), 2)}
     gas = {}

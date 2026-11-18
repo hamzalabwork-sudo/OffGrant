@@ -38,6 +38,8 @@ A_MS = int(D_S * 1000 * (1 + RHO_PPM / 1e6))
 P_RENEW = 4.0          # renewal period while connected (s)
 CKPT_EVERY = 12.0      # checkpoint period (s)
 CONFIRM = 3            # site blocks a checkpoint waits for (Clique has no finality)
+LAG_MS = 60_000        # anchor lag: renewals need anchored coverage up to (request reading - lag)
+WARMUP = 25           # s of normal operation before the scenario events (anchors and renewals settle)
 
 
 def obj(name):
@@ -94,7 +96,7 @@ def certify(ctx, digest):
 def setup(ctx, nodes):
     gadmin = C.Sender(C.connect(8700), nodes["g"][0]["key"])
     ctx["gadmin"] = gadmin
-    reg, r = gadmin.deploy("RightsRegistry", RHO_PPM, 2)
+    reg, r = gadmin.deploy("RightsRegistry", RHO_PPM, 2, LAG_MS)
     ctx["reg"] = reg
     ctx["gas"]["deploy_registry"] = r.gasUsed
     ctx["gkeys"] = [n["key"] for n in nodes["g"]]
@@ -103,8 +105,9 @@ def setup(ctx, nodes):
     gadmin.send(reg.functions.setCap(parts, 100))
     for s in ctx["sites"].values():
         gadmin.send(reg.functions.registerSite(s.k, 1, Account.from_key(s.clock.key).address,
-                                               [v["address"] for v in s.vals]))
+                                               [v["address"] for v in s.vals], s.clock.read()))
         gadmin.send(reg.functions.setShare(parts, s.k, 40))
+        s.close_next = s.clock.read()
         s.contract, r = s.rel_s.deploy("SiteRights", s.k, reg.address, Account.from_key(s.clock.key).address,
                                        auth, 3)
         ctx["gas"]["deploy_site"] = r.gasUsed
@@ -129,6 +132,12 @@ def relay_once(ctx, s):
         s.g.eth.block_number
     except Exception:
         return False
+    while s.ckpts:   # anchor first: G renews only sites whose checkpoints are anchored (anchor before renew)
+        h, sigs, ops = s.ckpts[0]
+        r = s.rel_g.send(reg_g.functions.anchor(h, sigs))
+        ctx["log"].add("anchor", site=s.k, height=h[1], ops=h[4], status=r.status, gas=r.gasUsed)
+        s.anchored.append((h, sigs, ops))
+        s.ckpts.pop(0)
     for name in ctx["objects"]:
         o = obj(name)
         lease = reg_g.functions.leases(o).call()   # exists, exclusive, stopped, allowance, lastIssue, holder, next
@@ -143,6 +152,13 @@ def relay_once(ctx, s):
         t_send = time.time()
         cq = s.clock.read()
         sig = s.clock.attest(C.request_digest, s.k, o, s.clock.epoch, cq)
+        try:   # a renewal G would refuse (e.g. AnchorDebt) is not sent; it is logged instead
+            reg_g.functions.renew(s.k, o, s.clock.epoch, cq, sig).call({"from": s.rel_g.acct.address})
+        except Exception as e:  # noqa: BLE001
+            if "timed out" in str(e) or "Connection" in str(e) or "Max retries" in str(e):
+                raise
+            ctx["log"].add("renew_refused", site=s.k, obj=name, why=str(e)[:80])
+            continue
         r = s.rel_g.send(reg_g.functions.renew(s.k, o, s.clock.epoch, cq, sig))
         if r.status != 1:
             continue
@@ -171,7 +187,7 @@ def handle_stop(ctx, s, name, o, exclusive, reg_g):
         return
     # Fast path: validators acknowledge once their own node shows the stop executed.
     reading = s.clock.read()
-    csig = s.clock.attest(C.clock_digest, s.k, s.clock.epoch, reading)
+    csig = s.clock.attest(C.clock_digest, s.k, s.clock.epoch, reading, o)
     acks = []
     for vw, vk in zip(s.vw3, s.vkeys):
         sc = vw.eth.contract(address=s.contract.address, abi=s.contract.abi)
@@ -215,17 +231,16 @@ def checkpointer(ctx, s, stop):
                 ops = [(l["args"]["kind"], l["args"]["key"], l["args"]["a"], l["args"]["b"], l["args"]["e"],
                         l["args"]["clockSig"]) for l in sorted(logs, key=lambda l: l["args"]["seq"])]
                 root, _ = C.merkle([C.op_leaf(op) for op in ops])
-                headers.append(((s.k, s.height + 1, s.prev, root, len(ops)), ops))
+                headers.append(((s.k, s.height + 1, s.prev, root, len(ops), s.close_next), ops))
             s.ckpt_block = hi
-            if headers[0][0][4] == 0:
-                continue
+            s.close_next = s.clock.read()
             h, ops = headers[0]
             sigs = [C.sign(vk, C.checkpoint_digest(ctx["reg"].address, C.header_hash(hv)))
                     for (hv, _), vk in zip(headers, s.vkeys) if hv == h]
             s.height += 1
             s.prev = C.header_hash(h)
             s.ckpts.append((h, sigs, ops))
-            ctx["log"].add("checkpoint", site=s.k, height=h[1], ops=h[4], agree=len(sigs))
+            ctx["log"].add("checkpoint", site=s.k, height=h[1], ops=h[4], agree=len(sigs), lo=lo, hi=hi)
         except Exception as e:  # noqa: BLE001
             ctx["log"].add("ckpt_error", site=s.k, err=str(e)[:160])
 
@@ -247,7 +262,7 @@ def operator(ctx, s, stop):
                 name = rnd.choice(held)
                 reading = s.clock.read()
                 fn = s.contract.functions.use(obj(name), s.clock.epoch, reading,
-                                              s.clock.attest(C.clock_digest, s.k, s.clock.epoch, reading))
+                                              s.clock.attest(C.clock_digest, s.k, s.clock.epoch, reading, obj(name)))
             elif kind == "consume":
                 name, fn = "parts", s.contract.functions.consume(parts, 1)
             else:
@@ -283,7 +298,7 @@ def scenario(ctx, cut_s):
     t0 = ctx["t0"]
 
     def at(t):
-        time.sleep(max(0.0, t0 + t - time.time()))
+        time.sleep(max(0.0, t0 + WARMUP + t - time.time()))
 
     at(20)
     uplink(1, False)
@@ -319,11 +334,11 @@ def attacks(ctx, nodes):
     parts = obj("spare-parts")
 
     def fresh():
-        reg, _ = admin.deploy("RightsRegistry", RHO_PPM, 2)
+        reg, _ = admin.deploy("RightsRegistry", RHO_PPM, 2, LAG_MS)
         admin.send(reg.functions.setCap(parts, 100))
         for s in (s1, s2):
             admin.send(reg.functions.registerSite(s.k, 1, Account.from_key(s.clock.key).address,
-                                                  [v["address"] for v in s.vals]))
+                                                  [v["address"] for v in s.vals], s.clock.read()))
             admin.send(reg.functions.setShare(parts, s.k, 40))
         o = obj("P-attack")
         admin.send(reg.functions.createLease(o, True, A_MS))
@@ -332,7 +347,7 @@ def attacks(ctx, nodes):
 
     def sealed(reg, site, ops, signers, height=1, prev=b"\x00" * 32):
         root, proofs = C.merkle([C.op_leaf(op) for op in ops])
-        h = (site.k, height, prev, root, len(ops))
+        h = (site.k, height, prev, root, len(ops), 0)
         sigs = [C.sign(site.vkeys[i], C.checkpoint_digest(reg.address, C.header_hash(h))) for i in signers]
         return h, sigs, proofs
 
@@ -358,7 +373,7 @@ def attacks(ctx, nodes):
     admin.send(reg.functions.renew(s1.k, o, s1.clock.epoch, cq,
                                    s1.clock.attest(C.request_digest, s1.k, o, s1.clock.epoch, cq)))
     rd = cq + A_MS
-    ops = [(C.USE, o, cq, rd, s1.clock.epoch, s1.clock.attest(C.clock_digest, s1.k, s1.clock.epoch, rd))]
+    ops = [(C.USE, o, cq, rd, s1.clock.epoch, s1.clock.attest(C.clock_digest, s1.k, s1.clock.epoch, rd, o))]
     h, sigs, pr = sealed(reg, s1, ops, byz)
     run("overuse", reg, reg.functions.proveOveruse(h, sigs, ops[0], 0, pr[0]))
     # Use after a clock reset (old base, new epoch).
@@ -366,7 +381,7 @@ def attacks(ctx, nodes):
     admin.send(reg.functions.renew(s1.k, o, s1.clock.epoch, cq,
                                    s1.clock.attest(C.request_digest, s1.k, o, s1.clock.epoch, cq)))
     e2 = s1.clock.epoch + 1
-    ops = [(C.USE, o, cq, cq + 10, e2, s1.clock.attest(C.clock_digest, s1.k, e2, cq + 10))]
+    ops = [(C.USE, o, cq, cq + 10, e2, s1.clock.attest(C.clock_digest, s1.k, e2, cq + 10, o))]
     h, sigs, pr = sealed(reg, s1, ops, byz)
     run("use_after_reset", reg, reg.functions.proveOveruse(h, sigs, ops[0], 0, pr[0]))
     # Use after an acknowledged release: ack by validators 0-2, use sealed by 1-3 -> slashes 1, 2.
@@ -376,8 +391,8 @@ def attacks(ctx, nodes):
     admin.send(reg.functions.stop(o, s2.k))
     ra = cq + 1000
     acks = [C.sign(s1.vkeys[i], C.ack_digest(reg.address, s1.k, o, s1.clock.epoch, ra)) for i in [0, 1, 2]]
-    admin.send(reg.functions.reassignAcked(o, s1.clock.epoch, ra, s1.clock.attest(C.clock_digest, s1.k, s1.clock.epoch, ra), acks))
-    ops = [(C.USE, o, cq, ra + 1, s1.clock.epoch, s1.clock.attest(C.clock_digest, s1.k, s1.clock.epoch, ra + 1))]
+    admin.send(reg.functions.reassignAcked(o, s1.clock.epoch, ra, s1.clock.attest(C.clock_digest, s1.k, s1.clock.epoch, ra, o), acks))
+    ops = [(C.USE, o, cq, ra + 1, s1.clock.epoch, s1.clock.attest(C.clock_digest, s1.k, s1.clock.epoch, ra + 1, o))]
     h, sigs, pr = sealed(reg, s1, ops, [1, 2, 3])
     run("use_after_ack", reg, reg.functions.proveUseAfterAck(h, sigs, ops[0], 0, pr[0]))
     # Fork: two checkpoints at height 1 sealed by {0,1,2} and {1,2,3} -> slashes 1, 2.
@@ -426,6 +441,8 @@ def main():
     setup(ctx, nodes)
     ctx["reg_at"] = lambda w3: w3.eth.contract(address=ctx["reg"].address, abi=ctx["reg"].abi)
     ctx["t0"] = ctx["log"].t0 = time.time()   # the scenario clock starts after setup
+    for s in ctx["sites"].values():
+        s.close_next = s.clock.read()
     stop = threading.Event()
     threads = []
     for s in ctx["sites"].values():

@@ -21,7 +21,9 @@
 (***************************************************************************)
 EXTENDS Integers, FiniteSets
 
-CONSTANTS K, R, A, Wait, D, Tmax
+CONSTANTS K, R, A, Wait, D, Tmax,
+          Mode   \* "send": count the allowance from the request's send (OffGrant);
+                 \* "receipt": count it from the renewal's receipt (drift-aware receipt-time lease)
 
 VARIABLES t, c, pend, inflight, base, baseT, gStopped, lastIssue, reassigned, cut
 
@@ -68,8 +70,10 @@ Deliver ==
   /\ ~cut
   /\ \E r \in inflight :
        /\ inflight' = inflight \ {r}
-       /\ IF r.cq > base THEN base' = r.cq /\ baseT' = r.tq
-                         ELSE UNCHANGED <<base, baseT>>
+       /\ IF Mode = "send"
+            THEN IF r.cq > base THEN base' = r.cq /\ baseT' = r.tq
+                                ELSE UNCHANGED <<base, baseT>>
+            ELSE base' = c /\ baseT' = t   \* receipt-time counting
   /\ UNCHANGED <<t, c, pend, gStopped, lastIssue, reassigned, cut>>
 
 Decide ==
