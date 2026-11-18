@@ -3,8 +3,8 @@ src = "src"
 test = "test"
 out = "out"
 libs = ["lib"]
-solc = ".solc/solc-0.8.30"   # official 0.8.30 build, sha256 f3e987dc...428f7
-# Besu QBFT and PoA EVM chains: conservative fork target.
+solc = ".solc/solc-0.8.30"   # official 0.8.30 static build; or set solc = "0.8.30" to let Foundry download it
+# PureChain (Clique, Cancun) and other PoA EVM chains: conservative fork target.
 evm_version = "paris"
 optimizer = true
 optimizer_runs = 10000

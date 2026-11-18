@@ -1,0 +1,225 @@
+{
+ "params": {
+  "rho_ppm": 150000,
+  "D_s": 60,
+  "A_ms": 69000,
+  "renew_period_s": 4.0,
+  "ckpt_every_s": 6.0,
+  "window_ms": 25000,
+  "g_slack_s": 2,
+  "W_s": 86,
+  "cut_s": 150,
+  "drift": {
+   "1": -0.15,
+   "2": 0.05
+  },
+  "flap": true
+ },
+ "effect_safety": {
+  "P11": {
+   "path": "slow",
+   "moved_at": 129.925,
+   "old_holder": 1,
+   "old_effects": 6,
+   "last_effect_end": 121.319,
+   "margin_s": 8.61,
+   "effects_ending_after_move": 0,
+   "effects_starting_after_move": 0
+  },
+  "L11": {
+   "path": "acked",
+   "moved_at": 223.976,
+   "old_holder": 1,
+   "old_effects": 1,
+   "last_effect_end": 125.917,
+   "margin_s": 98.06,
+   "effects_ending_after_move": 0,
+   "effects_starting_after_move": 0
+  },
+  "P21": {
+   "path": "acked",
+   "moved_at": 278.942,
+   "old_holder": 2,
+   "old_effects": 10,
+   "last_effect_end": 266.992,
+   "margin_s": 11.95,
+   "effects_ending_after_move": 0,
+   "effects_starting_after_move": 0
+  }
+ },
+ "lapses": {
+  "n": 4,
+  "by_obj": {
+   "P12": 1,
+   "C11": 1,
+   "P11": 1,
+   "C21": 1
+  }
+ },
+ "exec_n": 73,
+ "grant_to_effect_s": {
+  "median": 8.9,
+  "max": 12.1
+ },
+ "slow_path_P11": {
+  "W_s": 86,
+  "stop_to_reassign_s": 67.9,
+  "allowance_end_after_last_send_s": 81.2,
+  "allowance_end_t": 121.3,
+  "reassigned_t": 129.925,
+  "last_effect_end_t": 121.319,
+  "lapsed_after_cut": 1
+ },
+ "open_hold_L11": {
+  "slow_path": {
+   "t": 114.395,
+   "kind": "reassign_refused",
+   "obj": "L11",
+   "why": "HoldMayBeOpen",
+   "release_at": 1795000135,
+   "g_time": 1795000135
+  },
+  "acked": {
+   "t": 223.976,
+   "kind": "reassign_acked",
+   "site": 1,
+   "obj": "L11",
+   "status": 1,
+   "gas": 224519,
+   "latency_from_stop_seen": 17.715,
+   "ack_reading": 10255399
+  },
+  "ack_after_heal_s": 28.2,
+  "release_ops": [
+   125.917
+  ]
+ },
+ "revocation_C11": {
+  "effects_after_revoke": 3,
+  "max_window_s": 28.0,
+  "bound_W_s": 86
+ },
+ "fast_path_P21": {
+  "stop_to_reassign_s": 52.0,
+  "gas_reassignAcked": 224485
+ },
+ "clock_reset": {
+  "lapsed_old_epoch": 1,
+  "first_effect_after_reset_s": 32.1,
+  "renew_refused_after_reset": 3
+ },
+ "catch_up": {
+  "anchor_after_heal_s": 2.3,
+  "checkpoints_covered": 12,
+  "gas": 122732
+ },
+ "anchors": {
+  "n": 33,
+  "ok": 33,
+  "failed": [],
+  "gas_median": 122744
+ },
+ "checkpoints": {
+  "n": 96,
+  "all_agree": true
+ },
+ "site1_during_cut_recorded": {
+  "use": "6/16",
+  "cred": "6/25",
+  "lock": "0/5",
+  "consume": "14/14",
+  "log": "10/10"
+ },
+ "site1_during_cut_effects": {
+  "executed": 9,
+  "lapsed": 3
+ },
+ "op_latency_s": {
+  "median": 1.99,
+  "max": 2.84
+ },
+ "renewal_latency_s": {
+  "median": 5.72,
+  "max": 6.25,
+  "n": 58
+ },
+ "gas_median": {
+  "log": 30614,
+  "consume": 40659,
+  "use": 51223,
+  "cred": 51219,
+  "lock": 90423,
+  "release": 41832,
+  "renew_G": 70217,
+  "applyRenewal": 57876
+ },
+ "stop_gas": {
+  "P11": 55144,
+  "L11": 55156,
+  "C11": 33052,
+  "P21": 55144
+ },
+ "errors": [],
+ "attacks": {
+  "overspend": {
+   "status": 1,
+   "gas": 145462,
+   "slashed": 3
+  },
+  "understate": {
+   "status": 1,
+   "gas": 149965,
+   "slashed": 3
+  },
+  "understate_parent": {
+   "status": 1,
+   "gas": 151508,
+   "slashed": 3
+  },
+  "state_mismatch": {
+   "status": 1,
+   "gas": 144255,
+   "slashed": 3
+  },
+  "overuse": {
+   "status": 1,
+   "gas": 155084,
+   "slashed": 3
+  },
+  "hold_past_allowance": {
+   "status": 1,
+   "gas": 156193,
+   "slashed": 3
+  },
+  "use_after_reset": {
+   "status": 1,
+   "gas": 147063,
+   "slashed": 3
+  },
+  "use_after_ack": {
+   "status": 1,
+   "gas": 134816,
+   "slashed": 2
+  },
+  "release_after_ack": {
+   "status": 1,
+   "gas": 134887,
+   "slashed": 2
+  },
+  "fork": {
+   "status": 1,
+   "gas": 147417,
+   "slashed": 2
+  },
+  "forged_close": {
+   "rejected": true,
+   "reason": "BadClockSig"
+  },
+  "no_framing": {
+   "proof_attempts_on_honest_ops": 278,
+   "verdicts": {
+    "NotAViolation": 278
+   }
+  }
+ }
+}

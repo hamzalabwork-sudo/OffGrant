@@ -1,0 +1,10 @@
+# Python packages for the experiment drivers, simulator and analysis (Python 3.10+)
+web3>=7.0           # PureChain RPC (ExtraDataToPOAMiddleware for Clique)
+eth-account>=0.13
+eth-abi>=5.0
+eth-utils>=5.0
+eth-keys>=0.5       # testbed key generation
+numpy>=1.26
+scipy>=1.11         # confidence intervals in analyze.py
+matplotlib>=3.8     # figures
+truststore>=0.9     # optional: system certificate store for the public testnet RPC
