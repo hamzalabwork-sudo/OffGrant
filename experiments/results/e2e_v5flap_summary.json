@@ -1,0 +1,281 @@
+{
+ "params": {
+  "rho_ppm": 150000,
+  "D_s": 60,
+  "A_ms": 69000,
+  "renew_period_s": 4.0,
+  "ckpt_every_s": 6.0,
+  "window_ms": 25000,
+  "g_slack_s": 2,
+  "W_s": 86,
+  "cut_s": 150,
+  "drift": {
+   "1": -0.15,
+   "2": 0.05
+  },
+  "flap": true,
+  "g_timeout_s": 15
+ },
+ "effect_safety": {
+  "P11": {
+   "path": "slow",
+   "moved_at": 133.943,
+   "old_holder": 1,
+   "old_effects": 5,
+   "last_effect_end": 125.841,
+   "margin_s": 8.1,
+   "effects_ending_after_move": 0,
+   "effects_starting_after_move": 0
+  },
+  "L11": {
+   "path": "acked",
+   "moved_at": 227.06,
+   "old_holder": 1,
+   "old_effects": 1,
+   "last_effect_end": 132.971,
+   "margin_s": 94.09,
+   "effects_ending_after_move": 0,
+   "effects_starting_after_move": 0
+  },
+  "P21": {
+   "path": "acked",
+   "moved_at": 266.913,
+   "old_holder": 2,
+   "old_effects": 8,
+   "last_effect_end": 217.849,
+   "margin_s": 49.06,
+   "effects_ending_after_move": 0,
+   "effects_starting_after_move": 0
+  }
+ },
+ "lapses": {
+  "n": 2,
+  "by_obj": {
+   "C11": 1,
+   "C21": 1
+  }
+ },
+ "exec_n": 76,
+ "grant_to_effect_s": {
+  "median": 9.3,
+  "max": 12.4
+ },
+ "slow_path_P11": {
+  "W_s": 86,
+  "stop_to_reassign_s": 71.9,
+  "allowance_end_after_last_send_s": 81.2,
+  "allowance_end_t": 125.8,
+  "reassigned_t": 133.943,
+  "last_effect_end_t": 125.841,
+  "lapsed_after_cut": 0
+ },
+ "open_hold_L11": {
+  "slow_path": {
+   "t": 132.462,
+   "kind": "reassign_refused",
+   "obj": "L11",
+   "why": "HoldMayBeOpen",
+   "release_at": 1795018117,
+   "g_time": 1795018117
+  },
+  "acked": {
+   "t": 227.06,
+   "kind": "reassign_acked",
+   "site": 1,
+   "obj": "L11",
+   "status": 1,
+   "gas": 171526,
+   "latency_from_stop_seen": 26.207,
+   "ack_reading": 10242290,
+   "ack_epoch": 1
+  },
+  "ack_after_heal_s": 31.2,
+  "release_ops": [
+   132.971
+  ]
+ },
+ "revocation_C11": {
+  "effects_after_revoke": 7,
+  "max_window_s": 52.7,
+  "bound_W_s": 86
+ },
+ "fast_path_P21": {
+  "stop_to_reassign_s": 39.9,
+  "stop_to_site_s": 12.9,
+  "stop_seen_to_reassign_s": 27.064,
+  "gas_reassignAcked": 171542
+ },
+ "ack_ops": {
+  "n": 2,
+  "gas_median": 55146,
+  "refused": 0
+ },
+ "share_lowering": {
+  "lowered_t": 36.963,
+  "applied_t": 49.806,
+  "confirmed_t": 65.906,
+  "confirm_gas": 101115,
+  "refused": []
+ },
+ "renewal_interval_per_object_s": {
+  "median": 15.9,
+  "p90": 17.2
+ },
+ "site1_renewals_during_cut": 1,
+ "site1_anchors_during_cut": 1,
+ "clock_reset": {
+  "lapsed_old_epoch": 1,
+  "first_effect_after_reset_s": 26.1,
+  "renew_refused_after_reset": 1
+ },
+ "catch_up": {
+  "anchor_after_heal_s": 12.0,
+  "checkpoints_covered": 15,
+  "gas": 145816
+ },
+ "anchors": {
+  "n": 55,
+  "ok": 55,
+  "failed": [],
+  "gas_median": 145818
+ },
+ "checkpoints": {
+  "n": 96,
+  "all_agree": true
+ },
+ "site1_during_cut_recorded": {
+  "use": "7/14",
+  "cred": "10/24",
+  "lock": "0/3",
+  "consume": "14/14",
+  "log": "9/9"
+ },
+ "site1_during_cut_effects": {
+  "executed": 16,
+  "lapsed": 1
+ },
+ "op_latency_s": {
+  "median": 1.99,
+  "max": 2.29
+ },
+ "renewal_latency_s": {
+  "median": 5.7,
+  "max": 7.37,
+  "n": 31
+ },
+ "gas_median": {
+  "log": 32653,
+  "consume": 52347,
+  "use": 57247,
+  "cred": 57247,
+  "lock": 94143,
+  "release": 43259,
+  "renew_G": 146465,
+  "applyRenewal": 89013
+ },
+ "stop_gas": {
+  "P11": 55603,
+  "L11": 55615,
+  "C11": 33409,
+  "P21": 55603
+ },
+ "errors": [
+  {
+   "t": 97.064,
+   "kind": "relayer_error",
+   "site": 1,
+   "err": "{'code': -32000, 'message': 'nonce too low: next nonce 9, tx nonce 8'}"
+  }
+ ],
+ "attacks": {
+  "overspend": {
+   "status": 1,
+   "gas": 150594,
+   "slashed": 3
+  },
+  "understate": {
+   "status": 1,
+   "gas": 160200,
+   "slashed": 3
+  },
+  "state_regress": {
+   "status": 1,
+   "gas": 185350,
+   "slashed": 3
+  },
+  "restart_below_anchor": {
+   "status": 1,
+   "gas": 187219,
+   "slashed": 3
+  },
+  "stale_share_version": {
+   "status": 1,
+   "gas": 186629,
+   "slashed": 3
+  },
+  "state_mismatch": {
+   "status": 1,
+   "gas": 159245,
+   "slashed": 3
+  },
+  "overuse": {
+   "status": 1,
+   "gas": 153485,
+   "slashed": 3
+  },
+  "hold_past_allowance": {
+   "status": 1,
+   "gas": 154286,
+   "slashed": 3
+  },
+  "use_after_reset": {
+   "status": 1,
+   "gas": 152698,
+   "slashed": 3
+  },
+  "replayed_attestation": {
+   "status": 1,
+   "gas": 158824,
+   "slashed": 3
+  },
+  "forged_release": {
+   "status": 1,
+   "gas": 155525,
+   "slashed": 3
+  },
+  "use_after_ack": {
+   "status": 1,
+   "gas": 137095,
+   "slashed": 2
+  },
+  "release_after_ack": {
+   "status": 1,
+   "gas": 137161,
+   "slashed": 2
+  },
+  "fork": {
+   "status": 1,
+   "gas": 152316,
+   "slashed": 2
+  },
+  "fork_across_heights": {
+   "status": 1,
+   "gas": 171928,
+   "slashed": 2
+  },
+  "forged_close": {
+   "rejected": true,
+   "reason": "BadClockSig"
+  },
+  "grant_attestation_as_ack": {
+   "rejected": true,
+   "reason": "BadClockSig"
+  },
+  "no_framing": {
+   "proof_attempts_on_honest_data": 1245,
+   "verdicts": {
+    "NotAViolation": 1245
+   }
+  }
+ }
+}

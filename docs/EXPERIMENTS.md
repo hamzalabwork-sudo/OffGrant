@@ -213,7 +213,7 @@ python e2e_analyze.py v5
   The forged close and the grant attestation used as an acknowledgement were rejected (`BadClockSig`).
 - All 1,255 proof attempts against honest data reverted with `NotAViolation`.
 
-*Flapping uplink (`e2e_v5flap`): the run is in progress; its results will be added here.*
+*Flapping uplink (`e2e_v5flap_summary.json`): site 1's uplink alternated for 150 s between cuts of 3-15 s and slow, lossy periods of 10-30 s (800 +- 400 ms delay, 20% loss). A batch renewal sent just before the first cut arrived 7.4 s later through the lossy link; because the allowance counts from the send, site 1's last P11 hold ended exactly at the allowance end computed from the send, 8.1 s before G moved P11. One anchor also crossed during the flapping. L11 and P21 moved by acknowledgement 94 s and 49 s after their old holders' last effects, all fifteen attacks were attributed, and all 1,245 proof attempts on honest data were rejected.*
 
 ## 3. Public PureChain testnet
 
