@@ -1,0 +1,112 @@
+{
+ "params": {
+  "rho_ppm": 150000,
+  "D_s": 60,
+  "A_ms": 69000,
+  "renew_period_s": 4.0,
+  "W_s": 84,
+  "cut_s": 150,
+  "drift": {
+   "1": -0.15,
+   "2": 0.05
+  }
+ },
+ "slow_path": {
+  "W_s": 84,
+  "stop_to_reassign_s": 69.0,
+  "g_release_minus_stop_g": 67,
+  "site1_last_use_after_lastsend_s": 64.0,
+  "site1_allowance_real_s": 81.2,
+  "site1_last_use_before_reassign_s": 23.9,
+  "site2_first_use_after_reassign_s": 34.9
+ },
+ "revocation": {
+  "accepted_after_revoke": 2,
+  "max_window_s": 19.9,
+  "bound_s": 84,
+  "stop_applied_after_heal_s": 7.0
+ },
+ "fast_path": {
+  "stop_to_reassign_s": 14.0,
+  "gas_reassignAcked": 208393,
+  "site2_uses_after_ack": 0,
+  "site1_first_use_after_ack_s": 9.8
+ },
+ "clock_reset": {
+  "rejected_after_reset": 4,
+  "first_accept_after_reset_s": 18.0
+ },
+ "site1_during_cut": {
+  "use": "8/29",
+  "cred": "4/18",
+  "consume": "15/15",
+  "log": "11/11"
+ },
+ "op_latency_s": {
+  "median": 1.94,
+  "max": 3.05
+ },
+ "renewal_latency_s": {
+  "median": 3.79,
+  "max": 4.16
+ },
+ "gas_median": {
+  "log": 30288,
+  "consume": 38152,
+  "use": 42717,
+  "cred": 42717,
+  "renew_G": 66646,
+  "applyRenewal": 57860
+ },
+ "anchor": {
+  "n": 42,
+  "ok": 42,
+  "gas_median": 71949,
+  "ops_median": 4
+ },
+ "stop_gas": {
+  "P11": 55006,
+  "C11": 32914,
+  "P21": 55006
+ },
+ "applyStop_gas": [
+  72928,
+  72912
+ ],
+ "attacks": {
+  "overspend": {
+   "status": 1,
+   "gas": 66791,
+   "slashed": 3
+  },
+  "understate": {
+   "status": 1,
+   "gas": 72013,
+   "slashed": 3
+  },
+  "overuse": {
+   "status": 1,
+   "gas": 76579,
+   "slashed": 3
+  },
+  "use_after_reset": {
+   "status": 1,
+   "gas": 68467,
+   "slashed": 3
+  },
+  "use_after_ack": {
+   "status": 1,
+   "gas": 79006,
+   "slashed": 2
+  },
+  "fork": {
+   "status": 1,
+   "gas": 85593,
+   "slashed": 2
+  },
+  "no_framing": {
+   "proof_attempts_on_honest_ops": 191,
+   "reverted": 191
+  }
+ }
+}

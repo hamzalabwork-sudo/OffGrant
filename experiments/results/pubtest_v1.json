@@ -1,0 +1,52 @@
+{
+ "chain_id": 900520900520,
+ "start_block": 1952297,
+ "gas": {
+  "deploy": 3788949,
+  "registerSite": 236618,
+  "registerSite2": 236618,
+  "setCap": 46589,
+  "setShare": 73690,
+  "createLease": 49182,
+  "permit": 31393,
+  "anchor_16ops": 80315,
+  "stop": 55018,
+  "reassignAcked": 177865
+ },
+ "latency_s": {
+  "deploy": 2.12,
+  "registerSite": 1.73,
+  "registerSite2": 2.01,
+  "setCap": 2.06,
+  "setShare": 1.74,
+  "createLease": 2.06,
+  "permit": 2.19,
+  "anchor": 2.03,
+  "stop": 1.58,
+  "reassignAcked": 1.74
+ },
+ "registry": "0x9d060f981cF0466AfeB28C8b2c0CebCBDE970aFa",
+ "renew": {
+  "n": 20,
+  "gas": 66658,
+  "latency_median_s": 2.01,
+  "latency_max_s": 2.57
+ },
+ "no_framing": {
+  "attempts": 16,
+  "reverted": 16
+ },
+ "proofs": {
+  "overspend": {
+   "gas": 66783,
+   "latency_s": 2.0,
+   "slashed": 3
+  },
+  "use_after_ack": {
+   "gas": 79330,
+   "latency_s": 2.02,
+   "slashed": 2
+  }
+ },
+ "end_block": 1952361
+}
