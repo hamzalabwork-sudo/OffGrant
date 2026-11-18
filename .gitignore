@@ -17,3 +17,7 @@ contracts/.solc/
 contracts/out/
 contracts/cache/
 contracts/lib/
+testbed/purechain/bin/
+testbed/*/net*/
+*.env
+experiments/results/*.jsonl

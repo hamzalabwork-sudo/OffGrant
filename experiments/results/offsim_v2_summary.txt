@@ -1,0 +1,252 @@
+== rho=0.0001 uniform L=2.5h D=1h n=10 offline=0.013 W=1.001h
+  ours      Xout=0.60 Vout=0.49 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=0.86h VwinMax=0.52h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=10 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  nodrift   Xout=0.60 Vout=0.49 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=0.86h VwinMax=0.52h overlapMax=0s
+== rho=0.0001 uniform L=2.5h D=6h n=10 offline=0.013 W=6.002h
+  ours      Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=10 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  nodrift   Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+== rho=0.0001 uniform L=2.5h D=24h n=10 offline=0.013 W=24.005h
+  ours      Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=10 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  nodrift   Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+== rho=0.0001 uniform L=2.5h D=72h n=10 offline=0.013 W=72.015h
+  ours      Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=10 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  nodrift   Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+== rho=0.0001 uniform L=24h D=1h n=10 offline=0.103 W=1.001h
+  ours      Xout=0.07 Vout=0.06 Bout=0.82 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=0.86h VwinMax=0.52h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=8513 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=46 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  nodrift   Xout=0.07 Vout=0.06 Bout=0.82 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=0.86h VwinMax=0.52h overlapMax=0s
+== rho=0.0001 uniform L=24h D=6h n=10 offline=0.103 W=6.002h
+  ours      Xout=0.33 Vout=0.28 Bout=0.82 Xconf=0.0 Vstale=3.0 Bover=0.0 rolled=0 authMax=5.86h VwinMax=5.52h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=8513 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=46 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  nodrift   Xout=0.33 Vout=0.28 Bout=0.82 Xconf=0.0 Vstale=3.0 Bover=0.0 rolled=0 authMax=5.86h VwinMax=5.52h overlapMax=0s
+== rho=0.0001 uniform L=24h D=24h n=10 offline=0.103 W=24.005h
+  ours      Xout=0.97 Vout=0.82 Bout=0.82 Xconf=0.0 Vstale=23.8 Bover=0.0 rolled=0 authMax=18.19h VwinMax=16.04h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=8513 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=46 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  nodrift   Xout=0.97 Vout=0.82 Bout=0.82 Xconf=0.0 Vstale=23.8 Bover=0.0 rolled=0 authMax=18.19h VwinMax=16.04h overlapMax=1s
+== rho=0.0001 uniform L=24h D=72h n=10 offline=0.103 W=72.015h
+  ours      Xout=1.00 Vout=0.84 Bout=0.82 Xconf=0.0 Vstale=27.5 Bover=0.0 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=8513 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=46 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  nodrift   Xout=1.00 Vout=0.84 Bout=0.82 Xconf=0.0 Vstale=27.5 Bover=0.0 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+== rho=0.0001 uniform L=72h D=1h n=10 offline=0.269 W=1.001h
+  ours      Xout=0.02 Vout=0.02 Bout=0.79 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=0.86h VwinMax=0.52h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=37356 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=0 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=392 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  nodrift   Xout=0.02 Vout=0.02 Bout=0.79 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=0.86h VwinMax=0.52h overlapMax=0s
+== rho=0.0001 uniform L=72h D=6h n=10 offline=0.269 W=6.002h
+  ours      Xout=0.10 Vout=0.08 Bout=0.79 Xconf=0.0 Vstale=2.7 Bover=0.0 rolled=0 authMax=5.86h VwinMax=5.52h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=37356 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=0 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=392 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  nodrift   Xout=0.10 Vout=0.08 Bout=0.79 Xconf=0.0 Vstale=2.7 Bover=0.0 rolled=0 authMax=5.86h VwinMax=5.52h overlapMax=0s
+== rho=0.0001 uniform L=72h D=24h n=10 offline=0.269 W=24.005h
+  ours      Xout=0.39 Vout=0.33 Bout=0.79 Xconf=0.0 Vstale=34.9 Bover=0.0 rolled=0 authMax=23.86h VwinMax=23.52h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=37356 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=0 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=392 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  nodrift   Xout=0.39 Vout=0.33 Bout=0.79 Xconf=0.0 Vstale=34.9 Bover=0.0 rolled=0 authMax=23.86h VwinMax=23.52h overlapMax=7s
+== rho=0.0001 uniform L=72h D=72h n=10 offline=0.269 W=72.015h
+  ours      Xout=0.92 Vout=0.79 Bout=0.79 Xconf=0.0 Vstale=168.4 Bover=0.0 rolled=0 authMax=70.30h VwinMax=69.81h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=37356 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=0 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=392 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  nodrift   Xout=0.92 Vout=0.79 Bout=0.79 Xconf=0.0 Vstale=168.4 Bover=0.0 rolled=0 authMax=70.29h VwinMax=69.80h overlapMax=24s
+== rho=0.15 slow L=2.5h D=1h n=10 offline=0.013 W=1.353h
+  ours      Xout=0.75 Vout=0.64 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.21h VwinMax=0.87h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=10 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  nodrift   Xout=0.68 Vout=0.56 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.04h VwinMax=0.69h overlapMax=634s
+== rho=0.15 slow L=2.5h D=6h n=10 offline=0.013 W=8.118h
+  ours      Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=10 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  nodrift   Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+== rho=0.15 slow L=2.5h D=24h n=10 offline=0.013 W=32.471h
+  ours      Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=10 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  nodrift   Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+== rho=0.15 slow L=2.5h D=72h n=10 offline=0.013 W=97.412h
+  ours      Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=10 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  nodrift   Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+== rho=0.15 slow L=24h D=1h n=10 offline=0.103 W=1.353h
+  ours      Xout=0.08 Vout=0.07 Bout=0.82 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.21h VwinMax=0.87h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=8513 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=46 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  nodrift   Xout=0.08 Vout=0.06 Bout=0.82 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.04h VwinMax=0.69h overlapMax=634s
+== rho=0.15 slow L=24h D=6h n=10 offline=0.103 W=8.118h
+  ours      Xout=0.46 Vout=0.37 Bout=0.82 Xconf=0.0 Vstale=5.1 Bover=0.0 rolled=0 authMax=7.98h VwinMax=7.63h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=8513 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=46 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  nodrift   Xout=0.39 Vout=0.33 Bout=0.82 Xconf=0.5 Vstale=3.7 Bover=0.0 rolled=0 authMax=6.92h VwinMax=6.58h overlapMax=3811s
+== rho=0.15 slow L=24h D=24h n=10 offline=0.103 W=32.471h
+  ours      Xout=0.99 Vout=0.84 Bout=0.82 Xconf=0.0 Vstale=26.1 Bover=0.0 rolled=0 authMax=18.78h VwinMax=24.51h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=8513 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=46 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  nodrift   Xout=0.98 Vout=0.83 Bout=0.82 Xconf=0.4 Vstale=24.7 Bover=0.0 rolled=0 authMax=18.19h VwinMax=20.27h overlapMax=15246s
+== rho=0.15 slow L=24h D=72h n=10 offline=0.103 W=97.412h
+  ours      Xout=1.00 Vout=0.84 Bout=0.82 Xconf=0.0 Vstale=27.5 Bover=0.0 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=8513 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=46 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  nodrift   Xout=1.00 Vout=0.84 Bout=0.82 Xconf=0.0 Vstale=27.5 Bover=0.0 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+== rho=0.15 slow L=72h D=1h n=10 offline=0.269 W=1.353h
+  ours      Xout=0.02 Vout=0.02 Bout=0.79 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.21h VwinMax=0.87h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=37356 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=0 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=392 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  nodrift   Xout=0.02 Vout=0.02 Bout=0.79 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.04h VwinMax=0.69h overlapMax=634s
+== rho=0.15 slow L=72h D=6h n=10 offline=0.269 W=8.118h
+  ours      Xout=0.14 Vout=0.11 Bout=0.79 Xconf=0.0 Vstale=4.2 Bover=0.0 rolled=0 authMax=7.98h VwinMax=7.63h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=37356 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=0 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=392 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  nodrift   Xout=0.12 Vout=0.10 Bout=0.79 Xconf=0.5 Vstale=3.0 Bover=0.0 rolled=0 authMax=6.92h VwinMax=6.58h overlapMax=3811s
+== rho=0.15 slow L=72h D=24h n=10 offline=0.269 W=32.471h
+  ours      Xout=0.52 Vout=0.45 Bout=0.79 Xconf=0.0 Vstale=61.3 Bover=0.0 rolled=0 authMax=32.33h VwinMax=31.99h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=37356 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=0 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=392 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  nodrift   Xout=0.45 Vout=0.39 Bout=0.79 Xconf=8.0 Vstale=47.1 Bover=0.0 rolled=0 authMax=28.09h VwinMax=27.75h overlapMax=15246s
+== rho=0.15 slow L=72h D=72h n=10 offline=0.269 W=97.412h
+  ours      Xout=0.97 Vout=0.84 Bout=0.79 Xconf=0.0 Vstale=189.9 Bover=0.0 rolled=0 authMax=91.95h VwinMax=91.00h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=37356 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=0 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=392 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  nodrift   Xout=0.96 Vout=0.83 Bout=0.79 Xconf=12.5 Vstale=182.5 Bover=0.0 rolled=0 authMax=81.97h VwinMax=81.84h overlapMax=45740s
+== rho=0.15 uniform L=2.5h D=1h n=10 offline=0.013 W=1.353h
+  ours      Xout=0.66 Vout=0.55 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=0.92h VwinMax=0.73h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=10 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  nodrift   Xout=0.59 Vout=0.49 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=0.78h VwinMax=0.57h overlapMax=0s
+== rho=0.15 uniform L=2.5h D=6h n=10 offline=0.013 W=8.118h
+  ours      Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=10 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  nodrift   Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+== rho=0.15 uniform L=2.5h D=24h n=10 offline=0.013 W=32.471h
+  ours      Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=10 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  nodrift   Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+== rho=0.15 uniform L=2.5h D=72h n=10 offline=0.013 W=97.412h
+  ours      Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=10 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.83 Bout=0.99 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+  nodrift   Xout=1.00 Vout=0.83 Bout=0.93 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=1.59h VwinMax=0.93h overlapMax=0s
+== rho=0.15 uniform L=24h D=1h n=10 offline=0.103 W=1.353h
+  ours      Xout=0.07 Vout=0.06 Bout=0.82 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=0.92h VwinMax=0.73h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=8513 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=46 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  nodrift   Xout=0.07 Vout=0.06 Bout=0.82 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=0.78h VwinMax=0.57h overlapMax=0s
+== rho=0.15 uniform L=24h D=6h n=10 offline=0.103 W=8.118h
+  ours      Xout=0.38 Vout=0.32 Bout=0.82 Xconf=0.0 Vstale=3.6 Bover=0.0 rolled=0 authMax=6.22h VwinMax=6.79h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=8513 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=46 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  nodrift   Xout=0.33 Vout=0.28 Bout=0.82 Xconf=0.0 Vstale=2.7 Bover=0.0 rolled=0 authMax=5.39h VwinMax=5.84h overlapMax=959s
+== rho=0.15 uniform L=24h D=24h n=10 offline=0.103 W=32.471h
+  ours      Xout=0.98 Vout=0.83 Bout=0.82 Xconf=0.0 Vstale=24.2 Bover=0.0 rolled=0 authMax=18.19h VwinMax=16.60h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=8513 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=46 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  nodrift   Xout=0.96 Vout=0.81 Bout=0.82 Xconf=0.0 Vstale=23.2 Bover=0.0 rolled=0 authMax=18.19h VwinMax=14.60h overlapMax=3534s
+== rho=0.15 uniform L=24h D=72h n=10 offline=0.103 W=97.412h
+  ours      Xout=1.00 Vout=0.84 Bout=0.82 Xconf=0.0 Vstale=27.5 Bover=0.0 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=8513 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.84 Bout=0.99 Xconf=15.1 Vstale=27.5 Bover=3.9 rolled=46 authMax=18.78h VwinMax=31.68h overlapMax=0s
+  nodrift   Xout=1.00 Vout=0.84 Bout=0.82 Xconf=0.0 Vstale=27.5 Bover=0.0 rolled=0 authMax=18.78h VwinMax=31.68h overlapMax=0s
+== rho=0.15 uniform L=72h D=1h n=10 offline=0.269 W=1.353h
+  ours      Xout=0.02 Vout=0.02 Bout=0.79 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=0.92h VwinMax=0.73h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=37356 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=0 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=392 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  nodrift   Xout=0.02 Vout=0.02 Bout=0.79 Xconf=0.0 Vstale=0.1 Bover=0.0 rolled=0 authMax=0.78h VwinMax=0.57h overlapMax=0s
+== rho=0.15 uniform L=72h D=6h n=10 offline=0.269 W=8.118h
+  ours      Xout=0.11 Vout=0.10 Bout=0.79 Xconf=0.0 Vstale=3.1 Bover=0.0 rolled=0 authMax=6.22h VwinMax=6.79h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=37356 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=0 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=392 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  nodrift   Xout=0.10 Vout=0.08 Bout=0.79 Xconf=0.0 Vstale=2.4 Bover=0.0 rolled=0 authMax=5.39h VwinMax=5.84h overlapMax=959s
+== rho=0.15 uniform L=72h D=24h n=10 offline=0.269 W=32.471h
+  ours      Xout=0.44 Vout=0.38 Bout=0.79 Xconf=0.0 Vstale=43.1 Bover=0.0 rolled=0 authMax=26.57h VwinMax=28.61h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=37356 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=0 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=392 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  nodrift   Xout=0.38 Vout=0.33 Bout=0.79 Xconf=1.9 Vstale=33.6 Bover=0.0 rolled=0 authMax=22.88h VwinMax=24.81h overlapMax=14967s
+== rho=0.15 uniform L=72h D=72h n=10 offline=0.269 W=97.412h
+  ours      Xout=0.95 Vout=0.81 Bout=0.79 Xconf=0.0 Vstale=175.4 Bover=0.0 rolled=0 authMax=79.12h VwinMax=74.77h overlapMax=0s
+  global    Xout=0.00 Vout=0.00 Bout=0.00 Xconf=0.0 Vstale=0.0 Bover=0.0 rolled=0 authMax=0.00h VwinMax=0.00h overlapMax=0s
+  discard   Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=37356 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  crdt      Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=0 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  timestamp Xout=1.00 Vout=0.87 Bout=1.00 Xconf=144.5 Vstale=204.4 Bover=43.2 rolled=392 authMax=166.50h VwinMax=128.45h overlapMax=0s
+  nodrift   Xout=0.91 Vout=0.78 Bout=0.79 Xconf=1.3 Vstale=163.3 Bover=0.0 rolled=0 authMax=72.07h VwinMax=64.03h overlapMax=23573s
