@@ -1,4 +1,4 @@
-"""Summary of an end-to-end run of OffGrant v3 (experiments/results/e2e_<tag>.json).
+"""Summary of an end-to-end run of OffGrant (contracts v5) (experiments/results/e2e_<tag>.json).
 
 Effect times are those of the site gateway: a grant takes effect when the gateway executes it (once final, with a
 fresh clock reading) and, for a bounded hold, lasts until the hold's end on the site clock (converted to real time
@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def main(tag="v4"):
+def main(tag="v5"):
     d = json.loads((ROOT / "experiments" / "results" / f"e2e_{tag}.json").read_text())
     ev, p = d["events"], d["params"]
     first = lambda k, **kw: next((e for e in ev if e["kind"] == k and all(e.get(a) == b for a, b in kw.items())), None)
@@ -58,7 +58,7 @@ def main(tag="v4"):
 
     # Slow path for P11.
     stop11, rea11 = first("stop", obj="P11"), first("reassigned_slow", obj="P11")
-    last_send_1 = max(r["t_send"] for r in ren if r["site"] == 1 and r["obj"] == "P11" and r["t_send"] < cut + 5)
+    last_send_1 = max(r["t_send"] for r in ren if r["site"] == 1 and "P11" in r["objs"] and r["t_send"] < cut + 5)
     allow_real = p["A_ms"] / 1000 / (1 + p["drift"]["1"])
     s1_p11 = [e for e in ex if e["site"] == 1 and e["obj"] == "P11"]
     lap_p11 = [e for e in lapse if e["site"] == 1 and e["obj"] == "P11" and e["t"] > cut]
@@ -85,8 +85,33 @@ def main(tag="v4"):
                              "max_window_s": round(max(stale) - rev["t"], 1) if stale else 0.0, "bound_W_s": p["W_s"]}
     # Fast path for P21.
     stop21, ack21 = first("stop", obj="P21"), first("reassign_acked", obj="P21")
+    applied21 = first("stop_applied", obj="P21")
     out["fast_path_P21"] = {"stop_to_reassign_s": round(ack21["t"] - stop21["t"], 1) if ack21 else None,
+                            "stop_to_site_s": round(applied21["t"] - stop21["t"], 1) if applied21 else None,
+                            "stop_seen_to_reassign_s": ack21.get("latency_from_stop_seen") if ack21 else None,
                             "gas_reassignAcked": ack21["gas"] if ack21 else None}
+    acks = [e for e in ev if e["kind"] == "ack_op"]
+    out["ack_ops"] = {"n": len(acks), "gas_median": int(st.median(a["gas"] for a in acks)) if acks else None,
+                      "refused": sum(1 for e in ev if e["kind"] == "ack_refused")}
+    # Share lowering at site 2: applied on the site ledger, capacity freed on G from a sealed checkpoint.
+    low, app, conf = first("share_lowered"), first("share_applied", site=2), first("share_confirmed", site=2)
+    out["share_lowering"] = {"lowered_t": low["t"] if low else None, "applied_t": app["t"] if app else None,
+                             "confirmed_t": conf["t"] if conf else None,
+                             "confirm_gas": conf["gas"] if conf else None,
+                             "refused": [e for e in ev if e["kind"] == "share_refused"][:3]}
+    # Renewal cadence per object (batch renewals), and renewals that got through during the cut or flapping.
+    cad = []
+    for k in (1, 2):
+        per = {}
+        for r in ren:
+            if r["site"] == k:
+                for o in r["objs"]:
+                    per.setdefault(o, []).append(r["t"])
+        for ts in per.values():
+            cad += [b - a for a, b in zip(ts, ts[1:]) if b - a < 60]
+    out["renewal_interval_per_object_s"] = {"median": round(st.median(cad), 1), "p90": round(sorted(cad)[int(0.9 * len(cad))], 1)} if cad else None
+    out["site1_renewals_during_cut"] = sum(1 for r in ren if r["site"] == 1 and cut <= r["t"] < heal)
+    out["site1_anchors_during_cut"] = sum(1 for a in ev if a["kind"] == "anchor" and a["site"] == 1 and cut <= a["t"] < heal and a["status"] == 1)
     # Clock reset at site 2.
     rst = first("clock_reset", site=2)["t"]
     out["clock_reset"] = {

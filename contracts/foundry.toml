@@ -7,7 +7,8 @@ solc = ".solc/solc-0.8.30"   # official 0.8.30 static build; or set solc = "0.8.
 # PureChain (Clique, Cancun) and other PoA EVM chains: conservative fork target.
 evm_version = "paris"
 optimizer = true
-optimizer_runs = 10000
+optimizer_runs = 200   # keeps RightsRegistry under the 24,576-byte EIP-170 limit
+via_ir = true   # v5 proofs take many calldata arguments
 remappings = ["forge-std/=lib/forge-std/src/"]
 gas_reports = ["RightsRegistry", "SiteRights"]
 

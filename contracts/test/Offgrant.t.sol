@@ -6,9 +6,12 @@ import {OffLib} from "../src/OffLib.sol";
 import {RightsRegistry} from "../src/RightsRegistry.sol";
 import {SiteRights} from "../src/SiteRights.sol";
 
+/// Tests for the v5 contracts. Each reviewer-reported exploit of v4 has a regression test (named *_v4exploit),
+/// and every proof function has both a violation test and a no-framing test on honest input.
 contract OffgrantTest is Test {
     RightsRegistry reg;
     SiteRights siteC;
+    bytes32 dom;
 
     uint64 constant SITE = 1;
     uint64 constant SITE2 = 2;
@@ -23,14 +26,18 @@ contract OffgrantTest is Test {
     bytes32 constant PARTS = keccak256("spare-parts");
     bytes32 constant PERMIT = keccak256("switching-window:feeder-7");
     bytes32 constant LOTO = keccak256("isolation:pump-7");
+    bytes32 constant CRED = keccak256("credential:operator-17");
     uint64 constant A = 99_000; // allowance, ms
     uint64 constant EPOCH = 1; // trusted-clock epoch (TPM resetCount/restartCount)
     uint64 constant LAG = 60_000; // anchor lag (ms)
     uint64 constant START = 5_000; // site clock reading at registration
 
+    bytes32[21] zeros;
+
     function setUp() public {
         vm.warp(1_000_000);
         reg = new RightsRegistry(RHO, SLACK, LAG);
+        dom = reg.dom();
         address[] memory vs = new address[](4);
         for (uint256 i = 0; i < 4; i++) {
             va[i] = vm.addr(vk[i]);
@@ -45,20 +52,25 @@ contract OffgrantTest is Test {
         reg.setCap(PARTS, 100);
         reg.setShare(PARTS, SITE, 40); // version 1
         reg.setShare(PARTS, SITE2, 60);
-        reg.createLease(PERMIT, true, A);
+        reg.createLease(PERMIT, true, false, A);
         reg.permit(PERMIT, SITE);
-        reg.createLease(LOTO, true, A);
-        reg.setOpenHold(LOTO);
+        reg.createLease(LOTO, true, true, A);
         reg.permit(LOTO, SITE);
+        reg.createLease(CRED, false, false, A);
+        reg.permit(CRED, SITE);
+        reg.permit(CRED, SITE2);
 
         address[] memory auth = new address[](3);
         for (uint256 i = 0; i < 3; i++) {
             auth[i] = vm.addr(gk[i]);
         }
-        siteC = new SiteRights(SITE, address(reg), vm.addr(CLOCK), auth, 2);
+        siteC = new SiteRights(SITE, address(reg), block.chainid, vm.addr(CLOCK), auth, 2);
+        for (uint256 d = 0; d < 20; d++) {
+            zeros[d + 1] = keccak256(abi.encode(zeros[d], zeros[d]));
+        }
     }
 
-    // ------------------------------------------------------------ helpers
+    // ------------------------------------------------------------ signing helpers
     function _sig(uint256 pk, bytes32 d) internal pure returns (bytes memory) {
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(pk, d);
         return abi.encodePacked(r, s, v);
@@ -70,20 +82,91 @@ contract OffgrantTest is Test {
         s[1] = _sig(gk[2], d);
     }
 
-    function _seal(OffLib.Header memory h, uint256[] memory who) internal view returns (bytes[] memory s) {
-        bytes32 d = OffLib.checkpointDigest(address(reg), OffLib.headerHash(h));
+    function _who(uint256 a, uint256 b, uint256 c) internal pure returns (uint256[] memory w) {
+        w = new uint256[](3);
+        (w[0], w[1], w[2]) = (a, b, c);
+    }
+
+    function _signAll(bytes32 d, uint256[] memory who) internal view returns (bytes[] memory s) {
         s = new bytes[](who.length);
         for (uint256 i = 0; i < who.length; i++) {
             s[i] = _sig(vk[who[i]], d);
         }
     }
 
-    function _idx(uint256 a, uint256 b, uint256 c) internal pure returns (uint256[] memory w) {
-        w = new uint256[](3);
-        (w[0], w[1], w[2]) = (a, b, c);
+    function _seal(OffLib.Header memory h, uint256[] memory who) internal view returns (bytes[] memory) {
+        return _signAll(OffLib.checkpointDigest(dom, OffLib.headerHash(h)), who);
     }
 
+    // ------------------------------------------------------------ operations
+    function _att(OffLib.Op memory op) internal view returns (OffLib.Op memory) {
+        op.clockSig = _sig(CLOCK, OffLib.clockDigest(dom, SITE, op.epoch, op.reading, OffLib.opTag(op)));
+        return op;
+    }
+
+    function _consume(uint64 amount, uint64 total, uint64 version, uint64 reading)
+        internal
+        view
+        returns (OffLib.Op memory)
+    {
+        return _att(OffLib.Op(OffLib.CONSUME, PARTS, EPOCH, reading, 0, 0, amount, total, version, ""));
+    }
+
+    function _grant(bytes32 obj, uint64 epoch, uint64 cq, uint64 reading, uint64 until)
+        internal
+        view
+        returns (OffLib.Op memory)
+    {
+        return _att(OffLib.Op(OffLib.USE, obj, epoch, reading, cq, until, 0, 0, 0, ""));
+    }
+
+    function _release(bytes32 obj, uint64 holdId, uint64 reading) internal view returns (OffLib.Op memory) {
+        return _att(OffLib.Op(OffLib.RELEASE, obj, EPOCH, reading, holdId, 0, 0, 0, 0, ""));
+    }
+
+    function _ackOp(bytes32 obj, uint64 cq, uint64 reading) internal view returns (OffLib.Op memory) {
+        return _att(OffLib.Op(OffLib.ACK, obj, EPOCH, reading, cq, 0, 0, 0, 0, ""));
+    }
+
+    function _log(bytes32 k) internal pure returns (OffLib.Op memory) {
+        return OffLib.Op(OffLib.LOG, k, 0, 0, 0, 0, 0, 0, 0, "");
+    }
+
+    function _shareOp(uint64 amount, uint64 total, uint64 version) internal pure returns (OffLib.Op memory) {
+        return OffLib.Op(OffLib.SHARE, PARTS, 0, 0, 0, 0, amount, total, version, "");
+    }
+
+    function _ops1(OffLib.Op memory a) internal pure returns (OffLib.Op[] memory o) {
+        o = new OffLib.Op[](1);
+        o[0] = a;
+    }
+
+    function _ops2(OffLib.Op memory a, OffLib.Op memory b) internal pure returns (OffLib.Op[] memory o) {
+        o = new OffLib.Op[](2);
+        (o[0], o[1]) = (a, b);
+    }
+
+    // ------------------------------------------------------------ states
+    function _st(uint64 reading, uint64 total, uint64 version) internal pure returns (OffLib.State memory s) {
+        s.epoch = EPOCH;
+        s.reading = reading;
+        s.resources = new bytes32[](1);
+        s.totals = new uint64[](1);
+        s.versions = new uint64[](1);
+        (s.resources[0], s.totals[0], s.versions[0]) = (PARTS, total, version);
+    }
+
+    function _stEmpty(uint64 reading) internal pure returns (OffLib.State memory s) {
+        s.epoch = EPOCH;
+        s.reading = reading;
+        s.resources = new bytes32[](0);
+        s.totals = new uint64[](0);
+        s.versions = new uint64[](0);
+    }
+
+    // ------------------------------------------------------------ Merkle trees
     function _root(bytes32[] memory leaves) internal pure returns (bytes32) {
+        if (leaves.length == 0) return bytes32(0);
         bytes32[] memory lvl = leaves;
         while (lvl.length > 1) {
             bytes32[] memory up = new bytes32[]((lvl.length + 1) / 2);
@@ -97,7 +180,7 @@ contract OffgrantTest is Test {
         return lvl[0];
     }
 
-    function _proof(bytes32[] memory leaves, uint256 idx) internal pure returns (bytes32[] memory p) {
+    function _path(bytes32[] memory leaves, uint256 idx) internal pure returns (bytes32[] memory p) {
         uint256 depth;
         for (uint256 n = leaves.length; n > 1; n = (n + 1) / 2) depth++;
         p = new bytes32[](depth);
@@ -116,537 +199,807 @@ contract OffgrantTest is Test {
         }
     }
 
-    function _consumeV(uint64 amount, uint64 runningTotal, uint64 version) internal pure returns (OffLib.Op memory) {
-        return OffLib.Op(OffLib.CONSUME, PARTS, amount, runningTotal, version, 0, "");
+    /// History accumulator: leaf i = hash of the checkpoint at height i (leaf 0 is zero), depth 20.
+    function _histRoot(bytes32[] memory hist) internal view returns (bytes32) {
+        bytes32[] memory lvl = hist;
+        for (uint256 d = 0; d < 20; d++) {
+            uint256 n = (lvl.length + 1) / 2;
+            if (n == 0) return zeros[20];
+            bytes32[] memory up = new bytes32[](n);
+            for (uint256 i = 0; i < n; i++) {
+                bytes32 r = 2 * i + 1 < lvl.length ? lvl[2 * i + 1] : zeros[d];
+                up[i] = keccak256(abi.encode(lvl[2 * i], r));
+            }
+            lvl = up;
+        }
+        return lvl[0];
     }
 
-    function _consume(uint64 amount, uint64 runningTotal) internal pure returns (OffLib.Op memory) {
-        return _consumeV(amount, runningTotal, 1);
+    function _histPath(bytes32[] memory hist, uint256 idx) internal view returns (bytes32[] memory p) {
+        p = new bytes32[](20);
+        bytes32[] memory lvl = hist;
+        for (uint256 d = 0; d < 20; d++) {
+            uint256 sib = idx ^ 1;
+            p[d] = sib < lvl.length ? lvl[sib] : zeros[d];
+            uint256 n = (lvl.length + 1) / 2;
+            bytes32[] memory up = new bytes32[](n);
+            for (uint256 i = 0; i < n; i++) {
+                bytes32 r = 2 * i + 1 < lvl.length ? lvl[2 * i + 1] : zeros[d];
+                up[i] = keccak256(abi.encode(lvl[2 * i], r));
+            }
+            lvl = up;
+            idx >>= 1;
+        }
     }
 
-    function _holdE(bytes32 obj, uint64 epoch, uint64 cq, uint64 reading, uint64 until)
+    /// A checkpoint at height hist.length whose history is `hist` (hist[0] = 0).
+    function _ckpt(bytes32[] memory hist, OffLib.Op[] memory ops, OffLib.State memory st, uint64 closeR)
         internal
-        pure
-        returns (OffLib.Op memory)
+        view
+        returns (OffLib.Header memory h)
     {
-        return OffLib.Op(OffLib.USE, obj, cq, reading, until, epoch, _sig(CLOCK, OffLib.clockDigest(SITE, epoch, reading, obj)));
-    }
-
-    function _useE(uint64 epoch, uint64 cq, uint64 reading) internal pure returns (OffLib.Op memory) {
-        return _holdE(PERMIT, epoch, cq, reading, reading);
-    }
-
-    function _use(uint64 cq, uint64 reading) internal pure returns (OffLib.Op memory) {
-        return _useE(EPOCH, cq, reading);
-    }
-
-    function _clk(uint64 epoch, uint64 reading) internal pure returns (bytes memory) {
-        return _sig(CLOCK, OffLib.clockDigest(SITE, epoch, reading, PERMIT));
-    }
-
-    function _clkT(uint64 reading, bytes32 tag) internal pure returns (bytes memory) {
-        return _sig(CLOCK, OffLib.clockDigest(SITE, EPOCH, reading, tag));
-    }
-
-    function _hdr(uint64 height, bytes32 prev, OffLib.Op[] memory ops, uint64 close)
-        internal
-        pure
-        returns (OffLib.Header memory h, bytes32[] memory leaves)
-    {
-        leaves = new bytes32[](ops.length);
+        bytes32[] memory leaves = new bytes32[](ops.length);
         for (uint256 i = 0; i < ops.length; i++) {
             leaves[i] = OffLib.leaf(ops[i]);
         }
-        h = OffLib.Header(SITE, height, prev, _root(leaves), uint64(ops.length), bytes32(0), 0, bytes32(0), EPOCH, close, "");
-        h.closeSig = _sig(CLOCK, OffLib.clockDigest(SITE, EPOCH, close, OffLib.contentTag(h)));
+        h = OffLib.Header(
+            SITE,
+            uint64(hist.length),
+            _histRoot(hist),
+            _root(leaves),
+            uint64(ops.length),
+            OffLib.stateHash(st),
+            bytes32(uint256(0xB10C)),
+            EPOCH,
+            closeR,
+            ""
+        );
+        h.closeSig = _sig(CLOCK, OffLib.clockDigest(dom, SITE, EPOCH, closeR, OffLib.contentTag(h)));
     }
 
-    /// Header that commits a running total for PARTS (state root with one leaf) and builds on (bh, bhash).
-    function _hdrS(uint64 height, bytes32 prev, OffLib.Op[] memory ops, uint64 partsTotal, uint64 bh, bytes32 bhash, uint64 close)
+    function _op(OffLib.Op[] memory ops, uint256 i) internal pure returns (RightsRegistry.OpProof memory) {
+        bytes32[] memory leaves = new bytes32[](ops.length);
+        for (uint256 k = 0; k < ops.length; k++) {
+            leaves[k] = OffLib.leaf(ops[k]);
+        }
+        return RightsRegistry.OpProof(ops[i], i, _path(leaves, i));
+    }
+
+    function _hist1() internal pure returns (bytes32[] memory h) {
+        h = new bytes32[](1); // height 1: no earlier checkpoint
+    }
+
+    function _push(bytes32[] memory hist, OffLib.Header memory h) internal pure returns (bytes32[] memory out) {
+        out = new bytes32[](hist.length + 1);
+        for (uint256 i = 0; i < hist.length; i++) {
+            out[i] = hist[i];
+        }
+        out[hist.length] = OffLib.headerHash(h);
+    }
+
+    function _anc(bytes32[] memory histOfChild, OffLib.Header memory p, OffLib.State memory s)
         internal
-        pure
-        returns (OffLib.Header memory h, bytes32[] memory leaves)
+        view
+        returns (RightsRegistry.Ancestor memory)
     {
-        (h, leaves) = _hdr(height, prev, ops, close);
-        h.stateRoot = OffLib.stateLeaf(PARTS, partsTotal);
-        (h.baseHeight, h.baseHash) = (bh, bhash);
-        h.closeSig = _sig(CLOCK, OffLib.clockDigest(SITE, EPOCH, close, OffLib.contentTag(h)));
+        return RightsRegistry.Ancestor(p, s, _histPath(histOfChild, p.height));
     }
 
-    function _header(uint64 height, bytes32 prev, OffLib.Op[] memory ops)
-        internal
-        pure
-        returns (OffLib.Header memory h, bytes32[] memory leaves)
-    {
-        return _hdr(height, prev, ops, START);
+    // ------------------------------------------------------------ protocol helpers
+    function _objs(bytes32 o) internal pure returns (bytes32[] memory a) {
+        a = new bytes32[](1);
+        a[0] = o;
     }
 
-    function _renewO(bytes32 obj, uint64 cq) internal returns (uint64) {
-        return reg.renew(SITE, obj, EPOCH, cq, _sig(CLOCK, OffLib.requestDigest(SITE, obj, EPOCH, cq)));
+    function _renewE(bytes32[] memory objs, uint64 epoch, uint64 cq) internal returns (uint64 issued) {
+        bytes32 tag = OffLib.requestTag(OffLib.objectsHash(objs));
+        issued = reg.renew(SITE, objs, epoch, cq, _sig(CLOCK, OffLib.clockDigest(dom, SITE, epoch, cq, tag)));
     }
 
-    function _renew(uint64 cq) internal returns (uint64) {
-        return _renewO(PERMIT, cq);
+    function _renew(bytes32 o, uint64 cq) internal returns (uint64) {
+        return _renewE(_objs(o), EPOCH, cq);
     }
 
-    function _one(OffLib.Op memory op) internal pure returns (OffLib.Op[] memory ops) {
-        ops = new OffLib.Op[](1);
-        ops[0] = op;
+    /// Renews on G and applies the certified renewal on the site ledger.
+    function _renewSite(bytes32 o, uint64 cq) internal {
+        uint64 issued = _renew(o, cq);
+        bytes32[] memory objs = _objs(o);
+        siteC.applyRenewal(
+            objs, EPOCH, cq, issued, _cert(OffLib.renewalDigest(dom, SITE, OffLib.objectsHash(objs), EPOCH, cq, issued))
+        );
     }
 
-    // ------------------------------------------------------------ Proposition 1: wait and reassignment
-    function test_waitFormula() public view {
-        // ceil(99000 ms / (1 - 1e-4)) = 99.0099.. s -> 100 s, plus 2 x 2 s timestamp error.
-        assertEq(reg.waitSeconds(PERMIT), 104);
+    function _provision() internal {
+        siteC.applyShare(PARTS, 40, 1, _cert(OffLib.shareDigest(dom, SITE, PARTS, 40, 1)));
+        siteC.applyLease(PERMIT, A, false, _cert(OffLib.leaseDigest(dom, SITE, PERMIT, A, false)));
+        siteC.applyLease(LOTO, A, true, _cert(OffLib.leaseDigest(dom, SITE, LOTO, A, true)));
+        siteC.applyLease(CRED, A, false, _cert(OffLib.leaseDigest(dom, SITE, CRED, A, false)));
     }
 
-    function testFuzz_waitCoversSlowClock(uint64 a, uint32 rho) public {
-        a = uint64(bound(a, 1, 1e12));
-        rho = uint32(bound(rho, 0, 999_999));
-        RightsRegistry r = new RightsRegistry(rho, 0, LAG);
-        r.createLease(PERMIT, true, a);
-        uint256 w = r.waitSeconds(PERMIT);
-        // A slow clock (1 - rho) needs A / (1 - rho) real time to advance A: the wait must cover it.
-        assertGe(w * 1000 * (1_000_000 - uint256(rho)), uint256(a) * 1_000_000);
+    function _siteUse(bytes32 obj, uint64 cq, uint64 reading, uint64 until) internal {
+        OffLib.Op memory op = _grant(obj, EPOCH, cq, reading, until);
+        siteC.use(obj, cq, EPOCH, reading, until, op.clockSig);
     }
 
-    function test_reassignOnlyAfterRelease() public {
-        uint64 issued = _renew(5_000);
+    function _siteStop(bytes32 obj, uint64 cq) internal {
+        siteC.applyStop(obj, EPOCH, cq, _cert(OffLib.stopDigest(dom, SITE, obj, EPOCH, cq)));
+    }
+
+    function _acks(bytes32 obj, uint64 reading) internal view returns (bytes[] memory) {
+        return _signAll(OffLib.ackDigest(dom, SITE, obj, EPOCH, reading), _who(0, 1, 2));
+    }
+
+    /// Full fast path: the site records an ACK operation, three validators sign, G moves the object.
+    function _fastPath(bytes32 obj, uint64 stopCq, uint64 reading) internal {
+        OffLib.Op memory ack = _ackOp(obj, stopCq, reading);
+        siteC.acknowledge(obj, EPOCH, reading, ack.clockSig);
+        reg.reassignAcked(obj, EPOCH, reading, ack.clockSig, _acks(obj, reading));
+    }
+
+    /// G-side fast path only (the site ledger is not modelled).
+    function _ackOnG(bytes32 obj, uint64 stopCq, uint64 reading) internal {
+        OffLib.Op memory ack = _ackOp(obj, stopCq, reading);
+        reg.reassignAcked(obj, EPOCH, reading, ack.clockSig, _acks(obj, reading));
+    }
+
+    // ============================================================ leases and renewals (Proposition 1)
+    function testFuzz_waitFormula(uint64 aMs) public {
+        aMs = uint64(bound(aMs, 1, 10 days * 1000));
+        reg.createLease(keccak256("x"), true, false, aMs);
+        uint256 w = reg.waitSeconds(keccak256("x"));
+        uint256 den = uint256(1_000_000 - RHO) * 1000;
+        uint256 expect = (uint256(aMs) * 1_000_000 + den - 1) / den + 2 * SLACK; // ceil(A/(1-rho)) + 2 eps_G
+        assertEq(w, expect);
+    }
+
+    function test_batchRenewalOneTransaction() public {
+        bytes32[] memory objs = new bytes32[](2);
+        (objs[0], objs[1]) = (PERMIT, CRED);
+        uint64 issued = _renewE(objs, EPOCH, 10_000);
+        assertEq(reg.renewalIssued(OffLib.renewalKey(SITE, PERMIT, EPOCH, 10_000)), issued);
+        assertEq(reg.renewalIssued(OffLib.renewalKey(SITE, CRED, EPOCH, 10_000)), issued);
+    }
+
+    function test_staleRequestRejected() public {
+        _renew(PERMIT, 10_000);
+        vm.expectRevert(RightsRegistry.StaleRequest.selector);
+        _renew(PERMIT, 9_000); // replay of an older valid request
+    }
+
+    function test_renewNeedsCoverageInEpoch() public {
+        vm.expectRevert(abi.encodeWithSelector(RightsRegistry.AnchorDebt.selector, START, START + 1));
+        _renew(PERMIT, START + LAG + 1);
+        bytes32 tag = OffLib.requestTag(OffLib.objectsHash(_objs(PERMIT)));
+        bytes memory s = _sig(CLOCK, OffLib.clockDigest(dom, SITE, 2, 10_000, tag));
+        vm.expectRevert(abi.encodeWithSelector(RightsRegistry.AnchorDebt.selector, START, 0));
+        reg.renew(SITE, _objs(PERMIT), 2, 10_000, s); // a new epoch needs a new-epoch anchor
+    }
+
+    function test_requestFromOtherDeploymentRejected() public {
+        RightsRegistry other = new RightsRegistry(RHO, SLACK, LAG);
+        bytes32 tag = OffLib.requestTag(OffLib.objectsHash(_objs(PERMIT)));
+        bytes memory s = _sig(CLOCK, OffLib.clockDigest(other.dom(), SITE, EPOCH, 10_000, tag));
+        vm.expectRevert(RightsRegistry.BadClockSig.selector);
+        reg.renew(SITE, _objs(PERMIT), EPOCH, 10_000, s);
+    }
+
+    function test_slowPathWaitsW() public {
+        _renew(PERMIT, 10_000);
         reg.stop(PERMIT, SITE2);
-        vm.expectRevert();
-        reg.renew(SITE, PERMIT, EPOCH, 6_000, _sig(CLOCK, OffLib.requestDigest(SITE, PERMIT, EPOCH, 6_000)));
-        uint64 at = issued + reg.waitSeconds(PERMIT);
-        vm.warp(at - 1);
+        uint64 at = reg.releaseAt(PERMIT);
         vm.expectRevert(abi.encodeWithSelector(RightsRegistry.TooEarly.selector, at));
         reg.reassign(PERMIT);
         vm.warp(at);
         reg.reassign(PERMIT);
-        assertTrue(reg.mayRenew(PERMIT, SITE2));
-        assertFalse(reg.mayRenew(PERMIT, SITE));
+        (,,,,,, uint64 holder,) = reg.leases(PERMIT);
+        assertEq(holder, SITE2);
     }
 
-    function test_renewRejectsForgedClock() public {
-        vm.expectRevert(RightsRegistry.BadClockSig.selector);
-        reg.renew(SITE, PERMIT, EPOCH, 5_000, _sig(vk[0], OffLib.requestDigest(SITE, PERMIT, EPOCH, 5_000)));
-    }
-
-    function test_sharesNeverExceedCap() public {
-        vm.expectRevert(RightsRegistry.OverCap.selector);
-        reg.setShare(PARTS, SITE, 41);
-    }
-
-    // ------------------------------------------------------------ site enforcement while cut off
-    function _provisionSite(uint64 cq) internal {
-        siteC.applyShare(PARTS, 40, 1, _cert(OffLib.shareDigest(address(reg), SITE, PARTS, 40, 1)));
-        siteC.applyLease(PERMIT, A, false, _cert(OffLib.leaseDigest(address(reg), SITE, PERMIT, A, false)));
-        siteC.applyLease(LOTO, A, true, _cert(OffLib.leaseDigest(address(reg), SITE, LOTO, A, true)));
-        _applyRenewal(PERMIT, EPOCH, cq);
-        _applyRenewal(LOTO, EPOCH, cq);
-    }
-
-    function _applyRenewal(bytes32 obj, uint64 epoch, uint64 cq) internal {
-        siteC.applyRenewal(obj, epoch, cq, 7, _cert(OffLib.renewalDigest(address(reg), SITE, obj, epoch, cq, 7)));
-    }
-
-    function test_siteEnforcesShare() public {
-        _provisionSite(5_000);
-        siteC.consume(PARTS, 30);
-        siteC.consume(PARTS, 10);
-        vm.expectRevert(abi.encodeWithSelector(SiteRights.OverShare.selector, uint64(41), uint64(40)));
-        siteC.consume(PARTS, 1);
-    }
-
-    function test_siteEnforcesAllowance() public {
-        _provisionSite(5_000);
-        siteC.use(PERMIT, EPOCH, 5_000 + A - 1, 5_000 + A - 1, _clk(EPOCH, 5_000 + A - 1));
-        vm.expectRevert();
-        siteC.use(PERMIT, EPOCH, 5_000 + A, 5_000 + A, _clk(EPOCH, 5_000 + A));
-    }
-
-    function test_siteRejectsUncertifiedRights() public {
-        bytes[] memory bad = new bytes[](2);
-        bad[0] = _sig(gk[0], OffLib.shareDigest(address(reg), SITE, PARTS, 1000, 1));
-        bad[1] = _sig(gk[0], OffLib.shareDigest(address(reg), SITE, PARTS, 1000, 1)); // same authority twice
-        vm.expectRevert(SiteRights.BadCertificate.selector);
-        siteC.applyShare(PARTS, 1000, 1, bad);
-    }
-
-    function test_siteRejectsForgedOrStaleClock() public {
-        _provisionSite(5_000);
-        vm.expectRevert(SiteRights.BadClockSig.selector);
-        siteC.use(PERMIT, EPOCH, 6_000, 6_000, _sig(vk[0], OffLib.clockDigest(SITE, EPOCH, 6_000, PERMIT)));
-        siteC.use(PERMIT, EPOCH, 7_000, 7_000, _clk(EPOCH, 7_000));
-        vm.expectRevert(SiteRights.StaleReading.selector);
-        siteC.use(PERMIT, EPOCH, 6_500, 6_500, _clk(EPOCH, 6_500));
-    }
-
-    // ------------------------------------------------------------ holds (review round 2)
-    function test_boundedHoldMustEndInsideAllowance() public {
-        _provisionSite(5_000);
-        // A hold that would outlast the allowance is refused, even though it starts inside it.
-        vm.expectRevert(abi.encodeWithSelector(SiteRights.AllowanceExpired.selector, 5_000 + A, 5_000 + A));
-        siteC.use(PERMIT, EPOCH, 6_000, 5_000 + A, _clk(EPOCH, 6_000));
-        siteC.use(PERMIT, EPOCH, 6_000, 5_000 + A - 1, _clk(EPOCH, 6_000));
-        assertFalse(siteC.quiescent(PERMIT, 5_000 + A - 2));
-        assertTrue(siteC.quiescent(PERMIT, 5_000 + A - 1));
-    }
-
-    function test_holdPastAllowanceIsSlashable() public {
-        _renew(5_000);
-        OffLib.Op[] memory ops = _one(_holdE(PERMIT, EPOCH, 5_000, 6_000, 5_000 + A)); // ends 1 ms too late
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
-        assertEq(reg.proveOveruse(h, _seal(h, _idx(0, 1, 2)), ops[0], 0, _proof(lv, 0)), 3);
-    }
-
-    function test_openHoldNeverMovesByExpiry() public {
-        _provisionSite(5_000);
-        siteC.use(LOTO, EPOCH, 6_000, OffLib.OPEN, _clkT(6_000, LOTO));
-        assertFalse(siteC.quiescent(LOTO, type(uint64).max - 1));
-        // On G the slow path is closed for open-hold objects, however long the wait.
-        uint64 issued = _renewO(LOTO, 5_000);
+    function test_openHoldNeverMovedByExpiry() public {
+        _renew(LOTO, 10_000);
         reg.stop(LOTO, SITE2);
-        vm.warp(issued + reg.waitSeconds(LOTO) + 1 days);
+        vm.warp(block.timestamp + 10 days);
         vm.expectRevert(RightsRegistry.HoldMayBeOpen.selector);
         reg.reassign(LOTO);
-        // The release ends the hold; then the site's quorum may acknowledge.
-        siteC.release(LOTO, EPOCH, 7_000, _clkT(7_000, OffLib.releaseTag(LOTO)));
-        assertTrue(siteC.quiescent(LOTO, 7_000));
     }
 
-    function test_releaseAfterAckIsSlashable() public {
-        _renewO(LOTO, 5_000);
+    function test_badRegistrationsRejected() public {
+        address[] memory vs = new address[](4);
+        for (uint256 i = 0; i < 4; i++) {
+            vs[i] = vm.addr(0xE1 + i);
+        }
+        vm.expectRevert(RightsRegistry.BadSite.selector);
+        reg.registerSite(0, 1, vm.addr(CLOCK), vs, EPOCH, START); // site 0 is the "no holder" sentinel
+        vs[2] = address(0);
+        vm.expectRevert(RightsRegistry.BadSite.selector);
+        reg.registerSite(3, 1, vm.addr(CLOCK), vs, EPOCH, START);
+        vm.expectRevert(RightsRegistry.BadLease.selector);
+        reg.createLease(keccak256("y"), false, true, A); // open holds only for exclusive objects
+        vm.expectRevert(RightsRegistry.BadSite.selector);
+        reg.stop(PERMIT, 0); // an exclusive object needs a next holder
+    }
+
+    function test_credentialRevocation() public {
+        _provision();
+        _renewSite(CRED, 10_000);
+        _siteUse(CRED, 10_000, 11_000, 11_500);
+        reg.stop(CRED, 0);
+        vm.expectRevert(RightsRegistry.LeaseStopped.selector);
+        _renew(CRED, 12_000);
+        _siteStop(CRED, 10_000);
+        OffLib.Op memory op = _grant(CRED, EPOCH, 0, 12_500, 13_000);
+        vm.expectRevert(SiteRights.NoRenewal.selector);
+        siteC.use(CRED, 10_000, EPOCH, 12_500, 13_000, op.clockSig);
+    }
+
+    // ============================================================ site ledger rules
+    function test_grantInsideAllowanceOnly() public {
+        _provision();
+        _renewSite(PERMIT, 10_000);
+        _siteUse(PERMIT, 10_000, 11_000, 16_000);
+        OffLib.Op memory late = _grant(PERMIT, EPOCH, 10_000, 12_000, 10_000 + A); // ends at cq + A
+        vm.expectRevert(abi.encodeWithSelector(SiteRights.AllowanceExpired.selector, 10_000 + A, 10_000 + A));
+        siteC.use(PERMIT, 10_000, EPOCH, 12_000, 10_000 + A, late.clockSig);
+        OffLib.Op memory zero = _grant(PERMIT, EPOCH, 10_000, 13_000, 13_000);
+        vm.expectRevert(SiteRights.BadHold.selector);
+        siteC.use(PERMIT, 10_000, EPOCH, 13_000, 13_000, zero.clockSig);
+    }
+
+    function test_attestationBindsContent_v4exploit() public {
+        _provision();
+        _renewSite(PERMIT, 10_000);
+        OffLib.Op memory g = _grant(PERMIT, EPOCH, 10_000, 11_000, 12_000);
+        vm.expectRevert(SiteRights.BadClockSig.selector); // the same attestation with a longer hold
+        siteC.use(PERMIT, 10_000, EPOCH, 11_000, 50_000, g.clockSig);
+    }
+
+    /// v4: a faulty operator replayed crew 1's release; the open-hold count fell to 0 while crew 2's lock was on.
+    function test_releaseReplayRejected_v4exploit() public {
+        _provision();
+        _renewSite(LOTO, 10_000);
+        _siteUse(LOTO, 10_000, 11_000, OffLib.OPEN); // crew 1
+        _siteUse(LOTO, 10_000, 11_500, OffLib.OPEN); // crew 2
+        OffLib.Op memory r = _release(LOTO, 11_000, 12_000);
+        siteC.release(LOTO, 11_000, EPOCH, 12_000, r.clockSig);
+        vm.expectRevert(SiteRights.NotHeld.selector);
+        siteC.release(LOTO, 11_000, EPOCH, 12_000, r.clockSig); // replay: that hold is gone
+        OffLib.Op memory r2 = _release(LOTO, 11_500, 12_000);
+        vm.expectRevert(SiteRights.StaleReading.selector);
+        siteC.release(LOTO, 11_500, EPOCH, 12_000, r2.clockSig); // equal reading
+        assertEq(siteC.openCount(LOTO), 1);
+        _siteStop(LOTO, 10_000);
+        OffLib.Op memory ack = _ackOp(LOTO, 10_000, 13_000);
+        vm.expectRevert(SiteRights.StillHeld.selector);
+        siteC.acknowledge(LOTO, EPOCH, 13_000, ack.clockSig);
+    }
+
+    function test_acknowledgeNeedsStopAndNoHold() public {
+        _provision();
+        _renewSite(PERMIT, 10_000);
+        _siteUse(PERMIT, 10_000, 11_000, 20_000);
+        OffLib.Op memory early = _ackOp(PERMIT, 0, 12_000);
+        vm.expectRevert(SiteRights.NotStopped.selector);
+        siteC.acknowledge(PERMIT, EPOCH, 12_000, early.clockSig);
+        _siteStop(PERMIT, 10_000);
+        OffLib.Op memory busy = _ackOp(PERMIT, 10_000, 15_000);
+        vm.expectRevert(SiteRights.StillHeld.selector);
+        siteC.acknowledge(PERMIT, EPOCH, 15_000, busy.clockSig);
+        OffLib.Op memory ok = _ackOp(PERMIT, 10_000, 20_000);
+        siteC.acknowledge(PERMIT, EPOCH, 20_000, ok.clockSig);
+        OffLib.Op memory g = _grant(PERMIT, EPOCH, 0, 21_000, 22_000); // nothing under the stopped renewal
+        vm.expectRevert(SiteRights.NoRenewal.selector);
+        siteC.use(PERMIT, 10_000, EPOCH, 21_000, 22_000, g.clockSig);
+    }
+
+    function test_newEpochEndsBoundedHolds() public {
+        _provision();
+        _renewSite(PERMIT, 10_000);
+        _siteUse(PERMIT, 10_000, 11_000, 90_000);
+        _siteStop(PERMIT, 10_000);
+        OffLib.Op memory ack = _att(OffLib.Op(OffLib.ACK, PERMIT, 2, 1_000, 10_000, 0, 0, 0, 0, ""));
+        siteC.acknowledge(PERMIT, 2, 1_000, ack.clockSig); // after a power loss the bounded hold has ended
+    }
+
+    function test_shareVersionedAndAttested() public {
+        siteC.applyShare(PARTS, 40, 1, _cert(OffLib.shareDigest(dom, SITE, PARTS, 40, 1)));
+        OffLib.Op memory c = _consume(30, 0, 1, 11_000);
+        siteC.consume(PARTS, 30, 1, EPOCH, 11_000, c.clockSig);
+        bytes[] memory lower = _cert(OffLib.shareDigest(dom, SITE, PARTS, 20, 2));
+        vm.expectRevert(abi.encodeWithSelector(SiteRights.OverShare.selector, 30, 20));
+        siteC.applyShare(PARTS, 20, 2, lower);
+        bytes[] memory old = _cert(OffLib.shareDigest(dom, SITE, PARTS, 40, 1));
+        vm.expectRevert(SiteRights.StaleShare.selector);
+        siteC.applyShare(PARTS, 40, 1, old);
+        vm.expectRevert(SiteRights.BadClockSig.selector);
+        siteC.consume(PARTS, 5, 1, EPOCH, 12_000, c.clockSig); // consumption needs the gateway's attestation
+    }
+
+    // ============================================================ fast path and framing
+    function test_fastPathMovesObject() public {
+        _provision();
+        _renewSite(PERMIT, 10_000);
+        reg.stop(PERMIT, SITE2);
+        _siteStop(PERMIT, 10_000);
+        _fastPath(PERMIT, 10_000, 12_000);
+        (,,,,,, uint64 holder,) = reg.leases(PERMIT);
+        assertEq(holder, SITE2);
+        assertEq(reg.ackSignerCount(OffLib.ackKey(PERMIT, SITE, EPOCH, 12_000)), 3);
+    }
+
+    /// v4: a grant's public attestation was accepted as an acknowledgement reading.
+    function test_grantAttestationIsNoAck_v4exploit() public {
+        _provision();
+        _renewSite(LOTO, 10_000);
+        OffLib.Op memory lock = _grant(LOTO, EPOCH, 10_000, 11_000, OffLib.OPEN);
+        siteC.use(LOTO, 10_000, EPOCH, 11_000, OffLib.OPEN, lock.clockSig);
         reg.stop(LOTO, SITE2);
-        bytes32 d = OffLib.ackDigest(address(reg), SITE, LOTO, EPOCH, 8_000);
-        bytes[] memory acks = new bytes[](3);
-        for (uint256 i = 0; i < 3; i++) {
-            acks[i] = _sig(vk[i], d);
-        }
-        reg.reassignAcked(LOTO, EPOCH, 8_000, _clkT(8_000, LOTO), acks);
-        // The lock was still on when the quorum acknowledged: its release is recorded after the ack.
-        OffLib.Op memory rel = OffLib.Op(
-            OffLib.RELEASE, LOTO, 5_000, 9_000, 0, EPOCH, _sig(CLOCK, OffLib.clockDigest(SITE, EPOCH, 9_000, OffLib.releaseTag(LOTO)))
-        );
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), _one(rel));
-        assertEq(reg.proveUseAfterAck(h, _seal(h, _idx(0, 1, 3)), rel, 0, _proof(lv, 0)), 2);
+        bytes[] memory acks = _acks(LOTO, 11_000);
+        vm.expectRevert(RightsRegistry.BadClockSig.selector);
+        reg.reassignAcked(LOTO, EPOCH, 11_000, lock.clockSig, acks);
     }
 
-    // ------------------------------------------------------------ Theorem 1: no framing of honest checkpoints
-    function test_honestCheckpointIsNotSlashable() public {
-        _renew(5_000);
-        OffLib.Op[] memory ops = new OffLib.Op[](3);
-        ops[0] = _consume(30, 30);
-        ops[1] = _holdE(PERMIT, EPOCH, 5_000, 5_000 + A - 10, 5_000 + A - 1);
-        ops[2] = _consume(10, 40);
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
-        bytes[] memory s = _seal(h, _idx(0, 1, 2));
-        vm.expectRevert(RightsRegistry.NotAViolation.selector);
-        reg.proveOverspend(h, s, ops[2], 2, _proof(lv, 2));
-        vm.expectRevert(RightsRegistry.NotAViolation.selector);
-        reg.proveOveruse(h, s, ops[1], 1, _proof(lv, 1));
-        vm.expectRevert(RightsRegistry.NotAViolation.selector);
-        reg.proveUnderstate(h, s, ops[0], 0, _proof(lv, 0), ops[2], 2, _proof(lv, 2));
-        reg.anchor(h, s);
-        assertEq(reg.bond(SITE, va[0]), reg.BOND());
-    }
-
-    function test_belowQuorumIsRejected() public {
-        OffLib.Op[] memory ops = _one(_consume(50, 50));
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
-        uint256[] memory two = new uint256[](2);
-        (two[0], two[1]) = (0, 1);
-        vm.expectRevert(RightsRegistry.NoQuorum.selector);
-        reg.proveOverspend(h, _seal(h, two), ops[0], 0, _proof(lv, 0));
-    }
-
-    // ------------------------------------------------------------ Theorem 1: over-threshold site is attributed
-    function test_overspendSlashesSealers() public {
-        OffLib.Op[] memory ops = new OffLib.Op[](2);
-        ops[0] = _consume(30, 30);
-        ops[1] = _consume(25, 55); // share is 40
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
-        uint256 n = reg.proveOverspend(h, _seal(h, _idx(0, 1, 2)), ops[1], 1, _proof(lv, 1));
-        assertEq(n, 3);
-        assertEq(reg.bond(SITE, va[3]), reg.BOND()); // the validator that did not seal keeps its bond
-    }
-
-    function test_firstConsumptionBelowItsAmountSlashes() public {
-        OffLib.Op[] memory ops = _one(_consume(30, 5)); // a total below its own amount hides 25 units
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
-        assertEq(reg.proveOverspend(h, _seal(h, _idx(0, 1, 2)), ops[0], 0, _proof(lv, 0)), 3);
-    }
-
-    function test_understateWithinCheckpointSlashes() public {
-        OffLib.Op[] memory ops = new OffLib.Op[](2);
-        ops[0] = _consume(35, 35);
-        ops[1] = _consume(5, 10); // restarts the running total
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
-        assertEq(reg.proveUnderstate(h, _seal(h, _idx(0, 1, 2)), ops[0], 0, _proof(lv, 0), ops[1], 1, _proof(lv, 1)), 3);
-    }
-
-    function test_understateAgainstParentSlashesChildSealers() public {
-        // Parent commits a total of 35; the child, sealed by {1,2,3}, restarts at 20. Constant cost, no anchoring needed.
-        (OffLib.Header memory p,) = _hdrS(1, bytes32(0), _one(_consume(35, 35)), 35, 0, bytes32(0), 6_000);
-        OffLib.Op[] memory ops2 = _one(_consume(20, 20));
-        (OffLib.Header memory h, bytes32[] memory lv) = _hdrS(2, OffLib.headerHash(p), ops2, 20, 0, bytes32(0), 7_000);
-        uint256 n = reg.proveUnderstateParent(h, _seal(h, _idx(1, 2, 3)), ops2[0], 0, _proof(lv, 0), p, 35, 0, new bytes32[](0));
-        assertEq(n, 3);
-        assertEq(reg.bond(SITE, va[0]), reg.BOND());
-    }
-
-    function test_understateParentMustBeTheRealParent() public {
-        (OffLib.Header memory p,) = _hdrS(1, bytes32(0), _one(_consume(35, 35)), 35, 0, bytes32(0), 6_000);
-        OffLib.Op[] memory ops2 = _one(_consume(20, 20));
-        (OffLib.Header memory h, bytes32[] memory lv) = _hdrS(2, keccak256("other parent"), ops2, 20, 0, bytes32(0), 7_000);
-        bytes[] memory s2 = _seal(h, _idx(1, 2, 3));
-        bytes32[] memory pr = _proof(lv, 0);
-        vm.expectRevert(RightsRegistry.BadProof.selector);
-        reg.proveUnderstateParent(h, s2, ops2[0], 0, pr, p, 35, 0, new bytes32[](0));
-    }
-
-    function test_stateRootBelowOwnConsumptionSlashes() public {
-        OffLib.Op[] memory ops = _one(_consume(30, 30));
-        (OffLib.Header memory h, bytes32[] memory lv) = _hdrS(1, bytes32(0), ops, 10, 0, bytes32(0), 6_000); // commits 10
-        assertEq(reg.proveStateMismatch(h, _seal(h, _idx(0, 1, 2)), ops[0], 0, _proof(lv, 0), 10, 0, new bytes32[](0)), 3);
-    }
-
-    function test_anchorSkipsToNewestCheckpointAfterOutage() public {
-        OffLib.Op[] memory l = _one(OffLib.Op(OffLib.LOG, keccak256("x"), 0, 0, 0, 0, ""));
-        (OffLib.Header memory h1,) = _hdrS(1, bytes32(0), l, 0, 0, bytes32(0), 6_000);
-        reg.anchor(h1, _seal(h1, _idx(0, 1, 2)));
-        // 1000 checkpoints later, one transaction anchors the newest, which names h1 as its anchored base.
-        (OffLib.Header memory hn,) = _hdrS(1001, keccak256("parent 1000"), l, 0, 1, OffLib.headerHash(h1), 9_000_000);
-        reg.anchor(hn, _seal(hn, _idx(0, 1, 2)));
-        (,,,,,, uint64 ah,,, uint64 covered) = reg.sites(SITE);
-        assertEq(ah, 1001);
-        assertEq(covered, 9_000_000);
-        // A checkpoint that does not build on the anchored one is refused.
-        (OffLib.Header memory bad,) = _hdrS(1002, bytes32(0), l, 0, 1, OffLib.headerHash(h1), 9_100_000);
-        bytes[] memory sb = _seal(bad, _idx(0, 1, 2));
-        vm.expectRevert(RightsRegistry.BadProof.selector);
-        reg.anchor(bad, sb);
-    }
-
-    function test_overusePastAllowanceSlashes() public {
-        _renew(5_000);
-        OffLib.Op[] memory ops = _one(_use(5_000, 5_000 + A)); // one ms past the allowance
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
-        assertEq(reg.proveOveruse(h, _seal(h, _idx(0, 1, 2)), ops[0], 0, _proof(lv, 0)), 3);
-    }
-
-    function test_useWithoutRenewalSlashes() public {
-        OffLib.Op[] memory ops = _one(_use(5_000, 6_000)); // no renewal with base 5000 was ever issued by G
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
-        assertEq(reg.proveOveruse(h, _seal(h, _idx(1, 2, 3)), ops[0], 0, _proof(lv, 0)), 3);
-    }
-
-    function test_forkSlashesOnlyDoubleSealers() public {
-        (OffLib.Header memory h1,) = _header(1, bytes32(0), _one(_consume(10, 10)));
-        (OffLib.Header memory h2,) = _header(1, bytes32(0), _one(_consume(12, 12)));
-        uint256 n = reg.proveFork(h1, _seal(h1, _idx(0, 1, 2)), h2, _seal(h2, _idx(1, 2, 3)));
-        assertEq(n, 2);
-        assertEq(reg.bond(SITE, va[0]), reg.BOND());
-        assertEq(reg.bond(SITE, va[3]), reg.BOND());
-        assertEq(reg.bond(SITE, va[1]), 0);
-    }
-
-    function test_slashingIsIdempotent() public {
-        OffLib.Op[] memory ops = _one(_consume(50, 50));
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
-        bytes[] memory s = _seal(h, _idx(0, 1, 2));
-        assertEq(reg.proveOverspend(h, s, ops[0], 0, _proof(lv, 0)), 3);
-        assertEq(reg.proveOverspend(h, s, ops[0], 0, _proof(lv, 0)), 0);
-    }
-
-    // ------------------------------------------------------------ sanctions (review round 2)
-    function test_slashedValidatorsLoseQuorumAndSiteIsRevoked() public {
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), _one(_consume(50, 50)));
-        reg.proveOverspend(h, _seal(h, _idx(0, 1, 2)), _consume(50, 50), 0, _proof(lv, 0));
-        (bool exists, bool revoked,,,,,,,,) = reg.sites(SITE);
-        assertTrue(exists && revoked); // f + 1 = 2 validators slashed
-        vm.expectRevert(RightsRegistry.SiteRevokedErr.selector);
-        _renew(5_000);
-        // Slashed validators no longer form a quorum for new anchors.
-        (OffLib.Header memory g,) = _header(1, bytes32(0), _one(OffLib.Op(OffLib.LOG, keccak256("y"), 0, 0, 0, 0, "")));
-        vm.expectRevert(RightsRegistry.NoQuorum.selector);
-        reg.anchor(g, _seal(g, _idx(0, 1, 2)));
-    }
-
-    // ------------------------------------------------------------ clock epochs, stops and the fast path
-    function test_clockResetExpiresAllowance() public {
-        _provisionSite(5_000);
-        // After a power loss the TPM starts a new epoch: the old allowance no longer applies.
-        vm.expectRevert(SiteRights.NoRenewal.selector);
-        siteC.use(PERMIT, EPOCH + 1, 6_000, 6_000, _clk(EPOCH + 1, 6_000));
-    }
-
-    function test_useInNewEpochIsSlashable() public {
-        _renew(5_000);
-        OffLib.Op[] memory ops = _one(_useE(EPOCH + 1, 5_000, 6_000)); // base from epoch 1 used in epoch 2
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
-        assertEq(reg.proveOveruse(h, _seal(h, _idx(0, 1, 2)), ops[0], 0, _proof(lv, 0)), 3);
-    }
-
-    function test_stopEndsAllowanceAtOnce() public {
-        _provisionSite(5_000);
-        siteC.applyStop(PERMIT, EPOCH, 5_000, _cert(OffLib.stopDigest(address(reg), SITE, PERMIT, EPOCH, 5_000)));
-        vm.expectRevert(SiteRights.NoRenewal.selector);
-        siteC.use(PERMIT, EPOCH, 6_000, 6_000, _clk(EPOCH, 6_000));
-    }
-
-    function test_stopCannotCancelLaterRenewal() public {
-        _provisionSite(5_000);
-        siteC.applyStop(PERMIT, EPOCH, 5_000, _cert(OffLib.stopDigest(address(reg), SITE, PERMIT, EPOCH, 5_000)));
-        _applyRenewal(PERMIT, EPOCH, 9_000); // granted again after a later re-assignment
-        siteC.use(PERMIT, EPOCH, 9_500, 9_500, _clk(EPOCH, 9_500));
-        // Replaying the old stop changes nothing.
-        siteC.applyStop(PERMIT, EPOCH, 5_000, _cert(OffLib.stopDigest(address(reg), SITE, PERMIT, EPOCH, 5_000)));
-        siteC.use(PERMIT, EPOCH, 9_600, 9_600, _clk(EPOCH, 9_600));
-    }
-
-    function _ack(uint64 reading, uint256[] memory who) internal view returns (bytes[] memory s) {
-        bytes32 d = OffLib.ackDigest(address(reg), SITE, PERMIT, EPOCH, reading);
-        s = new bytes[](who.length);
-        for (uint256 i = 0; i < who.length; i++) {
-            s[i] = _sig(vk[who[i]], d);
+    /// v4: lock, release, stop, then an acknowledgement at an old reading framed the honest sealers of the
+    /// release. In v5 the ACK is an operation newer than every earlier one, so the honest release is never late.
+    function test_honestReleaseNotFramed_v4exploit() public {
+        _provision();
+        _renewSite(LOTO, 10_000);
+        OffLib.Op memory lock = _grant(LOTO, EPOCH, 10_000, 11_000, OffLib.OPEN);
+        siteC.use(LOTO, 10_000, EPOCH, 11_000, OffLib.OPEN, lock.clockSig);
+        OffLib.Op memory rel = _release(LOTO, 11_000, 12_000);
+        siteC.release(LOTO, 11_000, EPOCH, 12_000, rel.clockSig);
+        reg.stop(LOTO, SITE2);
+        _siteStop(LOTO, 10_000);
+        OffLib.Op memory old = _ackOp(LOTO, 10_000, 11_500);
+        vm.expectRevert(SiteRights.StaleReading.selector); // an acknowledgement older than the release
+        siteC.acknowledge(LOTO, EPOCH, 11_500, old.clockSig);
+        _fastPath(LOTO, 10_000, 13_000);
+        OffLib.Op[] memory ops = _ops2(lock, rel);
+        OffLib.Header memory h = _ckpt(_hist1(), ops, _st(12_000, 0, 1), 12_500);
+        bytes[] memory s = _seal(h, _who(0, 1, 2));
+        for (uint256 i = 0; i < 2; i++) {
+            RightsRegistry.OpProof memory o = _op(ops, i);
+            vm.expectRevert(RightsRegistry.NotAViolation.selector);
+            reg.proveUseAfterAck(h, s, o, EPOCH, 13_000);
         }
     }
 
-    function test_fastPathReassignsAtOnce() public {
-        _renew(5_000);
+    function test_useAfterAckSlashesBoth() public {
+        _renew(PERMIT, 10_000);
         reg.stop(PERMIT, SITE2);
-        uint256[] memory two = new uint256[](2);
-        (two[0], two[1]) = (0, 1);
-        vm.expectRevert(RightsRegistry.NoQuorum.selector);
-        reg.reassignAcked(PERMIT, EPOCH, 8_000, _clk(EPOCH, 8_000), _ack(8_000, two));
-        reg.reassignAcked(PERMIT, EPOCH, 8_000, _clk(EPOCH, 8_000), _ack(8_000, _idx(0, 1, 2)));
-        assertTrue(reg.mayRenew(PERMIT, SITE2));
+        _ackOnG(PERMIT, 10_000, 12_000);
+        OffLib.Op[] memory ops = _ops1(_grant(PERMIT, EPOCH, 10_000, 12_001, 12_500)); // under the old renewal
+        OffLib.Header memory h = _ckpt(_hist1(), ops, _stEmpty(12_001), 13_000);
+        uint256 n = reg.proveUseAfterAck(h, _seal(h, _who(1, 2, 3)), _op(ops, 0), EPOCH, 12_000);
+        assertEq(n, 2); // validators 1 and 2 both acknowledged and sealed
+        assertTrue(reg.slashed(SITE, va[1]) && reg.slashed(SITE, va[2]) && !reg.slashed(SITE, va[3]));
     }
 
-    function test_useAfterAckSlashesOnlyAckersThatSealedIt() public {
-        _renew(5_000);
+    function test_holdRunningPastAckSlashes() public {
+        _renew(PERMIT, 10_000);
         reg.stop(PERMIT, SITE2);
-        reg.reassignAcked(PERMIT, EPOCH, 8_000, _clk(EPOCH, 8_000), _ack(8_000, _idx(0, 1, 2)));
-        OffLib.Op[] memory ops = new OffLib.Op[](3);
-        ops[0] = _use(5_000, 8_000); // at the acknowledged reading: before the stop, not a violation
-        ops[1] = _use(5_000, 8_001); // granted after it
-        ops[2] = _holdE(PERMIT, EPOCH, 5_000, 7_000, 8_500); // granted before, but still held after it
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
-        bytes[] memory seals = _seal(h, _idx(1, 2, 3));
+        _ackOnG(PERMIT, 10_000, 12_000);
+        OffLib.Op[] memory ops = _ops1(_grant(PERMIT, EPOCH, 10_000, 11_000, 30_000)); // granted before, ends after
+        OffLib.Header memory h = _ckpt(_hist1(), ops, _stEmpty(11_000), 13_000);
+        assertEq(reg.proveUseAfterAck(h, _seal(h, _who(0, 1, 2)), _op(ops, 0), EPOCH, 12_000), 3);
+    }
+
+    /// v4: lastAck was overwritten by the next hand-over, erasing the evidence. v5 keeps every acknowledgement.
+    function test_ackEvidenceSurvivesLaterHandOver_v4exploit() public {
+        _renew(PERMIT, 10_000);
+        reg.stop(PERMIT, SITE2);
+        _ackOnG(PERMIT, 10_000, 12_000);
+        bytes32[] memory objs = _objs(PERMIT);
+        bytes32 tag = OffLib.requestTag(OffLib.objectsHash(objs));
+        reg.renew(SITE2, objs, EPOCH, 10_000, _sig(CLOCK2, OffLib.clockDigest(dom, SITE2, EPOCH, 10_000, tag)));
+        reg.stop(PERMIT, SITE);
+        vm.warp(reg.releaseAt(PERMIT));
+        reg.reassign(PERMIT); // a later hand-over of the same object
+        OffLib.Op[] memory ops = _ops1(_grant(PERMIT, EPOCH, 10_000, 12_001, 12_500));
+        OffLib.Header memory h = _ckpt(_hist1(), ops, _stEmpty(12_001), 13_000);
+        assertEq(reg.proveUseAfterAck(h, _seal(h, _who(0, 1, 2)), _op(ops, 0), EPOCH, 12_000), 3);
+    }
+
+    function test_honestUseAfterReturnNotFramed() public {
+        _renew(PERMIT, 10_000);
+        reg.stop(PERMIT, SITE2);
+        _ackOnG(PERMIT, 10_000, 12_000);
+        OffLib.Op[] memory ops = _ops1(_grant(PERMIT, EPOCH, 20_000, 21_000, 22_000)); // under a newer renewal
+        OffLib.Header memory h = _ckpt(_hist1(), ops, _stEmpty(21_000), 23_000);
+        bytes[] memory s = _seal(h, _who(0, 1, 2));
+        RightsRegistry.OpProof memory o = _op(ops, 0);
         vm.expectRevert(RightsRegistry.NotAViolation.selector);
-        reg.proveUseAfterAck(h, seals, ops[0], 0, _proof(lv, 0));
-        assertEq(reg.proveUseAfterAck(h, seals, ops[2], 2, _proof(lv, 2)), 2);
-        assertEq(reg.bond(SITE, va[0]), reg.BOND()); // acked but did not seal
-        assertEq(reg.bond(SITE, va[3]), reg.BOND()); // sealed but did not ack
+        reg.proveUseAfterAck(h, s, o, EPOCH, 12_000);
     }
 
-    // ------------------------------------------------------------ review round 1 fixes
-    function test_renewNeedsAnchoredCoverage() public {
-        _renew(START + LAG); // within the lag after registration
-        uint64 far = START + LAG + 1;
-        vm.expectRevert(abi.encodeWithSelector(RightsRegistry.AnchorDebt.selector, START, far - LAG));
-        reg.renew(SITE, PERMIT, EPOCH, far, _sig(CLOCK, OffLib.requestDigest(SITE, PERMIT, EPOCH, far)));
-        // Anchoring a checkpoint whose clock-attested close is later restores renewals.
-        (OffLib.Header memory h,) = _hdr(1, bytes32(0), _one(OffLib.Op(OffLib.LOG, keccak256("x"), 0, 0, 0, 0, "")), far);
-        reg.anchor(h, _seal(h, _idx(0, 1, 2)));
-        _renew(far);
-    }
-
-    function test_staleAckIsRejected() public {
-        _renew(5_000);
+    function test_staleAckRejected() public {
+        _renew(PERMIT, 10_000);
         reg.stop(PERMIT, SITE2);
-        // An acknowledgement older than the last renewal (e.g. replayed from an earlier hand-over) is refused.
+        OffLib.Op memory ack = _ackOp(PERMIT, 10_000, 9_000);
+        bytes[] memory acks = _acks(PERMIT, 9_000);
         vm.expectRevert(RightsRegistry.StaleAck.selector);
-        reg.reassignAcked(PERMIT, EPOCH, 4_999, _clk(EPOCH, 4_999), _ack(4_999, _idx(0, 1, 2)));
+        reg.reassignAcked(PERMIT, EPOCH, 9_000, ack.clockSig, acks);
     }
 
-    function test_quorumForLargerSites() public {
-        uint64 S5 = 5;
-        address[] memory v5 = new address[](5);
-        uint256[5] memory k5 = [uint256(0xE1), 0xE2, 0xE3, 0xE4, 0xE5];
-        for (uint256 i = 0; i < 5; i++) {
-            v5[i] = vm.addr(k5[i]);
+    // ============================================================ fraud proofs: single checkpoint
+    function test_overspend() public {
+        OffLib.Op[] memory ops = _ops1(_consume(45, 45, 1, 11_000));
+        OffLib.Header memory h = _ckpt(_hist1(), ops, _st(11_000, 45, 1), 12_000);
+        assertEq(reg.proveOverspend(h, _seal(h, _who(0, 1, 2)), _op(ops, 0)), 3);
+    }
+
+    function test_honestConsumptionNotSlashable() public {
+        OffLib.Op[] memory ops = _ops2(_consume(30, 30, 1, 11_000), _consume(5, 35, 1, 11_500));
+        OffLib.State memory st = _st(11_500, 35, 1);
+        OffLib.Header memory h = _ckpt(_hist1(), ops, st, 12_000);
+        bytes[] memory s = _seal(h, _who(0, 1, 2));
+        for (uint256 i = 0; i < 2; i++) {
+            RightsRegistry.OpProof memory o = _op(ops, i);
+            vm.expectRevert(RightsRegistry.NotAViolation.selector);
+            reg.proveOverspend(h, s, o);
+            vm.expectRevert(RightsRegistry.NotAViolation.selector);
+            reg.proveBadOp(h, s, o);
+            vm.expectRevert(RightsRegistry.NotAViolation.selector);
+            reg.proveStateMismatch(h, s, o, st);
         }
-        reg.registerSite(S5, 1, vm.addr(CLOCK2), v5, EPOCH, START);
-        OffLib.Op[] memory ops = _one(_consume(50, 50)); // site 5 has no share
-        bytes32[] memory leaves = new bytes32[](1);
-        leaves[0] = OffLib.leaf(ops[0]);
-        OffLib.Header memory h = OffLib.Header(S5, 1, bytes32(0), _root(leaves), 1, bytes32(0), 0, bytes32(0), EPOCH, 0, "");
-        bytes32 d = OffLib.checkpointDigest(address(reg), OffLib.headerHash(h));
+        RightsRegistry.OpProof memory o0 = _op(ops, 0);
+        RightsRegistry.OpProof memory o1 = _op(ops, 1);
+        vm.expectRevert(RightsRegistry.NotAViolation.selector);
+        reg.proveInconsistent(h, s, o0, o1);
+    }
+
+    function test_badOp() public {
+        OffLib.Op memory forged = _release(LOTO, 11_000, 12_000);
+        forged.clockSig = _sig(CLOCK, bytes32(uint256(1))); // not an attestation of this release
+        OffLib.Op[] memory ops = _ops1(forged);
+        OffLib.Header memory h = _ckpt(_hist1(), ops, _stEmpty(12_000), 13_000);
+        assertEq(reg.proveBadOp(h, _seal(h, _who(0, 1, 2)), _op(ops, 0)), 3);
+        OffLib.Op[] memory ops2 = _ops1(_shareOp(90, 0, 7)); // version 7 was never certified
+        OffLib.Header memory h2 = _ckpt(_hist1(), ops2, _st(0, 0, 7), 13_000);
+        reg.proveBadOp(h2, _seal(h2, _who(0, 1, 3)), _op(ops2, 0));
+        assertTrue(reg.slashed(SITE, va[3]));
+    }
+
+    function test_honestOpsNotBadOps() public {
+        OffLib.Op[] memory ops = new OffLib.Op[](5);
+        ops[0] = _shareOp(40, 0, 1);
+        ops[1] = _log(keccak256("record"));
+        ops[2] = _grant(LOTO, EPOCH, 10_000, 11_000, OffLib.OPEN);
+        ops[3] = _release(LOTO, 11_000, 12_000);
+        ops[4] = _ackOp(LOTO, 10_000, 12_500);
+        OffLib.Header memory h = _ckpt(_hist1(), ops, _st(12_500, 0, 1), 13_000);
+        bytes[] memory s = _seal(h, _who(0, 1, 2));
+        for (uint256 i = 0; i < 5; i++) {
+            RightsRegistry.OpProof memory o = _op(ops, i);
+            vm.expectRevert(RightsRegistry.NotAViolation.selector);
+            reg.proveBadOp(h, s, o);
+        }
+    }
+
+    function test_overuse() public {
+        _renew(PERMIT, 10_000);
+        _renew(LOTO, 10_000);
+        OffLib.Op[] memory ops = new OffLib.Op[](4);
+        ops[0] = _grant(PERMIT, EPOCH, 9_000, 11_000, 12_000); // no such renewal
+        ops[1] = _grant(PERMIT, EPOCH, 10_000, 10_000 + A, 10_000 + A + 5); // after the allowance
+        ops[2] = _grant(PERMIT, EPOCH, 10_000, 11_000, 10_000 + A); // hold ends past the allowance
+        ops[3] = _grant(LOTO, EPOCH, 10_000, 11_000, 12_000); // bounded hold of an open-hold object
+        OffLib.Header memory h = _ckpt(_hist1(), ops, _stEmpty(11_000), 12_000);
+        bytes[] memory s = _seal(h, _who(0, 1, 2));
+        assertEq(reg.proveOveruse(h, s, _op(ops, 0)), 3);
+        for (uint256 i = 1; i < 4; i++) {
+            assertEq(reg.proveOveruse(h, s, _op(ops, i)), 0); // already slashed, still a violation
+        }
+    }
+
+    function test_honestGrantsNotOveruse() public {
+        _renew(PERMIT, 10_000);
+        _renew(LOTO, 10_000);
+        _renew(CRED, 10_000);
+        OffLib.Op[] memory ops = new OffLib.Op[](3);
+        ops[0] = _grant(PERMIT, EPOCH, 10_000, 11_000, 10_000 + A - 1);
+        ops[1] = _grant(LOTO, EPOCH, 10_000, 11_500, OffLib.OPEN);
+        ops[2] = _grant(CRED, EPOCH, 10_000, 12_000, 12_001);
+        OffLib.Header memory h = _ckpt(_hist1(), ops, _stEmpty(12_000), 13_000);
+        bytes[] memory s = _seal(h, _who(0, 1, 2));
+        for (uint256 i = 0; i < 3; i++) {
+            RightsRegistry.OpProof memory o = _op(ops, i);
+            vm.expectRevert(RightsRegistry.NotAViolation.selector);
+            reg.proveOveruse(h, s, o);
+        }
+    }
+
+    function test_inconsistentOrder() public {
+        OffLib.Op memory g = _grant(PERMIT, EPOCH, 10_000, 11_000, 12_000);
+        OffLib.Op[] memory ops = _ops2(g, g); // a replayed attestation: readings do not increase
+        OffLib.Header memory h = _ckpt(_hist1(), ops, _stEmpty(11_000), 13_000);
+        assertEq(reg.proveInconsistent(h, _seal(h, _who(0, 1, 2)), _op(ops, 0), _op(ops, 1)), 3);
+    }
+
+    function test_inconsistentStaleVersionAndUnderstate() public {
+        OffLib.Op[] memory ops = _ops2(_shareOp(20, 10, 2), _consume(5, 15, 1, 11_000)); // version 1 after v2
+        OffLib.Header memory h = _ckpt(_hist1(), ops, _st(11_000, 15, 2), 12_000);
+        assertEq(reg.proveInconsistent(h, _seal(h, _who(0, 1, 2)), _op(ops, 0), _op(ops, 1)), 3);
+        OffLib.Op[] memory ops2 = _ops2(_consume(30, 30, 1, 11_000), _consume(5, 5, 1, 11_500)); // restarts at 0
+        OffLib.Header memory h2 = _ckpt(_hist1(), ops2, _st(11_500, 5, 1), 12_000);
+        reg.proveInconsistent(h2, _seal(h2, _who(1, 2, 3)), _op(ops2, 0), _op(ops2, 1));
+        assertTrue(reg.slashed(SITE, va[3]));
+    }
+
+    function test_stateMismatch() public {
+        OffLib.Op[] memory ops = _ops1(_consume(30, 30, 1, 11_000));
+        OffLib.State memory st = _st(11_000, 10, 1); // understates 30
+        OffLib.Header memory h = _ckpt(_hist1(), ops, st, 12_000);
+        assertEq(reg.proveStateMismatch(h, _seal(h, _who(0, 1, 2)), _op(ops, 0), st), 3);
+    }
+
+    function test_stateMalformedOrClockBehind() public {
+        OffLib.State memory bad = _st(11_000, 30, 1);
+        bad.versions = new uint64[](0); // lengths differ
+        OffLib.Op[] memory ops = _ops1(_consume(30, 30, 1, 11_000));
+        OffLib.Header memory h = _ckpt(_hist1(), ops, bad, 12_000);
+        assertEq(reg.proveStateMismatch(h, _seal(h, _who(0, 1, 2)), _op(ops, 0), bad), 3);
+        OffLib.State memory behind = _st(10_000, 30, 1); // clock behind its own operation
+        OffLib.Header memory h2 = _ckpt(_hist1(), ops, behind, 12_000);
+        reg.proveStateMismatch(h2, _seal(h2, _who(1, 2, 3)), _op(ops, 0), behind);
+        assertTrue(reg.slashed(SITE, va[3]));
+    }
+
+    // ============================================================ fraud proofs: history
+    /// v4: a checkpoint with no consumption lowered the committed total, laundering an understatement.
+    function test_regressThroughEmptyCheckpoint_v4exploit() public {
+        OffLib.State memory s1 = _st(11_000, 30, 1);
+        OffLib.Header memory c1 = _ckpt(_hist1(), _ops1(_consume(30, 30, 1, 11_000)), s1, 12_000);
+        bytes32[] memory hist2 = _push(_hist1(), c1);
+        OffLib.State memory s2 = _st(11_000, 0, 1); // no consumption, total lowered
+        OffLib.Header memory c2 = _ckpt(hist2, _ops1(_log(keccak256("noop"))), s2, 13_000);
+        assertEq(reg.proveRegress(c2, _seal(c2, _who(0, 1, 2)), s2, _anc(hist2, c1, s1)), 3);
+    }
+
+    function test_regressDroppedResourceOrClock() public {
+        OffLib.State memory s1 = _st(11_000, 30, 1);
+        OffLib.Header memory c1 = _ckpt(_hist1(), _ops1(_consume(30, 30, 1, 11_000)), s1, 12_000);
+        bytes32[] memory hist2 = _push(_hist1(), c1);
+        OffLib.State memory s2 = _stEmpty(11_000); // resource dropped
+        OffLib.Header memory c2 = _ckpt(hist2, _ops1(_log(keccak256("a"))), s2, 13_000);
+        assertEq(reg.proveRegress(c2, _seal(c2, _who(0, 1, 2)), s2, _anc(hist2, c1, s1)), 3);
+        OffLib.State memory s3 = _st(10_000, 30, 1); // clock went back
+        OffLib.Header memory c3 = _ckpt(hist2, _ops1(_log(keccak256("b"))), s3, 13_000);
+        reg.proveRegress(c3, _seal(c3, _who(1, 2, 3)), s3, _anc(hist2, c1, s1));
+        assertTrue(reg.slashed(SITE, va[3]));
+    }
+
+    /// v4: a faulty quorum anchored a checkpoint whose consumption restarted below the anchored base.
+    function test_restartBelowAncestor_v4exploit() public {
+        OffLib.State memory s1 = _st(11_000, 40, 1);
+        OffLib.Header memory c1 = _ckpt(_hist1(), _ops1(_consume(40, 40, 1, 11_000)), s1, 12_000);
+        reg.anchor(c1, _seal(c1, _who(0, 1, 2)), new bytes32[](0));
+        bytes32[] memory hist = new bytes32[](1000); // hidden intermediate checkpoints
+        hist[1] = OffLib.headerHash(c1);
+        OffLib.Op[] memory ops = _ops1(_consume(40, 40, 1, 50_000)); // consumption restarts at zero
+        OffLib.Header memory c = _ckpt(hist, ops, _st(50_000, 40, 1), 51_000);
+        assertEq(reg.proveOpRegress(c, _seal(c, _who(0, 1, 2)), _op(ops, 0), _anc(hist, c1, s1)), 3);
+    }
+
+    /// v4: after confirmShare, a faulty quorum kept consuming under the old, larger share version.
+    function test_staleVersionAfterConfirmShare_v4exploit() public {
+        OffLib.Header memory c1 = _ckpt(_hist1(), _ops1(_consume(30, 30, 1, 11_000)), _st(11_000, 30, 1), 12_000);
+        assertEq(reg.setShare(PARTS, SITE, 30), 2); // lower 40 -> 30, pending
+        OffLib.State memory s2 = _st(11_000, 30, 2);
+        bytes32[] memory hist2 = _push(_hist1(), c1);
+        OffLib.Header memory c2 = _ckpt(hist2, _ops1(_shareOp(30, 30, 2)), s2, 13_000);
+        reg.confirmShare(PARTS, SITE, c2, _seal(c2, _who(0, 1, 2)), s2);
+        assertEq(reg.allocated(PARTS), 90);
+        bytes32[] memory hist3 = _push(hist2, c2);
+        OffLib.Op[] memory ops = _ops1(_consume(10, 40, 1, 14_000)); // claims version 1 (40)
+        OffLib.Header memory c3 = _ckpt(hist3, ops, _st(14_000, 40, 1), 15_000);
+        bytes[] memory s3 = _seal(c3, _who(0, 1, 2));
+        RightsRegistry.OpProof memory o = _op(ops, 0);
+        vm.expectRevert(RightsRegistry.NotAViolation.selector);
+        reg.proveOverspend(c3, s3, o); // within version 1, so this proof alone cannot catch it
+        assertEq(reg.proveOpRegress(c3, s3, o, _anc(hist3, c2, s2)), 3);
+    }
+
+    function test_replayedAttestationAcrossCheckpoints() public {
+        OffLib.Op memory g = _grant(PERMIT, EPOCH, 10_000, 11_000, 12_000);
+        OffLib.State memory s1 = _stEmpty(11_000);
+        OffLib.Header memory c1 = _ckpt(_hist1(), _ops1(g), s1, 12_000);
+        bytes32[] memory hist2 = _push(_hist1(), c1);
+        OffLib.Op[] memory ops = _ops1(g); // the same grant again
+        OffLib.Header memory c2 = _ckpt(hist2, ops, _stEmpty(11_000), 13_000);
+        assertEq(reg.proveOpRegress(c2, _seal(c2, _who(0, 1, 2)), _op(ops, 0), _anc(hist2, c1, s1)), 3);
+    }
+
+    function test_honestHistoryNotSlashable() public {
+        OffLib.State memory s1 = _st(11_000, 30, 1);
+        OffLib.Header memory c1 = _ckpt(_hist1(), _ops1(_consume(30, 30, 1, 11_000)), s1, 12_000);
+        bytes32[] memory hist2 = _push(_hist1(), c1);
+        OffLib.Op[] memory ops = _ops2(_consume(5, 35, 1, 12_500), _grant(PERMIT, EPOCH, 10_000, 12_600, 13_000));
+        OffLib.State memory s2 = _st(12_600, 35, 1);
+        OffLib.Header memory c2 = _ckpt(hist2, ops, s2, 13_500);
+        bytes[] memory s = _seal(c2, _who(0, 1, 2));
+        RightsRegistry.Ancestor memory anc = _anc(hist2, c1, s1);
+        vm.expectRevert(RightsRegistry.NotAViolation.selector);
+        reg.proveRegress(c2, s, s2, anc);
+        for (uint256 i = 0; i < 2; i++) {
+            RightsRegistry.OpProof memory o = _op(ops, i);
+            vm.expectRevert(RightsRegistry.NotAViolation.selector);
+            reg.proveOpRegress(c2, s, o, anc);
+        }
+        bytes[] memory s1Seals = _seal(c1, _who(0, 1, 2));
+        bytes32[] memory p = _histPath(hist2, 1);
+        vm.expectRevert(RightsRegistry.NotAViolation.selector);
+        reg.proveFork(c1, s1Seals, c2, s, OffLib.headerHash(c1), p);
+    }
+
+    function test_ancestorMustBeInHistory() public {
+        OffLib.State memory s1 = _st(11_000, 30, 1);
+        OffLib.Header memory c1 = _ckpt(_hist1(), _ops1(_consume(30, 30, 1, 11_000)), s1, 12_000);
+        OffLib.State memory s2 = _stEmpty(11_000);
+        bytes32[] memory other = new bytes32[](2); // a history that does not contain c1
+        other[1] = keccak256("another checkpoint");
+        OffLib.Header memory c2 = _ckpt(other, _ops1(_log(keccak256("x"))), s2, 13_000);
+        RightsRegistry.Ancestor memory anc = RightsRegistry.Ancestor(c1, s1, _histPath(other, 1));
+        bytes[] memory s = _seal(c2, _who(0, 1, 2));
+        vm.expectRevert(RightsRegistry.BadProof.selector);
+        reg.proveRegress(c2, s, s2, anc);
+    }
+
+    function test_forkSameHeight() public {
+        OffLib.Header memory h1 = _ckpt(_hist1(), _ops1(_log(keccak256("a"))), _stEmpty(0), 12_000);
+        OffLib.Header memory h2 = _ckpt(_hist1(), _ops1(_log(keccak256("b"))), _stEmpty(0), 12_000);
+        uint256 n = reg.proveFork(h1, _seal(h1, _who(0, 1, 2)), h2, _seal(h2, _who(1, 2, 3)), bytes32(0), new bytes32[](0));
+        assertEq(n, 2);
+    }
+
+    /// v4: forks were detected only at equal heights; a branch at another height escaped.
+    function test_forkAcrossHeights_v4exploit() public {
+        OffLib.Header memory a1 = _ckpt(_hist1(), _ops1(_log(keccak256("a"))), _stEmpty(0), 12_000);
+        OffLib.Header memory b1 = _ckpt(_hist1(), _ops1(_log(keccak256("b"))), _stEmpty(0), 12_000); // never shown
+        bytes32[] memory histB = new bytes32[](1000);
+        histB[1] = OffLib.headerHash(b1);
+        OffLib.Header memory b999 = _ckpt(histB, _ops1(_log(keccak256("c"))), _stEmpty(0), 50_000);
+        bytes[] memory sa = _seal(a1, _who(0, 1, 2));
+        bytes[] memory sb = _seal(b999, _who(1, 2, 3));
+        assertEq(reg.proveFork(a1, sa, b999, sb, OffLib.headerHash(b1), _histPath(histB, 1)), 2);
+    }
+
+    // ============================================================ anchoring, shares, quorums, recovery
+    function test_anchorCatchUpAndHistory() public {
+        OffLib.Header memory c1 = _ckpt(_hist1(), _ops1(_log(keccak256("1"))), _stEmpty(0), 12_000);
+        reg.anchor(c1, _seal(c1, _who(0, 1, 2)), new bytes32[](0));
+        bytes32[] memory hist = new bytes32[](50);
+        hist[1] = OffLib.headerHash(c1);
+        OffLib.Header memory c50 = _ckpt(hist, _ops1(_log(keccak256("50"))), _stEmpty(0), 90_000);
+        reg.anchor(c50, _seal(c50, _who(0, 1, 2)), _histPath(hist, 1)); // one transaction, 48 heights later
+        (,,,,,, uint64 ah,, uint64 ce, uint64 cr) = reg.sites(SITE);
+        assertEq(ah, 50);
+        assertEq(ce, EPOCH);
+        assertEq(cr, 90_000);
+    }
+
+    function test_anchorRejectsForeignHistoryAndForgedClose() public {
+        OffLib.Header memory c1 = _ckpt(_hist1(), _ops1(_log(keccak256("1"))), _stEmpty(0), 12_000);
+        reg.anchor(c1, _seal(c1, _who(0, 1, 2)), new bytes32[](0));
+        bytes32[] memory other = new bytes32[](3);
+        other[1] = keccak256("not c1");
+        OffLib.Header memory c3 = _ckpt(other, _ops1(_log(keccak256("3"))), _stEmpty(0), 20_000);
+        bytes[] memory s3 = _seal(c3, _who(0, 1, 2));
+        bytes32[] memory p3 = _histPath(other, 1);
+        vm.expectRevert(RightsRegistry.BadProof.selector);
+        reg.anchor(c3, s3, p3);
+        bytes32[] memory hist = _push(_hist1(), c1);
+        OffLib.Header memory c2 = _ckpt(hist, _ops1(_log(keccak256("2"))), _stEmpty(0), 20_000);
+        c2.closeReading = 9_000_000; // inflated coverage: the close is no longer attested
+        bytes[] memory s2 = _seal(c2, _who(0, 1, 2));
+        bytes32[] memory p2 = _histPath(hist, 1);
+        vm.expectRevert(RightsRegistry.BadClockSig.selector);
+        reg.anchor(c2, s2, p2);
+    }
+
+    /// Anyone may anchor an older checkpoint first; the newest still anchors because its history contains it.
+    function test_anchorGriefingHarmless() public {
+        OffLib.Header memory c1 = _ckpt(_hist1(), _ops1(_log(keccak256("1"))), _stEmpty(0), 12_000);
+        bytes32[] memory hist2 = _push(_hist1(), c1);
+        OffLib.Header memory c2 = _ckpt(hist2, _ops1(_log(keccak256("2"))), _stEmpty(0), 13_000);
+        bytes32[] memory hist3 = _push(hist2, c2);
+        OffLib.Header memory c3 = _ckpt(hist3, _ops1(_log(keccak256("3"))), _stEmpty(0), 14_000);
+        reg.anchor(c2, _seal(c2, _who(0, 1, 2)), new bytes32[](0));
+        reg.anchor(c3, _seal(c3, _who(0, 1, 2)), _histPath(hist3, 2));
+        (,,,,,, uint64 ah,,,) = reg.sites(SITE);
+        assertEq(ah, 3);
+    }
+
+    function test_renewAfterAnchor() public {
+        OffLib.Header memory c1 = _ckpt(_hist1(), _ops1(_log(keccak256("1"))), _stEmpty(0), 70_000);
+        reg.anchor(c1, _seal(c1, _who(0, 1, 2)), new bytes32[](0));
+        _renew(PERMIT, 70_000 + LAG);
+    }
+
+    function test_confirmShareNeedsAppliedVersion() public {
+        OffLib.Header memory c0 = _ckpt(_hist1(), _ops1(_log(keccak256("x"))), _stEmpty(0), 1);
+        vm.expectRevert(RightsRegistry.NoPendingShare.selector);
+        reg.confirmShare(PARTS, SITE, c0, new bytes[](0), _stEmpty(0));
+        reg.setShare(PARTS, SITE, 30); // v2, pending
+        OffLib.State memory old = _st(11_000, 35, 1); // still on v1 and above 30
+        OffLib.Header memory c = _ckpt(_hist1(), _ops1(_consume(35, 35, 1, 11_000)), old, 12_000);
+        bytes[] memory s = _seal(c, _who(0, 1, 2));
+        vm.expectRevert(RightsRegistry.ShareNotApplied.selector);
+        reg.confirmShare(PARTS, SITE, c, s, old);
+        assertEq(reg.allocated(PARTS), 100);
+    }
+
+    function test_slashedExcludedFromQuorums() public {
+        OffLib.Op[] memory ops = _ops1(_consume(45, 45, 1, 11_000));
+        OffLib.Header memory h = _ckpt(_hist1(), ops, _st(11_000, 45, 1), 12_000);
+        reg.proveOverspend(h, _seal(h, _who(0, 1, 2)), _op(ops, 0)); // 3 slashed: site revoked
+        (, bool revoked,,,,,,,,) = reg.sites(SITE);
+        assertTrue(revoked);
+        OffLib.Header memory c = _ckpt(_hist1(), _ops1(_log(keccak256("1"))), _stEmpty(0), 12_000);
+        bytes[] memory s = _seal(c, _who(0, 1, 3));
+        vm.expectRevert(RightsRegistry.NoQuorum.selector);
+        reg.anchor(c, s, new bytes32[](0));
+        vm.expectRevert(RightsRegistry.SiteRevokedErr.selector);
+        _renew(PERMIT, 10_000);
+    }
+
+    function test_largerSiteQuorum() public {
+        address[] memory vs = new address[](5);
+        for (uint256 i = 0; i < 5; i++) {
+            vs[i] = vm.addr(0xF1 + i);
+        }
+        reg.registerSite(5, 1, vm.addr(CLOCK), vs, EPOCH, START); // q = floor((5+1)/2)+1 = 4
+        OffLib.Header memory h = _ckpt(_hist1(), _ops1(_log(keccak256("q"))), _stEmpty(0), 12_000);
+        h.site = 5;
+        bytes32 d = OffLib.checkpointDigest(dom, OffLib.headerHash(h));
         bytes[] memory three = new bytes[](3);
         for (uint256 i = 0; i < 3; i++) {
-            three[i] = _sig(k5[i], d);
+            three[i] = _sig(0xF1 + i, d);
         }
-        // n = 5, f = 1: quorum floor(6/2)+1 = 4, so three seals are not enough.
         vm.expectRevert(RightsRegistry.NoQuorum.selector);
-        reg.proveOverspend(h, three, ops[0], 0, _proof(leaves, 0));
-        bytes[] memory four = new bytes[](4);
-        for (uint256 i = 0; i < 4; i++) {
-            four[i] = _sig(k5[i], d);
-        }
-        assertEq(reg.proveOverspend(h, four, ops[0], 0, _proof(leaves, 0)), 4);
+        reg.anchor(h, three, new bytes32[](0));
     }
 
-    // ------------------------------------------------------------ review round 2 regressions
-    function test_anchorNeedsAttestedClose() public {
-        (OffLib.Header memory h,) = _hdr(1, bytes32(0), _one(OffLib.Op(OffLib.LOG, keccak256("x"), 0, 0, 0, 0, "")), 900_000);
-        h.closeReading = 9_000_000; // a faulty quorum inflates its coverage: the clock never attested it
-        vm.expectRevert(RightsRegistry.BadClockSig.selector);
-        reg.anchor(h, _seal(h, _idx(0, 1, 2)));
+    function test_recoveryByAdmin() public {
+        reg.rotateClock(SITE, vm.addr(0xC9), 3, 100);
+        (,,,,, address ck,,, uint64 ce, uint64 cr) = reg.sites(SITE);
+        assertEq(ck, vm.addr(0xC9));
+        assertEq(ce, 3);
+        assertEq(cr, 100);
+        reg.replaceValidator(SITE, va[3], vm.addr(0xAA));
+        assertTrue(reg.isValidator(SITE, vm.addr(0xAA)) && !reg.isValidator(SITE, va[3]));
+        reg.stop(LOTO, SITE2);
+        reg.forceReassign(LOTO); // emergency override, logged
+        (,,,,,, uint64 holder,) = reg.leases(LOTO);
+        assertEq(holder, SITE2);
+        vm.prank(address(0xBEEF));
+        vm.expectRevert(RightsRegistry.NotAdmin.selector);
+        reg.forceReassign(PERMIT);
     }
 
-    function test_replayedOlderRequestIsRejected() public {
-        uint64 newer = START + 50_000;
-        _renew(newer);
-        // A relayer that withheld an older signed request cannot roll the last renewal back.
-        vm.expectRevert(RightsRegistry.StaleRequest.selector);
-        _renew(START + 10_000);
-    }
-
-    function test_ackRaisesRenewalFloor() public {
-        _renew(5_000);
-        reg.stop(PERMIT, SITE2);
-        reg.reassignAcked(PERMIT, EPOCH, 8_000, _clk(EPOCH, 8_000), _ack(8_000, _idx(0, 1, 2)));
-        // A request signed before the ack but never relayed cannot be used after the object comes back.
-        (uint64 fe, uint64 fcq) = reg.lastRenewal(PERMIT, SITE);
-        assertEq(fe, EPOCH);
-        assertEq(fcq, 8_000); // the floor is the acknowledged reading
-    }
-
-    function test_honestUseAfterReturnIsNotFramed() public {
-        _renew(5_000);
-        reg.stop(PERMIT, SITE2);
-        reg.reassignAcked(PERMIT, EPOCH, 8_000, _clk(EPOCH, 8_000), _ack(8_000, _idx(0, 1, 2)));
-        // Later grant under a renewal newer than the ack (base 20000): not a use after the ack.
-        OffLib.Op[] memory ops = _one(_use(20_000, 21_000));
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
-        vm.expectRevert(RightsRegistry.NotAViolation.selector);
-        reg.proveUseAfterAck(h, _seal(h, _idx(0, 1, 2)), ops[0], 0, _proof(lv, 0));
-    }
-
-    function test_shareReductionIsVersionedAndAcknowledged() public {
-        // Lower SITE's share from 40 to 20 (version 2): capacity stays reserved until the site acknowledges.
-        reg.setShare(PARTS, SITE, 20);
-        vm.expectRevert(RightsRegistry.OverCap.selector);
-        reg.setShare(PARTS, SITE2, 61);
-        // Consumption made under version 1 up to 40 stays honest: no framing after the reduction.
-        OffLib.Op[] memory ops = _one(_consumeV(5, 40, 1));
-        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
-        vm.expectRevert(RightsRegistry.NotAViolation.selector);
-        reg.proveOverspend(h, _seal(h, _idx(0, 1, 2)), ops[0], 0, _proof(lv, 0));
-        // The site applies version 2 (its total must already be within 20) and cannot go back to version 1.
-        siteC.applyShare(PARTS, 20, 2, _cert(OffLib.shareDigest(address(reg), SITE, PARTS, 20, 2)));
-        vm.expectRevert(SiteRights.StaleShare.selector);
-        siteC.applyShare(PARTS, 40, 1, _cert(OffLib.shareDigest(address(reg), SITE, PARTS, 40, 1)));
-        bytes32 d = OffLib.shareAckDigest(address(reg), SITE, PARTS, 2);
-        bytes[] memory acks = new bytes[](3);
-        for (uint256 i = 0; i < 3; i++) {
-            acks[i] = _sig(vk[i], d);
-        }
-        reg.confirmShare(PARTS, SITE, acks);
-        reg.setShare(PARTS, SITE2, 80); // the freed capacity is now available
-        // Under version 2, a total above 20 is provable.
-        OffLib.Op[] memory ops2 = _one(_consumeV(5, 25, 2));
-        (OffLib.Header memory h2, bytes32[] memory lv2) = _header(2, bytes32(0), ops2);
-        assertEq(reg.proveOverspend(h2, _seal(h2, _idx(0, 1, 2)), ops2[0], 0, _proof(lv2, 0)), 3);
+    /// A proof against an ancestor 900 heights back costs the same as one against the parent.
+    function test_proofCostIndependentOfHistory() public {
+        OffLib.State memory s1 = _st(11_000, 40, 1);
+        OffLib.Header memory c1 = _ckpt(_hist1(), _ops1(_consume(40, 40, 1, 11_000)), s1, 12_000);
+        bytes32[] memory near = _push(_hist1(), c1);
+        bytes32[] memory far = new bytes32[](901);
+        far[1] = OffLib.headerHash(c1);
+        OffLib.Op[] memory ops = _ops1(_consume(40, 40, 1, 50_000));
+        OffLib.Header memory cn = _ckpt(near, ops, _st(50_000, 40, 1), 51_000);
+        OffLib.Header memory cf = _ckpt(far, ops, _st(50_000, 40, 1), 51_000);
+        RightsRegistry.Ancestor memory an = _anc(near, c1, s1);
+        RightsRegistry.Ancestor memory af = _anc(far, c1, s1);
+        bytes[] memory sn = _seal(cn, _who(0, 1, 2));
+        bytes[] memory sf = _seal(cf, _who(0, 1, 2));
+        RightsRegistry.OpProof memory o = _op(ops, 0);
+        uint256 snap = vm.snapshotState();
+        uint256 g0 = gasleft();
+        reg.proveOpRegress(cn, sn, o, an);
+        uint256 gNear = g0 - gasleft();
+        vm.revertToState(snap);
+        g0 = gasleft();
+        reg.proveOpRegress(cf, sf, o, af);
+        uint256 gFar = g0 - gasleft();
+        // Both verify a 20-level path; they differ only in the byte content of the path (about 2%).
+        assertApproxEqRel(gNear, gFar, 0.03e18);
     }
 }

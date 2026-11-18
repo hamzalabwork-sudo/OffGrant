@@ -21,13 +21,13 @@
 (* Safe:      S1's hold is never in effect after the object moved to S2.  *)
 (* Tolerance: S1 may grant for real time D after sending the request      *)
 (*            answered by its latest renewal (same epoch, powered).       *)
-(* Expected: Safe holds iff Mode = "send", Epochs, Fresh and              *)
+(* Expected: Safe holds iff Mode = "send", Epochs, Fresh, HoldInside and  *)
 (*           Wait >= A*K/(K-R) + 2*EG.                                    *)
 (***************************************************************************)
 EXTENDS Integers
 
 CONSTANTS K, R, A, Wait, D, EG, Tmax, MaxPowerLoss,
-          Mode, Epochs, Fresh
+          Mode, Epochs, Fresh, HoldInside
 
 VARIABLES t, c, ep, on, losses, pend, inflight, base, bep, baseT,
           gStopped, lastIssueG, reassigned, cut, hold
@@ -80,10 +80,16 @@ Deliver ==
 
 Allowed == base >= 0 /\ (Epochs => bep = ep) /\ c - base < A
 
-\* S1 grants a hold (only one at a time is modelled): an instant or the longest allowed.
+\* S1 grants a hold (only one at a time is modelled): the shortest hold (ending one clock unit after the
+\* grant) or the longest allowed. With HoldInside a hold must end inside the allowance (u <= base + A - 1);
+\* without it, a hold may also run past the allowance (by one real-time step).
+HoldEnds ==
+  IF HoldInside THEN {x \in {c + 1, base + A - 1} : x <= base + A - 1}
+                ELSE {c + 1, base + A - 1, base + A + K}
+
 Grant ==
   /\ on /\ Allowed /\ hold = NoHold
-  /\ \E u \in {c, base + A - 1} : hold' = [u |-> u, he |-> ep, ex |-> FALSE, now |-> FALSE]
+  /\ \E u \in HoldEnds : u > c /\ hold' = [u |-> u, he |-> ep, ex |-> FALSE, now |-> FALSE]
   /\ UNCHANGED <<t, c, ep, on, losses, pend, inflight, base, bep, baseT, gStopped, lastIssueG, reassigned, cut>>
 
 \* The gateway executes the grant once it is final (any later time).

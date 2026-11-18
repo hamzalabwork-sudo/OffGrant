@@ -4,6 +4,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import matplotlib
+import matplotlib.ticker
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
@@ -18,17 +19,17 @@ C_OURS, C_NODRIFT, C_BOUND, C_ALT = "#1f4e79", "#c0504d", "#555555", "#7f9fbf"
 BOUND_LABEL = "bound $(1+\\rho)/(1-\\rho)$"
 
 
-def load():
+def load(path=None):
     g = defaultdict(list)
-    for line in open(ROOT / "experiments" / "results" / "offsim_v4.jsonl"):
+    for line in open(path or ROOT / "experiments" / "results" / "offsim_v5.jsonl", encoding="utf-8"):
         r = json.loads(line)
         c = r["cfg"]
         g[(c["rho"], c["clock"], c["L"], c["D"])].append(r)
     return g
 
 
-def tradeoff():
-    g = load()
+def tradeoff(path=None):
+    g = load(path)
     Ds = sorted({k[3] for k in g})
     x = np.array(Ds) / H
     fig, (a, b) = plt.subplots(1, 2, figsize=(3.45, 1.95))
@@ -48,24 +49,41 @@ def tradeoff():
     a.legend(loc="lower left", bbox_to_anchor=(-0.02, 1.0), ncol=2, frameon=False, fontsize=5.3,
              handlelength=1.5, columnspacing=0.7, borderaxespad=0.1, labelspacing=0.25)
     a.grid(alpha=0.25, lw=0.4)
-    # (b) authority after a reassignment decision, relative to D, TPM clocks all slow (worst case)
+    # (b) authority after a reassignment decision, relative to D, TPM clocks all slow (worst case). Log y-axis so
+    # that no point is clipped (the no-epochs ablation reaches about 4 x D at D = 1 h); markers are offset in x so
+    # that coinciding values stay visible. receipt / eps1 / nohold / nofresh are not drawn: their rights end at
+    # most seconds (receipt: the response delay) after OffGrant's and would coincide with its markers.
     rho = 0.15
-    b.axhline((1 + rho) / (1 - rho), color=C_BOUND, lw=0.8, label="bound")
+    bound = (1 + rho) / (1 - rho)
+    b.axhline(bound, color=C_BOUND, lw=0.8, label="bound")
     b.axhline(1.0, color=C_NODRIFT, lw=0.8, ls=":", label="no-drift wait")
-    for proto, col, mk in [("ours", C_OURS, "o"), ("nodrift", C_NODRIFT, "x"), ("noepoch", "#8064a2", "^")]:
+    ymax, ymin = bound, 1.0
+    for proto, col, mk, dx in [("ours", C_OURS, "o", 1.0), ("nodrift", C_NODRIFT, "x", 0.88),
+                               ("noepoch", "#8064a2", "^", 1.13)]:
         y = [max(max(r[proto]["X_authority_after"] or [0]) for L in (24 * H, 72 * H)
                  for r in g[(rho, "slow", L, D)]) / D for D in Ds]
         lab = {"ours": "OffGrant", "nodrift": "no drift", "noepoch": "no epochs"}[proto]
-        b.plot(x, y, mk, color=col, ms=3.4, mew=0.9, label=lab)
+        b.plot(x * dx, y, mk, color=col, ms=3.4, mew=0.9, label=lab, mfc="none" if mk == "o" else col)
+        ymax, ymin = max(ymax, max(y)), min([ymin] + [v for v in y if v > 0])
+        if proto == "noepoch":
+            k = int(np.argmax(y))
+            if y[k] > bound * 1.05:
+                b.annotate(f"{y[k]:.2f}", (x[k] * dx, y[k]), xytext=(4, -1), textcoords="offset points",
+                           fontsize=5.3, color="#8064a2", va="center")
     b.fill_between([x[0] * 0.8, x[-1] * 1.25], 1.0, 1 / (1 - rho), color=C_NODRIFT, alpha=0.08, lw=0)
     b.text(x[-1] * 1.15, 1.02, "double authority", fontsize=5.5, color=C_NODRIFT, ha="right", va="bottom")
     b.set_xscale("log")
+    b.set_yscale("log")
     b.set_xlim(x[0] * 0.8, x[-1] * 1.25)
-    b.set_ylim(0.9, 1.45)
+    b.set_ylim(min(0.9, ymin * 0.95), max(1.6, ymax * 1.25))
+    yt = [1.0, bound] + [v for v in (2.0, 3.0, 4.0, 6.0) if v < ymax * 1.25]
+    b.set_yticks(yt)
+    b.set_yticklabels([f"{v:.2f}" if v == bound else f"{v:g}" for v in yt])
+    b.yaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
     b.set_xticks(x)
     b.set_xticklabels([f"{v:g}" for v in x])
     b.set_xlabel("(b) tolerance $D$ (h)")
-    b.set_ylabel("authority after / $D$")
+    b.set_ylabel("authority after / $D$ (log)")
     b.legend(loc="lower left", bbox_to_anchor=(-0.04, 1.0), ncol=2, frameon=False, fontsize=5.3,
              handlelength=1.3, columnspacing=0.5, borderaxespad=0.1, labelspacing=0.25)
     b.grid(alpha=0.25, lw=0.4)
@@ -76,7 +94,7 @@ def tradeoff():
     print("wrote", OUT / "tradeoff.pdf")
 
 
-def timeline(tag="v4"):
+def timeline(tag="v5"):
     """End-to-end PureChain run: holds in effect per object and site, with the cut, stops and moves."""
     d = json.loads((ROOT / "experiments" / "results" / f"e2e_{tag}.json").read_text())
     ev = d["events"]

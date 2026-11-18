@@ -1,0 +1,60 @@
+{
+ "chain_id": 900520900520,
+ "start_block": 1952810,
+ "gas": {
+  "deploy": 5166982,
+  "setCap": 46878,
+  "registerSite": 255978,
+  "registerSite2": 255966,
+  "setShare": 122145,
+  "createLease": 51019,
+  "permit": 31937,
+  "stop": 55615,
+  "reassignAcked": 171514
+ },
+ "latency_s": {
+  "deploy": 0.97,
+  "setCap": 1.43,
+  "registerSite": 1.44,
+  "registerSite2": 2.81,
+  "setShare": 1.44,
+  "createLease": 2.25,
+  "permit": 2.54,
+  "stop": 0.61,
+  "reassignAcked": 1.7
+ },
+ "registry": "0x5Ea5B3361889Cd1D6a3e2C141D72fFFaC8B7bdB2",
+ "renew": {
+  "n": 24,
+  "gas": 72952,
+  "latency_median_s": 1.98,
+  "latency_max_s": 3.07
+ },
+ "anchor": {
+  "n": 3,
+  "ops_each": 24,
+  "gas_median": 133897,
+  "latency_median_s": 1.97
+ },
+ "no_framing": {
+  "attempts": 313,
+  "verdicts": {
+   "NotAViolation": 313
+  }
+ },
+ "proofs": {
+  "overspend": {
+   "status": 1,
+   "gas": 150554,
+   "latency_s": 1.98,
+   "slashed": 3
+  },
+  "use_after_ack": {
+   "status": 1,
+   "gas": 137055,
+   "latency_s": 2.53,
+   "slashed": 2
+  }
+ },
+ "end_block": 1952906
+}

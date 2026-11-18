@@ -19,7 +19,8 @@ each output means.
 | Python 3.10+ and `pip install -r requirements.txt` | experiment drivers, simulator, analysis |
 | Linux amd64 or arm64 host, or Docker Desktop | running the official PureChain binaries |
 
-The contracts must be compiled once, which produces `contracts/out/` (read by the drivers):
+The contracts must be compiled once, which produces `contracts/out/` (read by the drivers). They compile through
+the IR pipeline, which takes about a minute:
 
 ```sh
 cd contracts
@@ -92,59 +93,90 @@ others advanced 101, and its operations waited up to 122.9 s.
 
 ## 2. OffGrant end to end
 
-`experiments/offgrant/e2e.py` runs the whole protocol on the `offgrant` layout, in real time.
+`experiments/offgrant/e2e.py` runs the whole protocol (contract version 5) on the `offgrant` layout, in real
+time.
 
 **Setup**
 
-- **Contracts.** It deploys `RightsRegistry` on `G` and `SiteRights` on each site, and creates objects for each
-  site:
+- **Contracts.** It deploys `RightsRegistry` on `G` and `SiteRights` on each site. Each site gets a share of 40
+  spare parts (of a cap of 100). It creates these objects, each with its class fixed at creation:
 
   | Object | Kind |
   |---|---|
   | P11, P12, P21, P22 | permits (exclusive, bounded holds) |
-  | L11 | lockout point (exclusive, open hold) |
+  | L11 | lockout point (exclusive, open holds) |
   | C11, C21 | credentials |
 
-- **Clocks.** Site clocks are TPM stand-ins: site 1 runs at the 15% slow limit, site 2 at +5%.
+  The first digit after the letter is the site that holds the object at the start. Every site learns every lease,
+  because an object may move to it later.
+- **Clocks.** Site clocks are TPM stand-ins with epochs and strictly increasing attested readings. Site 1 runs at
+  the 15% slow limit, site 2 at +5%.
 - **Time compression.** `D = 60 s` and `W = 86 s`, so a run takes minutes.
 
 **Threads per site**
 
-- **Relayer:** anchors the newest checkpoint, sends renewal requests every 4 s, applies stops and sends
-  fast-path acknowledgements.
-- **Checkpointer:** every 6 s, each validator builds a checkpoint from its own node; the checkpoint is signed
-  when all views agree.
-- **Gateway:** executes final grants after a fresh clock check. A grant that no longer fits lapses.
-- **Operator:** a random workload of permits, credentials, locks and releases, consumption and records.
+- **Relayer:** in rounds 4 s apart, anchors the newest checkpoint and sends one clock-attested renewal request
+  for all the objects the site may renew (a batch renewal). Once the renewal is final on `G`, it applies the
+  certificate on the site ledger. It also applies stops and share certificates, confirms a lowered share from a
+  sealed checkpoint, and runs the fast path.
+- **Checkpointer:** every 6 s, each validator reads the new operations from its own node, three blocks behind
+  the head. Every validator whose view agrees signs the checkpoint; it needs at least 3 of 4. The checkpoint
+  commits the operations, the state and the history of all earlier checkpoints, and carries a clock-attested
+  close.
+- **Gateway:** executes grants that are in a sealed checkpoint, after a fresh clock check. A grant that no longer
+  fits lapses. It attests an `ACK` only when nothing of the object is in effect.
+- **Operator:** a random workload of permits, credentials, locks and releases, consumption and records. Every
+  operation that uses a right is attested by the site clock. A lock stays on for 20 s, and its release names the
+  hold it ends.
 
 **Scenario** (seconds after a 25 s warm-up)
 
 | Time | Event |
 |---|---|
+| 10 | `G` lowers site 2's share of parts from 40 to 30. Site 2 applies it as a `SHARE` operation; `G` frees the capacity once a sealed checkpoint shows the new version (`confirmShare`) |
 | 20 | site 1's uplink is cut for `--cut` seconds (default 150) |
 | 35 | `G` stops P11 and L11 in favour of site 2; P11 moves by the slow path at `W`, and L11's slow path is refused |
 | 45 | `G` revokes credential C11 of site 1 |
-| 20 + cut | site 1 reconnects: one anchor catches up; stops are applied; L11 moves once its lock is released |
+| 20 + cut | site 1 reconnects: one anchor catches up; stops are applied; L11 moves by acknowledgement once its lock is released |
 | + 30 | `G` stops P21 (site 2, connected): it moves by the fast path once every hold has ended |
 | + 60 | site 2 loses power (new clock epoch) |
 
 **Attacks**
 
-After the scenario, a faulty quorum of site 1 (validators 0–2) seals ten kinds of violation, each against a fresh
-registry, and the driver submits the fraud proofs. It also anchors a checkpoint with a forged close. Finally, it
-tries every applicable proof against every honest checkpoint of the run.
+After the scenario, a faulty quorum of site 1 seals 15 kinds of violation. Each is submitted as a fraud proof
+against a fresh registry, so that the slashing counts are independent.
+
+| Attack | Proof |
+|---|---|
+| `overspend` | `proveOverspend` |
+| `understate` (a running total that restarts lower) | `proveInconsistent` |
+| `state_regress` (a committed total that goes back) | `proveRegress` |
+| `restart_below_anchor` (ancestor 299 heights back) | `proveOpRegress` |
+| `stale_share_version` (consumption under the old version after `confirmShare`) | `proveOpRegress` |
+| `state_mismatch` | `proveStateMismatch` |
+| `overuse`, `hold_past_allowance`, `use_after_reset` | `proveOveruse` |
+| `replayed_attestation` | `proveInconsistent` |
+| `forged_release` (a release the clock never attested) | `proveBadOp` |
+| `use_after_ack`, `release_after_ack` | `proveUseAfterAck` |
+| `fork`, `fork_across_heights` (ancestor 499 heights back) | `proveFork` |
+
+Validators 0–2 seal each violation. For the acknowledgement and fork attacks, the second quorum is validators
+1–3, so only the 2 validators in both quorums are provably faulty. The driver also checks two forgeries that must
+be rejected outright: a checkpoint with a forged close, and a grant's attestation offered as an acknowledgement.
+Finally, it tries every applicable proof against every honest sealed operation, against pairs of honest
+checkpoints, and against every acknowledgement of the run. Each attempt must revert with `NotAViolation`.
 
 **Running it**
 
 ```sh
 cd experiments/offgrant
-python e2e.py --cut 150 --tag v4            # clean cut
-python e2e.py --cut 150 --tag v4flap --flap # lossy, flapping uplink instead of a clean cut
-python e2e_analyze.py v4
+python e2e.py --cut 150 --tag v5            # clean cut
+python e2e.py --cut 150 --tag v5flap --flap # lossy, flapping uplink instead of a clean cut
+python e2e_analyze.py v5
 ```
 
-`--flap` makes site 1's uplink alternate between cut and degraded (800 ± 400 ms delay, 20% loss) for random
-3–15 s periods.
+`--flap` makes site 1's uplink alternate between cut (3–15 s) and slow and lossy (800 ± 400 ms delay, 20% loss,
+10–30 s).
 
 **Reading the summary** (`experiments/results/e2e_<tag>_summary.json`)
 
@@ -157,24 +189,44 @@ python e2e_analyze.py v4
 | `open_hold_L11` | the refused slow path, then the acknowledged move after the lock's release |
 | `revocation_C11` | credential acceptances after the revocation, against the bound `W` |
 | `fast_path_P21` | stop-to-move time when the holder is connected |
+| `ack_ops` | `ACK` operations recorded on the site ledgers, their gas, and any refused |
+| `share_lowering` | when the lower share was set on `G`, applied on the site ledger and confirmed on `G` |
+| `renewal_interval_per_object_s` | time between two renewals of one object (batch renewals) |
 | `clock_reset` | grants that lapsed in the old epoch, and when the site worked again |
 | `catch_up` | how soon after reconnection one anchor covered the outage, and how many checkpoints it covered |
-| `anchors` | all anchors, including any that failed |
+| `anchors`, `checkpoints` | all anchors, including any that failed; all checkpoints, and whether every validator agreed |
 | `site1_during_cut_*` | what site 1 recorded and executed while cut off |
+| `op_latency_s`, `renewal_latency_s` | latency of site operations and of renewals (request sent to certificate applied) |
 | `gas_median`, `stop_gas` | gas of each transaction type |
-| `attacks` | for each attack: transaction status, gas and number of validators slashed; `forged_close`; `no_framing` with the contract's verdict on every proof attempt against honest operations |
+| `attacks` | for each attack: transaction status, gas and number of validators slashed; `forged_close` and `grant_attestation_as_ack`; `no_framing` with the contract's verdict on every proof attempt against honest data |
+
+**Our run** (`e2e_v5_summary.json`, 150 s cut):
+
+- Every object move had zero effects ending after the move. P11 moved by the slow path 31.3 s after the old
+  holder's last effect ended. L11 moved by acknowledgement with a margin of 106.1 s, and P21 by acknowledgement
+  with a margin of 47.2 s.
+- L11's slow path was refused (`HoldMayBeOpen`). It moved 41.2 s after reconnection, once its lock was released.
+- One anchor, 2.2 s after reconnection, covered the 24 checkpoints sealed during the outage.
+- Site 2's lowered share was applied on its ledger and confirmed on `G`.
+- With batch renewals, each object was renewed every 16 s (median).
+- Each of the 15 attacks slashed 3 validators, or 2 for use or release after acknowledgement and for both forks.
+  The forged close and the grant attestation used as an acknowledgement were rejected (`BadClockSig`).
+- All 1,255 proof attempts against honest data reverted with `NotAViolation`.
+
+*Flapping uplink (`e2e_v5flap`): the run is in progress; its results will be added here.*
 
 ## 3. Public PureChain testnet
 
-`experiments/offgrant/pubtest.py` deploys `RightsRegistry` on the public PureChain testnet (chain id
-900520900520) and runs the global-ledger side of the protocol there, about 45 transactions:
+`experiments/offgrant/pubtest.py` deploys `RightsRegistry` (contract version 5) on the public PureChain testnet
+(chain id 900520900520) and runs the global-ledger side of the protocol there, about 45 transactions:
 
 1. register two sites and issue a share and a lease;
-2. send 24 clock-attested renewals, anchoring the newest checkpoint of site 1's (locally kept) ledger after every
-   8, since `G` renews only sites whose anchored coverage is recent;
-3. try every applicable fraud proof against every honest anchored operation (read-only calls; all must revert
-   with `NotAViolation`);
-4. stop the object and move it by the fast path (acknowledgement by three site validators);
+2. send 24 clock-attested batch renewals, anchoring the newest checkpoint of site 1's (locally kept) ledger after
+   every 8, since `G` renews only sites whose anchored coverage is recent;
+3. try every applicable fraud proof against every honest anchored operation and checkpoint pair (read-only
+   calls; all must revert with `NotAViolation`);
+4. stop the object and move it by the fast path: an attested `ACK` operation, acknowledged by three site
+   validators;
 5. submit two real fraud proofs by faulty quorums: an overspend (3 validators slashed) and a grant after the
    acknowledgement (the 2 validators in both quorums slashed).
 
@@ -184,21 +236,27 @@ throwaway local keys. To try it first on the local network, point `OFFGRANT_KEYS
 `RPC=http://127.0.0.1:8700` and two keys from `testbed/purechain/net_offgrant/nodes.json`.
 
 ```sh
-OFFGRANT_KEYS_ENV=/path/to/.env python experiments/offgrant/pubtest.py v4
+OFFGRANT_KEYS_ENV=/path/to/.env python experiments/offgrant/pubtest.py v5
 ```
 
 Output: `experiments/results/pubtest_<tag>.json`, containing addresses, gas and latencies (no keys). In our run
-(`pubtest_v4.json`), renewals confirmed in 1.97 s median (at most 2.76 s) at 70.2k gas, anchors of 24 operations
-cost 112.0k gas, all 96 proof attempts against honest operations reverted, and the two proofs slashed 3 and 2
-validators.
+(`pubtest_v5.json`):
+
+| Measurement | Result |
+|---|---|
+| Batch renewal | confirmed in 1.98 s median (at most 3.07 s), 72,952 gas |
+| Anchor of 24 operations | 133,897 gas |
+| Fast-path move (`reassignAcked`) | 171,514 gas |
+| Proof attempts against honest data | 313, all reverted with `NotAViolation` |
+| Real fraud proofs | slashed 3 and 2 validators |
 
 ## 4. Figures
 
 `prototype/figs.py` draws the paper's figures into `paper/figures/` (created if missing), as PDF and PNG:
 
-- `tradeoff`: from `offsim_v4.jsonl`, (a) offline permit availability against `D` and (b) the longest authority
+- `tradeoff`: from `offsim_v5.jsonl`, (a) offline permit availability against `D` and (b) the longest authority
   of an old holder after a reassignment decision, relative to `D`, with every clock at the slow limit;
-- `timeline`: from `e2e_v4.json`, the holds in effect at the gateways for P11, L11, C11 and P21, with the cut,
+- `timeline`: from `e2e_v5.json`, the holds in effect at the gateways for P11, L11, C11 and P21, with the cut,
   stops, moves and lapsed grants.
 
 ```sh
@@ -207,15 +265,15 @@ python prototype/figs.py
 
 ## Result files
 
-Every version of every experiment is kept, so changes between versions can be compared. The current versions are
-listed first.
+Every version of every experiment is kept, so changes between versions can be compared. The current versions
+(contract version 5) are listed first.
 
 | File | Contents |
 |---|---|
-| `e2e_v4.json`, `e2e_v4_summary.json`, `e2e_v4.log` | end-to-end run (clean cut) with the current contracts |
-| `e2e_v4flap.*` | the same scenario with a flapping, lossy uplink |
-| `forge_test_v3.log` | the contract test run |
-| `offsim_v4.jsonl`, `offsim_v4_summary.txt` | current simulation grid and summary |
-| `pubtest_v4.json` | public testnet measurements with the current contracts |
+| `e2e_v5.json`, `e2e_v5_summary.json`, `e2e_v5.log` | end-to-end run (clean cut) with the current contracts |
+| `e2e_v5flap.*` | the same scenario with a flapping, lossy uplink |
+| `forge_test_v5.log` | the contract test run (51 tests) |
+| `offsim_v5.jsonl`, `offsim_v5_summary.txt`, `offsim_v5.log` | current simulation grid, summary and run log |
+| `pubtest_v5.json` | public testnet measurements with the current contracts |
 | `span_demo.json` | the single-chain problem demonstration |
-| `e2e_v1`–`e2e_v3`, `offsim_v1`–`offsim_v3`, `pubtest_v1`, `pubtest_v2` | earlier versions |
+| `e2e_v1`–`e2e_v4`, `e2e_v4flap`, `offsim_v1`–`offsim_v4`, `pubtest_v1`, `pubtest_v2`, `pubtest_v4`, `forge_test_v3.log` | earlier versions |

@@ -53,7 +53,7 @@ flowchart LR
   subgraph S2["Site 2 (own PureChain ledger, SiteRights)"]
     V2[4 site validators] --- GW2[gateway with TPM clock]
   end
-  S1 -- "1: clock-signed renewal requests" --> G
+  S1 -- "1: clock-attested batch renewal requests" --> G
   G -- "2: certified renewals and stops" --> S1
   S1 -. "3: newest checkpoint, fraud proofs (after reconnection)" .-> G
   S2 <--> G
@@ -63,24 +63,28 @@ flowchart LR
    *shares* of countable resources (e.g. 40 of 100 spare parts), *leases* on exclusive objects (permits, crane
    slots, isolation points) and *credential leases* (which operators may act there).
 2. **Each site runs its own ledger.** A cut-off site keeps a working PureChain (Clique) ledger. Its `SiteRights`
-   contract accepts an operation only if the site's rights allow it.
+   contract accepts an operation only if the site's rights allow it. Every operation that uses a right carries
+   the TPM's attestation of its whole content, and their clock readings strictly increase, so an attestation
+   cannot be replayed, reordered or reused.
 3. **Leases count on the site's trusted clock.** A lease lasts `A = D(1+ρ)` milliseconds on the site's TPM 2.0
-   clock, counted from the moment the site **sent** its renewal request. The lease is bound to the clock's
-   *epoch*, so a power loss ends it. Headquarters waits `W = ⌈A/(1−ρ)⌉ + 2ε_G` after the last renewal before
-   giving the object to another site. This is the smallest safe wait (the classical lease bound), and it needs no
-   assumption about message delays.
+   clock, counted from the moment the site **sent** its renewal request (one request renews all the site's
+   objects). The lease is bound to the clock's *epoch*, so a power loss ends it. Headquarters waits
+   `W = ⌈A/(1−ρ)⌉ + 2ε_G` after the last renewal before giving the object to another site. This is the smallest
+   safe wait (the classical lease bound), and it needs no assumption about message delays.
 4. **A grant takes effect only when the gateway executes it.** The site's ledger first makes the grant final.
    The gateway then reads its clock again and executes only if the hold still fits inside the lease. Otherwise
    the grant *lapses*. A *bounded hold* (a switching window) must end inside the lease. An *open hold* (a
-   lockout) lasts until it is released, and its object is never moved by expiry.
+   lockout) lasts until it is released, and its object is never moved by expiry. Several crews may each hold
+   their own lock on one object; a release names the lock it ends.
 5. **Checkpoints make the site accountable.** Site validators sign checkpoints of their ledger. Each checkpoint
-   commits the operations, the running totals and a closing time attested by the TPM. Headquarters renews a site
-   only if its checkpoints are anchored, so a site that hides its history loses its rights. After an outage of
-   any length, one transaction anchors the newest checkpoint.
-6. **Violations are provable.** Anyone can submit a fraud proof to `G` (overspending, understated totals,
-   over-use, use after release, forks). Each proof costs constant gas. It slashes exactly the validators whose
-   signatures prove the violation, never an honest one. A site with more than `f` slashed validators loses all
-   rights.
+   commits the operations, the site's state (running totals, share versions, clock), every earlier checkpoint
+   (in a history accumulator) and a closing time attested by the TPM. Headquarters renews a site only if its
+   checkpoints are anchored, so a site that hides its history loses its rights. After an outage of any length,
+   one transaction anchors the newest checkpoint.
+6. **Violations are provable.** Anyone can submit one of nine fraud proofs to `G` (overspending, forged or
+   reordered operations, over-use, understated or regressed state, use after acknowledgement, forks). A proof's
+   cost does not depend on the length of the site's history. It slashes exactly the validators whose signatures
+   prove the violation, never an honest one. A site with more than `f` slashed validators loses all rights.
 
 The guarantees and their exact conditions are in [docs/CONCEPTS.md](docs/CONCEPTS.md).
 
@@ -109,6 +113,8 @@ sed -i 's|^solc = .*|solc = "0.8.30"|' foundry.toml
 docker run --rm -v "$PWD:/work" -w /work --entrypoint forge ghcr.io/foundry-rs/foundry:v1.8.4 test
 ```
 
+The contracts compile through the IR pipeline, so the first run takes about a minute.
+
 **Run a short simulation (needs Python 3.10+):**
 
 ```sh
@@ -122,26 +128,42 @@ The model checking, the full simulation grid and the PureChain experiments are d
 
 ## Results at a glance
 
-From the end-to-end run on PureChain (`experiments/results/e2e_v4_summary.json`). Site 1's clock ran 15% slow,
-the lease was time-compressed to `D = 60 s`, and site 1's uplink was cut for 150 s:
+All results are for contract version 5.
+
+**End to end on PureChain** (`experiments/results/e2e_v5_summary.json`). Site 1's clock ran 15% slow, the lease
+was time-compressed to `D = 60 s`, and site 1's uplink was cut for 150 s:
 
 | What was checked | Outcome |
 |---|---|
-| Old holder never acts after its object moves | P11: last effect ended at 122.3 s, object moved at 130.9 s; P21 and L11 moved only after every hold ended |
+| Old holder never acts after its object moves | 0 effects ended after any move. P11 (slow path): margin 31.3 s. L11 and P21 (by acknowledgement): margins 106.1 s and 47.2 s |
 | A grant that would end too late | Lapsed at the gateway instead of taking effect |
 | Lockout object (open hold) | Refused by expiry (`HoldMayBeOpen`); moved only after release and acknowledgement |
-| Catch-up after the 150 s outage | One anchor transaction, 2.5 s after reconnection, covering 25 checkpoints |
-| Ten kinds of injected violation | Each slashed exactly the expected validators (3, or 2 where only some signers are provably faulty) |
-| Forged checkpoint close | Rejected (`BadClockSig`) |
-| Proof attempts against honest operations | 282 attempts, none slashed anyone |
+| Catch-up after the 150 s outage | One anchor transaction, 2.2 s after reconnection, covering 24 checkpoints |
+| Lowering a share | Applied on the site ledger, then confirmed on `G` from a sealed checkpoint |
+| Batch renewals | Each object renewed every 16 s (median) |
+| 15 kinds of injected violation | Each slashed 3 validators (2 for use or release after acknowledgement and for both forks, where only the validators in both quorums are provably faulty) |
+| Forged checkpoint close; grant attestation used as an acknowledgement | Both rejected (`BadClockSig`) |
+| Proof attempts against honest data | 1,255 attempts, all reverted with `NotAViolation` |
 
-On the public PureChain testnet (`experiments/results/pubtest_v4.json`), renewals confirmed in 1.97 s median,
-two fraud proofs slashed 3 and 2 validators, and all 96 proof attempts against honest operations reverted.
+*Flapping uplink (`e2e_v5flap`): the run is in progress; its results will be added here.*
 
-In the 720-run simulation (`experiments/results/offsim_v4_summary.txt`), OffGrant had no conflict and no
-over-consumption in any run, while the merging baselines conflicted in every run.
+**Public PureChain testnet** (`experiments/results/pubtest_v5.json`). Batch renewals confirmed in 1.98 s median
+(at most 3.07 s) at 72,952 gas, and anchors of 24 operations cost 133,897 gas. All 313 proof attempts against
+honest data reverted with `NotAViolation`, and two real fraud proofs slashed 3 and 2 validators.
 
-All 41 contract tests pass (`experiments/results/forge_test_v3.log`).
+**Simulation** (`experiments/results/offsim_v5_summary.txt`, 720 runs of 30 days). OffGrant had 0 authority
+overlaps, 0 double use and 0 over-consumption in every run. The merging baselines had authority overlaps in 569
+runs and double use in 514. Each ablation that drops one rule fails: without the hold-end rule (`nohold`) 306 runs
+had overlaps, without drift (`nodrift`) 143, without epochs (`noepoch`) 77, and without the fresh check
+(`nofresh`) 44. Counting from receipt (`receipt`) left rights beyond the move in 109 runs, and a single `ε_G` of
+slack (`eps1`) in 12.
+
+**Contracts.** All 51 Foundry tests pass (`experiments/results/forge_test_v5.log`), including regression tests
+for every exploit of v4 found in review.
+
+**Model checking.** TLC finds a counterexample for each lease rule that is dropped, and the accountability model
+holds with zero, one, three and four faulty validators. The safe lease configuration (`lease_v3_ok`) and the
+two-faulty configuration (`rights_v3_byz2`) are still running. See [docs/FORMAL.md](docs/FORMAL.md).
 
 ## Documentation
 
@@ -167,9 +189,11 @@ All 41 contract tests pass (`experiments/results/forge_test_v3.log`).
 | **Epoch** | The TPM's reset/restart counter. It changes on power loss and ends every lease |
 | **Hold** | The period a grant is in effect: bounded (has an end) or open (until released) |
 | **Gateway** | The site component that holds the TPM and executes grants on equipment |
-| **Checkpoint** | A signed summary of a stretch of the site ledger: operations, running totals, TPM-attested closing time |
+| **Attested operation** | A consumption, grant, release or acknowledgement signed by the site's TPM over its whole content. Readings of attested operations strictly increase |
+| **Checkpoint** | A signed summary of a stretch of the site ledger: operations, state, history accumulator, TPM-attested closing time |
+| **History accumulator** | A fixed-depth Merkle tree of all earlier checkpoints of a site, committed in each checkpoint |
 | **Anchor** | Recording a site's checkpoint on `G` |
-| **Fast path** | Moving an object at once when its holder is connected and acknowledges the stop |
+| **Fast path** | Moving an object at once when its holder is connected and records an acknowledgement (`ACK` operation) of the stop |
 | **Slashing** | Forfeiting a validator's collateral and excluding it from quorums after a fraud proof |
 
 ## License

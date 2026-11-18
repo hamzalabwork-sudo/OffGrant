@@ -1,0 +1,252 @@
+TLC2 Version 2026.11.06.222357 (rev: d8fb231)
+Running breadth-first search Model-Checking with fp 32 and seed -8060114408480194475 with 4 workers on 28 cores with 14564MB heap and 64MB offheap memory [pid: 3699048] (Linux 6.8.0-138-generic amd64, Ubuntu 21.0.13.0.3 64bit, MSBDiskFPSet, DiskStateQueue).
+Parsing file /home/s28/offgrant/formal/LeaseV3.tla
+Parsing file /tmp/tlc-11010435689730051396/Integers.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
+Parsing file /tmp/tlc-11010435689730051396/_TLCTrace.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/_TLCTrace.tla)
+Parsing file /tmp/tlc-11010435689730051396/Naturals.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file /tmp/tlc-11010435689730051396/TLC.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file /tmp/tlc-11010435689730051396/TLCExt.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/TLCExt.tla)
+Parsing file /tmp/tlc-11010435689730051396/Sequences.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
+Parsing file /tmp/tlc-11010435689730051396/FiniteSets.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
+Semantic processing of module Naturals
+Semantic processing of module Integers
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module TLCExt
+Semantic processing of module _TLCTrace
+Semantic processing of module LeaseV3
+Linting of module TLCExt
+Linting of module _TLCTrace
+Linting of module LeaseV3
+Starting... (2026-11-19 00:49:01)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-11-19 00:49:02.
+Progress(11) at 2026-11-19 00:49:05: 325,610 states generated (325,610 s/min), 122,894 distinct states found (122,894 ds/min), 80,169 states left on queue.
+Error: Invariant Safe is violated.
+Error: The behavior up to this point is:
+State 1: <Initial predicate>
+/\ bep = -1
+/\ gStopped = FALSE
+/\ inflight = {}
+/\ lastIssueG = -1000
+/\ reassigned = FALSE
+/\ baseT = -1
+/\ c = 0
+/\ on = TRUE
+/\ t = 0
+/\ pend = [cq |-> -1, ce |-> -1, tq |-> -1]
+/\ losses = 0
+/\ base = -1
+/\ cut = FALSE
+/\ hold = [u |-> -1, he |-> -1, ex |-> FALSE, now |-> FALSE]
+/\ ep = 0
+
+State 2: <Send line 53, col 3 to line 55, col 112 of module LeaseV3>
+/\ bep = -1
+/\ gStopped = FALSE
+/\ inflight = {}
+/\ lastIssueG = -1000
+/\ reassigned = FALSE
+/\ baseT = -1
+/\ c = 0
+/\ on = TRUE
+/\ t = 0
+/\ pend = [cq |-> 0, ce |-> 0, tq |-> 0]
+/\ losses = 0
+/\ base = -1
+/\ cut = FALSE
+/\ hold = [u |-> -1, he |-> -1, ex |-> FALSE, now |-> FALSE]
+/\ ep = 0
+
+State 3: <Issue line 60, col 3 to line 64, col 90 of module LeaseV3>
+/\ bep = -1
+/\ gStopped = FALSE
+/\ inflight = {[cq |-> 0, ce |-> 0, tq |-> 0]}
+/\ lastIssueG = -5
+/\ reassigned = FALSE
+/\ baseT = -1
+/\ c = 0
+/\ on = TRUE
+/\ t = 0
+/\ pend = [cq |-> -1, ce |-> -1, tq |-> -1]
+/\ losses = 0
+/\ base = -1
+/\ cut = FALSE
+/\ hold = [u |-> -1, he |-> -1, ex |-> FALSE, now |-> FALSE]
+/\ ep = 0
+
+State 4: <Decide line 110, col 3 to line 111, col 108 of module LeaseV3>
+/\ bep = -1
+/\ gStopped = TRUE
+/\ inflight = {[cq |-> 0, ce |-> 0, tq |-> 0]}
+/\ lastIssueG = -5
+/\ reassigned = FALSE
+/\ baseT = -1
+/\ c = 0
+/\ on = TRUE
+/\ t = 0
+/\ pend = [cq |-> -1, ce |-> -1, tq |-> -1]
+/\ losses = 0
+/\ base = -1
+/\ cut = FALSE
+/\ hold = [u |-> -1, he |-> -1, ex |-> FALSE, now |-> FALSE]
+/\ ep = 0
+
+State 5: <Deliver line 71, col 3 to line 79, col 90 of module LeaseV3>
+/\ bep = 0
+/\ gStopped = TRUE
+/\ inflight = {}
+/\ lastIssueG = -5
+/\ reassigned = FALSE
+/\ baseT = 0
+/\ c = 0
+/\ on = TRUE
+/\ t = 0
+/\ pend = [cq |-> -1, ce |-> -1, tq |-> -1]
+/\ losses = 0
+/\ base = 0
+/\ cut = FALSE
+/\ hold = [u |-> -1, he |-> -1, ex |-> FALSE, now |-> FALSE]
+/\ ep = 0
+
+State 6: <Grant line 91, col 3 to line 93, col 112 of module LeaseV3>
+/\ bep = 0
+/\ gStopped = TRUE
+/\ inflight = {}
+/\ lastIssueG = -5
+/\ reassigned = FALSE
+/\ baseT = 0
+/\ c = 0
+/\ on = TRUE
+/\ t = 0
+/\ pend = [cq |-> -1, ce |-> -1, tq |-> -1]
+/\ losses = 0
+/\ base = 0
+/\ cut = FALSE
+/\ hold = [u |-> 23, he |-> 0, ex |-> FALSE, now |-> FALSE]
+/\ ep = 0
+
+State 7: <Execute line 97, col 3 to line 100, col 112 of module LeaseV3>
+/\ bep = 0
+/\ gStopped = TRUE
+/\ inflight = {}
+/\ lastIssueG = -5
+/\ reassigned = FALSE
+/\ baseT = 0
+/\ c = 0
+/\ on = TRUE
+/\ t = 0
+/\ pend = [cq |-> -1, ce |-> -1, tq |-> -1]
+/\ losses = 0
+/\ base = 0
+/\ cut = FALSE
+/\ hold = [u |-> 23, he |-> 0, ex |-> TRUE, now |-> TRUE]
+/\ ep = 0
+
+State 8: <Tick line 133, col 3 to line 137, col 106 of module LeaseV3>
+/\ bep = 0
+/\ gStopped = TRUE
+/\ inflight = {}
+/\ lastIssueG = -5
+/\ reassigned = FALSE
+/\ baseT = 0
+/\ c = 4
+/\ on = TRUE
+/\ t = 5
+/\ pend = [cq |-> -1, ce |-> -1, tq |-> -1]
+/\ losses = 0
+/\ base = 0
+/\ cut = FALSE
+/\ hold = [u |-> 23, he |-> 0, ex |-> TRUE, now |-> FALSE]
+/\ ep = 0
+
+State 9: <Tick line 133, col 3 to line 137, col 106 of module LeaseV3>
+/\ bep = 0
+/\ gStopped = TRUE
+/\ inflight = {}
+/\ lastIssueG = -5
+/\ reassigned = FALSE
+/\ baseT = 0
+/\ c = 8
+/\ on = TRUE
+/\ t = 10
+/\ pend = [cq |-> -1, ce |-> -1, tq |-> -1]
+/\ losses = 0
+/\ base = 0
+/\ cut = FALSE
+/\ hold = [u |-> 23, he |-> 0, ex |-> TRUE, now |-> FALSE]
+/\ ep = 0
+
+State 10: <Tick line 133, col 3 to line 137, col 106 of module LeaseV3>
+/\ bep = 0
+/\ gStopped = TRUE
+/\ inflight = {}
+/\ lastIssueG = -5
+/\ reassigned = FALSE
+/\ baseT = 0
+/\ c = 12
+/\ on = TRUE
+/\ t = 15
+/\ pend = [cq |-> -1, ce |-> -1, tq |-> -1]
+/\ losses = 0
+/\ base = 0
+/\ cut = FALSE
+/\ hold = [u |-> 23, he |-> 0, ex |-> TRUE, now |-> FALSE]
+/\ ep = 0
+
+State 11: <Tick line 133, col 3 to line 137, col 106 of module LeaseV3>
+/\ bep = 0
+/\ gStopped = TRUE
+/\ inflight = {}
+/\ lastIssueG = -5
+/\ reassigned = FALSE
+/\ baseT = 0
+/\ c = 16
+/\ on = TRUE
+/\ t = 20
+/\ pend = [cq |-> -1, ce |-> -1, tq |-> -1]
+/\ losses = 0
+/\ base = 0
+/\ cut = FALSE
+/\ hold = [u |-> 23, he |-> 0, ex |-> TRUE, now |-> FALSE]
+/\ ep = 0
+
+State 12: <Tick line 133, col 3 to line 137, col 106 of module LeaseV3>
+/\ bep = 0
+/\ gStopped = TRUE
+/\ inflight = {}
+/\ lastIssueG = -5
+/\ reassigned = FALSE
+/\ baseT = 0
+/\ c = 20
+/\ on = TRUE
+/\ t = 25
+/\ pend = [cq |-> -1, ce |-> -1, tq |-> -1]
+/\ losses = 0
+/\ base = 0
+/\ cut = FALSE
+/\ hold = [u |-> 23, he |-> 0, ex |-> TRUE, now |-> FALSE]
+/\ ep = 0
+
+State 13: <Reassign line 114, col 3 to line 117, col 106 of module LeaseV3>
+/\ bep = 0
+/\ gStopped = TRUE
+/\ inflight = {}
+/\ lastIssueG = -5
+/\ reassigned = TRUE
+/\ baseT = 0
+/\ c = 20
+/\ on = TRUE
+/\ t = 25
+/\ pend = [cq |-> -1, ce |-> -1, tq |-> -1]
+/\ losses = 0
+/\ base = 0
+/\ cut = FALSE
+/\ hold = [u |-> 23, he |-> 0, ex |-> TRUE, now |-> FALSE]
+/\ ep = 0
+
+4107979 states generated, 1418542 distinct states found, 888587 states left on queue.
+The depth of the complete state graph search is 13.
+Finished in 22s at (2026-11-19 00:49:22)
+Trace exploration spec path: ./LeaseV3_TTrace_1795016940.tla
