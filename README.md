@@ -22,6 +22,7 @@ This repository contains everything needed to check and reproduce the work: the 
 - [Results at a glance](#results-at-a-glance)
 - [Documentation](#documentation)
 - [Glossary](#glossary)
+- [License](#license)
 
 ---
 
@@ -164,3 +165,8 @@ All 41 contract tests pass (`experiments/results/forge_test_v3.log`).
 | **Anchor** | Recording a site's checkpoint on `G` |
 | **Fast path** | Moving an object at once when its holder is connected and acknowledges the stop |
 | **Slashing** | Forfeiting a validator's collateral and excluding it from quorums after a fraud proof |
+
+## License
+
+Released under the [MIT License](LICENSE). You may use, modify and redistribute the code, including
+commercially, as long as the copyright notice is kept.
