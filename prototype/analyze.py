@@ -77,4 +77,5 @@ def main(path):
 
 
 if __name__ == "__main__":
+    sys.stdout.reconfigure(encoding="utf-8")   # the summary uses "±"; keep it UTF-8 whatever the console
     main(sys.argv[1] if len(sys.argv) > 1 else "experiments/results/offsim_v4.jsonl")

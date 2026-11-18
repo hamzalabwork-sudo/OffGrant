@@ -135,6 +135,12 @@ the lease was time-compressed to `D = 60 s`, and site 1's uplink was cut for 150
 | Forged checkpoint close | Rejected (`BadClockSig`) |
 | Proof attempts against honest operations | 282 attempts, none slashed anyone |
 
+On the public PureChain testnet (`experiments/results/pubtest_v4.json`), renewals confirmed in 1.97 s median,
+two fraud proofs slashed 3 and 2 validators, and all 96 proof attempts against honest operations reverted.
+
+In the 720-run simulation (`experiments/results/offsim_v4_summary.txt`), OffGrant had no conflict and no
+over-consumption in any run, while the merging baselines conflicted in every run.
+
 All 41 contract tests pass (`experiments/results/forge_test_v3.log`).
 
 ## Documentation

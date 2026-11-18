@@ -167,21 +167,39 @@ python e2e_analyze.py v4
 ## 3. Public PureChain testnet
 
 `experiments/offgrant/pubtest.py` deploys `RightsRegistry` on the public PureChain testnet (chain id
-900520900520). It then measures the gas and confirmation latency of renewals, anchors, stops, fast-path
-reassignment and fraud proofs. It needs two funded keys in a git-ignored `.env` file (`ADMIN_KEY`, `GATEWAY_KEY`),
-read from `testbed/purechain/.env` or the path in `OFFGRANT_KEYS_ENV`. Keys are never printed. Site validators
-and clocks use throwaway local keys.
+900520900520) and runs the global-ledger side of the protocol there, about 45 transactions:
+
+1. register two sites and issue a share and a lease;
+2. send 24 clock-attested renewals, anchoring the newest checkpoint of site 1's (locally kept) ledger after every
+   8, since `G` renews only sites whose anchored coverage is recent;
+3. try every applicable fraud proof against every honest anchored operation (read-only calls; all must revert
+   with `NotAViolation`);
+4. stop the object and move it by the fast path (acknowledgement by three site validators);
+5. submit two real fraud proofs by faulty quorums: an overspend (3 validators slashed) and a grant after the
+   acknowledgement (the 2 validators in both quorums slashed).
+
+It needs two funded keys in a git-ignored `.env` file (`RPC`, `ADMIN_KEY`, `GATEWAY_KEY`), read from
+`testbed/purechain/.env` or the path in `OFFGRANT_KEYS_ENV`. Keys are never printed. Site validators and clocks use
+throwaway local keys. To try it first on the local network, point `OFFGRANT_KEYS_ENV` to a file with
+`RPC=http://127.0.0.1:8700` and two keys from `testbed/purechain/net_offgrant/nodes.json`.
 
 ```sh
-OFFGRANT_KEYS_ENV=/path/to/.env python experiments/offgrant/pubtest.py v2
+OFFGRANT_KEYS_ENV=/path/to/.env python experiments/offgrant/pubtest.py v4
 ```
 
-Output: `experiments/results/pubtest_<tag>.json`, containing addresses, gas and latencies (no keys).
+Output: `experiments/results/pubtest_<tag>.json`, containing addresses, gas and latencies (no keys). In our run
+(`pubtest_v4.json`), renewals confirmed in 1.97 s median (at most 2.76 s) at 70.2k gas, anchors of 24 operations
+cost 112.0k gas, all 96 proof attempts against honest operations reverted, and the two proofs slashed 3 and 2
+validators.
 
 ## 4. Figures
 
-`prototype/figs.py` draws the paper's figures from the simulation and end-to-end results into `paper/figures/`
-(created if missing):
+`prototype/figs.py` draws the paper's figures into `paper/figures/` (created if missing), as PDF and PNG:
+
+- `tradeoff`: from `offsim_v4.jsonl`, (a) offline permit availability against `D` and (b) the longest authority
+  of an old holder after a reassignment decision, relative to `D`, with every clock at the slow limit;
+- `timeline`: from `e2e_v4.json`, the holds in effect at the gateways for P11, L11, C11 and P21, with the cut,
+  stops, moves and lapsed grants.
 
 ```sh
 python prototype/figs.py
@@ -198,6 +216,6 @@ listed first.
 | `e2e_v4flap.*` | the same scenario with a flapping, lossy uplink |
 | `forge_test_v3.log` | the contract test run |
 | `offsim_v4.jsonl`, `offsim_v4_summary.txt` | current simulation grid and summary |
-| `pubtest_v2.json` | public testnet measurements |
+| `pubtest_v4.json` | public testnet measurements with the current contracts |
 | `span_demo.json` | the single-chain problem demonstration |
-| `e2e_v1`–`e2e_v3`, `offsim_v1`–`offsim_v3`, `pubtest_v1` | earlier versions |
+| `e2e_v1`–`e2e_v3`, `offsim_v1`–`offsim_v3`, `pubtest_v1`, `pubtest_v2` | earlier versions |
