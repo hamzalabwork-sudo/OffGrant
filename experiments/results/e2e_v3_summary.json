@@ -1,0 +1,117 @@
+{
+ "params": {
+  "rho_ppm": 150000,
+  "D_s": 60,
+  "A_ms": 69000,
+  "renew_period_s": 4.0,
+  "W_s": 84,
+  "cut_s": 150,
+  "drift": {
+   "1": -0.15,
+   "2": 0.05
+  }
+ },
+ "slow_path": {
+  "W_s": 84,
+  "stop_to_reassign_s": 58.9,
+  "g_release_minus_stop_g": 57,
+  "site1_last_use_after_lastsend_s": 79.9,
+  "site1_allowance_real_s": 81.2,
+  "site1_last_use_before_reassign_s": 7.9,
+  "site2_first_use_after_reassign_s": 25.0
+ },
+ "revocation": {
+  "accepted_after_revoke": 3,
+  "max_window_s": 34.8,
+  "bound_s": 84,
+  "stop_applied_after_heal_s": 37.6
+ },
+ "fast_path": {
+  "stop_to_reassign_s": 21.9,
+  "gas_reassignAcked": 211485,
+  "site2_uses_after_ack": 0,
+  "site1_first_use_after_ack_s": 24.1
+ },
+ "clock_reset": {
+  "rejected_after_reset": 8,
+  "first_accept_after_reset_s": 15.9
+ },
+ "site1_during_cut": {
+  "use": "9/29",
+  "cred": "6/18",
+  "consume": "13/13",
+  "log": "10/10"
+ },
+ "op_latency_s": {
+  "median": 1.99,
+  "max": 7.54
+ },
+ "finality_latency_s": {
+  "n": 82,
+  "median": 12.3,
+  "max": 18.2
+ },
+ "renewal_latency_s": {
+  "median": 3.78,
+  "max": 9.87
+ },
+ "gas_median": {
+  "log": 30288,
+  "consume": 38152,
+  "use": 42736,
+  "cred": 42740,
+  "renew_G": 69051,
+  "applyRenewal": 57856
+ },
+ "anchor": {
+  "n": 46,
+  "ok": 45,
+  "gas_median": 78356,
+  "ops_median": 4
+ },
+ "stop_gas": {
+  "P11": 55021,
+  "C11": 32929,
+  "P21": 55021
+ },
+ "applyStop_gas": [
+  72956,
+  72916
+ ],
+ "attacks": {
+  "overspend": {
+   "status": 1,
+   "gas": 67592,
+   "slashed": 3
+  },
+  "understate": {
+   "status": 1,
+   "gas": 72781,
+   "slashed": 3
+  },
+  "overuse": {
+   "status": 1,
+   "gas": 77301,
+   "slashed": 3
+  },
+  "use_after_reset": {
+   "status": 1,
+   "gas": 69193,
+   "slashed": 3
+  },
+  "use_after_ack": {
+   "status": 1,
+   "gas": 79870,
+   "slashed": 2
+  },
+  "fork": {
+   "status": 1,
+   "gas": 87256,
+   "slashed": 2
+  },
+  "no_framing": {
+   "proof_attempts_on_honest_ops": 208,
+   "reverted": 208
+  }
+ }
+}

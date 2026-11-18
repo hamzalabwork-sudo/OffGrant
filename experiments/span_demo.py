@@ -119,7 +119,8 @@ def main():
         except Exception:  # noqa: BLE001
             op["block"] = None
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-    Path(args.out).write_text(json.dumps({"args": vars(args), "t0": t0, "trace": trace, "ops": ops}, indent=1))
+    meta = {k: v for k, v in vars(args).items() if k != "out"}
+    Path(args.out).write_text(json.dumps({"args": meta, "t0": t0, "trace": trace, "ops": ops}, indent=1))
     print("wrote", args.out)
 
 

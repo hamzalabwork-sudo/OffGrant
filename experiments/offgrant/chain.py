@@ -15,7 +15,8 @@ from web3.middleware import ExtraDataToPOAMiddleware
 ROOT = Path(__file__).resolve().parents[2]
 ART = ROOT / "contracts" / "out"
 
-CONSUME, USE, LOG = 1, 2, 3
+CONSUME, USE, LOG, RELEASE = 1, 2, 3, 4
+OPEN = 2**64 - 1   # hold that lasts until released
 
 
 def connect(port, timeout=4):
@@ -107,12 +108,26 @@ def ack_digest(registry, site, obj, epoch, reading):
               ["OFFGRANT-ACK", registry, site, obj, epoch, reading])
 
 
-def share_digest(registry, site, resource, amount):
-    return _h(["string", "address", "uint64", "bytes32", "uint64"], ["OFFGRANT-SHARE", registry, site, resource, amount])
+def share_digest(registry, site, resource, amount, version):
+    return _h(["string", "address", "uint64", "bytes32", "uint64", "uint64"],
+              ["OFFGRANT-SHARE", registry, site, resource, amount, version])
 
 
-def lease_digest(registry, site, obj, allowance):
-    return _h(["string", "address", "uint64", "bytes32", "uint64"], ["OFFGRANT-LEASE", registry, site, obj, allowance])
+def share_ack_digest(registry, site, resource, version):
+    return _h(["string", "address", "uint64", "bytes32", "uint64"], ["OFFGRANT-SHARE-ACK", registry, site, resource, version])
+
+
+def lease_digest(registry, site, obj, allowance, is_open):
+    return _h(["string", "address", "uint64", "bytes32", "uint64", "bool"],
+              ["OFFGRANT-LEASE", registry, site, obj, allowance, is_open])
+
+
+def release_tag(obj):
+    return _h(["string", "bytes32"], ["OFFGRANT-RELEASE", obj])
+
+
+def state_leaf(resource, total):
+    return _h(["string", "bytes32", "uint64"], ["OFFGRANT-STATE", resource, total])
 
 
 def sign(key, digest):
@@ -122,8 +137,8 @@ def sign(key, digest):
 
 # ------------------------------------------------------------------------- checkpoints
 def op_leaf(op):
-    kind, key, a, b, e, sig = op
-    return _h(["uint8", "bytes32", "uint64", "uint64", "uint64", "bytes32"], [kind, key, a, b, e, keccak(sig)])
+    kind, key, a, b, c, e, sig = op
+    return _h(["uint8", "bytes32", "uint64", "uint64", "uint64", "uint64", "bytes32"], [kind, key, a, b, c, e, keccak(sig)])
 
 
 def _pair(l, r):
@@ -149,9 +164,23 @@ def merkle(leaves):
     return levels[-1][0], proofs
 
 
+# Header tuple: (site, height, prev, opsRoot, opCount, stateRoot, baseHeight, baseHash, closeEpoch, closeReading, closeSig)
+def content_tag(h):
+    return _h(["string", "uint64", "uint64", "bytes32", "bytes32", "uint64", "bytes32", "uint64", "bytes32"],
+              ["OFFGRANT-CLOSE", *h[:8]])
+
+
 def header_hash(h):
-    site, height, prev, root, count, close = h
-    return _h(["uint64", "uint64", "bytes32", "bytes32", "uint64", "uint64"], [site, height, prev, root, count, close])
+    return _h(["bytes32", "uint64", "uint64"], [content_tag(h), h[8], h[9]])
+
+
+def make_header(clock, site, height, prev, ops, state_root, base_h, base_hash):
+    """Builds a header and has the trusted clock attest its close over the content (OffLib.contentTag)."""
+    root, proofs = merkle([op_leaf(op) for op in ops])
+    epoch, reading = clock.epoch, clock.read()
+    h = (site, height, prev, root, len(ops), state_root, base_h, base_hash, epoch, reading, b"")
+    sig = clock.attest(clock_digest, site, epoch, reading, content_tag(h))
+    return h[:10] + (sig,), proofs
 
 
 class Clock:

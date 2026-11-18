@@ -3,8 +3,7 @@
   "cut": 120,
   "before": 20,
   "after": 60,
-  "rate": 1.0,
-  "out": "C:\\Users\\Hamza Ibrahim\\Music\\OFFLINE_IIOT\\experiments\\results\\span_demo.json"
+  "rate": 1.0
  },
  "t0": 1794985425.0455825,
  "trace": [
