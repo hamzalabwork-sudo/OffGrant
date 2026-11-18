@@ -49,15 +49,33 @@ contract RightsRegistry {
 
     mapping(bytes32 => Lease) public leases;
     mapping(bytes32 => mapping(uint64 => bool)) public permitted;
-    mapping(bytes32 => uint64) public renewalIssued; // keccak(site, object, cq) => G issue time (s)
+    mapping(bytes32 => uint64) public renewalIssued; // OffLib.renewalKey(site, object, epoch, cq) => G issue time (s)
+
+    struct Base {
+        uint64 epoch;
+        uint64 cq;
+    }
+
+    mapping(bytes32 => mapping(uint64 => Base)) public lastRenewal; // last renewal issued per (object, site)
+
+    // Fast path: the stopped holder's quorum acknowledged at trusted-clock time (epoch, reading).
+    struct Ack {
+        uint64 site;
+        uint64 epoch;
+        uint64 reading;
+    }
+
+    mapping(bytes32 => Ack) public lastAck;
+    mapping(bytes32 => address[]) internal ackSigners;
 
     // ---------------------------------------------------------------- events
     event SiteRegistered(uint64 indexed site, uint8 f, address clockKey, address[] validators);
     event ShareSet(bytes32 indexed resource, uint64 indexed site, uint64 amount);
     event LeaseCreated(bytes32 indexed object, bool exclusive, uint64 allowanceMs);
     event Permitted(bytes32 indexed object, uint64 indexed site);
-    event Renewed(uint64 indexed site, bytes32 indexed object, uint64 cq, uint64 issued);
+    event Renewed(uint64 indexed site, bytes32 indexed object, uint64 epoch, uint64 cq, uint64 issued);
     event Stopped(bytes32 indexed object, uint64 nextSite, uint64 releaseAt);
+    event Acknowledged(bytes32 indexed object, uint64 indexed site, uint64 epoch, uint64 reading);
     event Reassigned(bytes32 indexed object, uint64 indexed site);
     event Anchored(uint64 indexed site, uint64 height, bytes32 headerHash);
     event Slashed(uint64 indexed site, address indexed validator, uint8 reason);
@@ -66,6 +84,7 @@ contract RightsRegistry {
     uint8 internal constant R_UNDERSTATE = 2;
     uint8 internal constant R_OVERUSE = 3;
     uint8 internal constant R_FORK = 4;
+    uint8 internal constant R_USE_AFTER_ACK = 5;
 
     error NotAdmin();
     error BadSite();
@@ -160,19 +179,24 @@ contract RightsRegistry {
     }
 
     /// A site's renewal request, relayed while its uplink is up. `cq` is the site's trusted-clock reading
-    /// taken when the request was SENT; the site may exercise while its clock is below cq + A.
-    function renew(uint64 site, bytes32 object, uint64 cq, bytes calldata clockSig) external returns (uint64 issued) {
+    /// taken when the request was SENT, in clock epoch `epoch`; the site may exercise while its clock, in the
+    /// same epoch, is below cq + A. Any clock reset (power loss) starts a new epoch and expires the allowance.
+    function renew(uint64 site, bytes32 object, uint64 epoch, uint64 cq, bytes calldata clockSig)
+        external
+        returns (uint64 issued)
+    {
         Lease storage l = leases[object];
         if (!l.exists) revert BadLease();
         if (!mayRenew(object, site)) revert NotPermitted();
         if (l.stopped) revert LeaseStopped();
-        if (OffLib.recover(OffLib.requestDigest(site, object, cq), clockSig) != sites[site].clockKey) {
+        if (OffLib.recover(OffLib.requestDigest(site, object, epoch, cq), clockSig) != sites[site].clockKey) {
             revert BadClockSig();
         }
         issued = uint64(block.timestamp);
-        renewalIssued[keccak256(abi.encode(site, object, cq))] = issued;
+        renewalIssued[OffLib.renewalKey(site, object, epoch, cq)] = issued;
+        lastRenewal[object][site] = Base(epoch, cq);
         l.lastIssue = issued;
-        emit Renewed(site, object, cq, issued);
+        emit Renewed(site, object, epoch, cq, issued);
     }
 
     /// Exclusive object: stop renewals now and name the next holder. Credential: revoke (nextSite = 0).
@@ -191,6 +215,33 @@ contract RightsRegistry {
         if (!l.exists || !l.exclusive || !l.stopped) revert BadLease();
         uint64 at = releaseAt(object);
         if (block.timestamp < at) revert TooEarly(at);
+        _handOver(object, l);
+    }
+
+    /// Fast path while the old holder is connected: its quorum acknowledges that its ledger executed the stop
+    /// at trusted-clock time (epoch, reading); the object moves at once. A later sealed use of the object at
+    /// or after that reading is provable (proveUseAfterAck).
+    function reassignAcked(
+        bytes32 object,
+        uint64 epoch,
+        uint64 reading,
+        bytes calldata clockSig,
+        bytes[] calldata acks
+    ) external {
+        Lease storage l = leases[object];
+        if (!l.exists || !l.exclusive || !l.stopped) revert BadLease();
+        uint64 site = l.holder;
+        if (OffLib.recover(OffLib.clockDigest(site, epoch, reading), clockSig) != sites[site].clockKey) {
+            revert BadClockSig();
+        }
+        address[] memory s = _quorum(site, OffLib.ackDigest(address(this), site, object, epoch, reading), acks);
+        lastAck[object] = Ack(site, epoch, reading);
+        ackSigners[object] = s;
+        emit Acknowledged(object, site, epoch, reading);
+        _handOver(object, l);
+    }
+
+    function _handOver(bytes32 object, Lease storage l) internal {
         l.holder = l.nextSite;
         l.nextSite = 0;
         l.stopped = false;
@@ -200,15 +251,18 @@ contract RightsRegistry {
 
     // ---------------------------------------------------------------- checkpoints and fraud proofs (Theorem 2)
     /// Returns the distinct site validators whose seals over `h` are valid; reverts below a 2f+1 quorum.
-    function _sealers(OffLib.Header calldata h, bytes[] calldata seals) internal view returns (address[] memory s) {
-        Site storage st = sites[h.site];
+    function _sealers(OffLib.Header calldata h, bytes[] calldata seals) internal view returns (address[] memory) {
+        return _quorum(h.site, OffLib.checkpointDigest(address(this), OffLib.headerHash(h)), seals);
+    }
+
+    function _quorum(uint64 site, bytes32 digest, bytes[] calldata seals) internal view returns (address[] memory s) {
+        Site storage st = sites[site];
         if (!st.exists) revert BadSite();
-        bytes32 digest = OffLib.checkpointDigest(address(this), OffLib.headerHash(h));
         s = new address[](seals.length);
         uint256 n;
         for (uint256 i = 0; i < seals.length; i++) {
             address v = OffLib.recover(digest, seals[i]);
-            if (v == address(0) || !isValidator[h.site][v]) continue;
+            if (v == address(0) || !isValidator[site][v]) continue;
             bool dup;
             for (uint256 j = 0; j < n; j++) {
                 if (s[j] == v) {
@@ -304,11 +358,45 @@ contract RightsRegistry {
         address[] memory s = _sealers(h, seals);
         _contains(h, op, idx, proof);
         if (op.kind != OffLib.USE) revert NotAViolation();
-        bool covered = renewalIssued[keccak256(abi.encode(h.site, op.key, op.a))] != 0
-            && OffLib.recover(OffLib.clockDigest(h.site, op.b), op.clockSig) == sites[h.site].clockKey
+        bool covered = renewalIssued[OffLib.renewalKey(h.site, op.key, op.e, op.a)] != 0
+            && OffLib.recover(OffLib.clockDigest(h.site, op.e, op.b), op.clockSig) == sites[h.site].clockKey
             && op.b >= op.a && op.b - op.a < leases[op.key].allowanceMs;
         if (covered) revert NotAViolation();
         return _slash(h.site, s, R_OVERUSE);
+    }
+
+    /// A sealed use of an object at or after the clock reading its site acknowledged releasing it at
+    /// (fast-path reassignment). A correct validator acknowledges only after its ledger executed the stop and
+    /// then never seals such a use, so the validators that did both are faulty (and are at least f+1).
+    function proveUseAfterAck(
+        OffLib.Header calldata h,
+        bytes[] calldata seals,
+        OffLib.Op calldata op,
+        uint256 idx,
+        bytes32[] calldata proof
+    ) external returns (uint256) {
+        address[] memory s = _sealers(h, seals);
+        _contains(h, op, idx, proof);
+        Ack storage ack = lastAck[op.key];
+        // Strictly after the acknowledged reading: uses sealed before the stop have readings <= it.
+        if (op.kind != OffLib.USE || ack.site != h.site || op.e != ack.epoch || op.b <= ack.reading) {
+            revert NotAViolation();
+        }
+        address[] storage a = ackSigners[op.key];
+        address[] memory both = new address[](s.length);
+        uint256 n;
+        for (uint256 i = 0; i < s.length; i++) {
+            for (uint256 j = 0; j < a.length; j++) {
+                if (s[i] == a[j]) {
+                    both[n++] = s[i];
+                    break;
+                }
+            }
+        }
+        assembly {
+            mstore(both, n)
+        }
+        return _slash(h.site, both, R_USE_AFTER_ACK);
     }
 
     /// Two different sealed checkpoints at the same height: slash the validators that sealed both.

@@ -7,8 +7,10 @@ import {OffLib} from "./OffLib.sol";
 /// live while the site's uplink is cut. It accepts rights only with a certificate from the global ledger's
 /// authorities and enforces them locally:
 ///   - bounded resources: the running total stays within the site's share;
-///   - leases and credentials: a use is valid while the trusted clock is below cq + A, where cq is the
-///     clock reading at the SEND of the renewal request that G answered (send-time counting, Theorem 1);
+///   - leases and credentials: a use is valid while the trusted clock, in the same clock epoch, is below
+///     cq + A, where cq is the reading at the SEND of the renewal request that G answered (Theorem 1);
+///     a clock reset (power loss) starts a new epoch and expires every allowance; a certified stop
+///     (reassignment or revocation) ends it at once when it arrives;
 ///   - commutative records are always accepted.
 /// Every accepted operation is emitted as an Op event; validators batch them into sealed checkpoints.
 contract SiteRights {
@@ -18,14 +20,21 @@ contract SiteRights {
     uint8 public immutable gThreshold;
     mapping(address => bool) public isAuthority; // global-ledger authorities
 
+    struct Base {
+        uint64 epoch;
+        uint64 cq;
+    }
+
     mapping(bytes32 => uint64) public share;
     mapping(bytes32 => uint64) public total; // running consumption per resource
     mapping(bytes32 => uint64) public allowanceMs;
-    mapping(bytes32 => uint64) public base; // cq of the newest applied renewal
+    mapping(bytes32 => Base) public base; // newest applied renewal
+    mapping(bytes32 => Base) public stoppedUpTo; // renewals up to this one are cancelled
+    uint64 public lastEpoch;
     uint64 public lastReading;
     uint64 public opCount;
 
-    event Op(uint64 indexed seq, uint8 kind, bytes32 key, uint64 a, uint64 b, bytes clockSig);
+    event Op(uint64 indexed seq, uint8 kind, bytes32 key, uint64 a, uint64 b, uint64 e, bytes clockSig);
     event RightApplied(bytes32 indexed key, uint8 what, uint64 value);
 
     error BadCertificate();
@@ -64,6 +73,10 @@ contract SiteRights {
         if (n < gThreshold) revert BadCertificate();
     }
 
+    function _after(Base memory x, Base memory y) internal pure returns (bool) {
+        return x.epoch > y.epoch || (x.epoch == y.epoch && x.cq > y.cq);
+    }
+
     // ---------------------------------------------------------------- rights (relayed while connected)
     function applyShare(bytes32 resource, uint64 amount, bytes[] calldata sigs) external {
         _certified(OffLib.shareDigest(registry, site, resource, amount), sigs);
@@ -77,10 +90,20 @@ contract SiteRights {
         emit RightApplied(object, 2, allowance);
     }
 
-    function applyRenewal(bytes32 object, uint64 cq, uint64 issued, bytes[] calldata sigs) external {
-        _certified(OffLib.renewalDigest(registry, site, object, cq, issued), sigs);
-        if (cq > base[object]) base[object] = cq;
+    function applyRenewal(bytes32 object, uint64 epoch, uint64 cq, uint64 issued, bytes[] calldata sigs) external {
+        _certified(OffLib.renewalDigest(registry, site, object, epoch, cq, issued), sigs);
+        Base memory b = Base(epoch, cq);
+        if (_after(b, base[object]) && _after(b, stoppedUpTo[object])) base[object] = b;
         emit RightApplied(object, 3, cq);
+    }
+
+    /// Reassignment or revocation reaching a connected site: ends the allowance at once.
+    function applyStop(bytes32 object, uint64 epoch, uint64 cq, bytes[] calldata sigs) external {
+        _certified(OffLib.stopDigest(registry, site, object, epoch, cq), sigs);
+        Base memory b = Base(epoch, cq);
+        if (_after(b, stoppedUpTo[object])) stoppedUpTo[object] = b;
+        if (!_after(base[object], b)) delete base[object];
+        emit RightApplied(object, 4, cq);
     }
 
     // ---------------------------------------------------------------- operations (also while cut off)
@@ -88,29 +111,30 @@ contract SiteRights {
         uint64 t = total[resource] + amount;
         if (t > share[resource]) revert OverShare(t, share[resource]);
         total[resource] = t;
-        emit Op(opCount++, OffLib.CONSUME, resource, amount, t, "");
+        emit Op(opCount++, OffLib.CONSUME, resource, amount, t, 0, "");
     }
 
-    /// Exercise an exclusive object or accept a credential at trusted-clock time `reading`.
-    function use(bytes32 object, uint64 reading, bytes calldata clockSig) external {
-        if (OffLib.recover(OffLib.clockDigest(site, reading), clockSig) != clockKey) revert BadClockSig();
-        if (reading < lastReading) revert StaleReading();
-        uint64 b = base[object];
-        if (b == 0 || reading < b) revert NoRenewal();
-        if (reading - b >= allowanceMs[object]) revert AllowanceExpired(reading, b + allowanceMs[object]);
+    /// Exercise an exclusive object or accept a credential at trusted-clock time (epoch, reading).
+    function use(bytes32 object, uint64 epoch, uint64 reading, bytes calldata clockSig) external {
+        if (OffLib.recover(OffLib.clockDigest(site, epoch, reading), clockSig) != clockKey) revert BadClockSig();
+        if (epoch < lastEpoch || (epoch == lastEpoch && reading < lastReading)) revert StaleReading();
+        Base memory b = base[object];
+        if (b.cq == 0 || b.epoch != epoch || reading < b.cq) revert NoRenewal();
+        if (reading - b.cq >= allowanceMs[object]) revert AllowanceExpired(reading, b.cq + allowanceMs[object]);
+        lastEpoch = epoch;
         lastReading = reading;
-        emit Op(opCount++, OffLib.USE, object, b, reading, clockSig);
+        emit Op(opCount++, OffLib.USE, object, b.cq, reading, epoch, clockSig);
     }
 
     function record(bytes32 payloadHash) external {
-        emit Op(opCount++, OffLib.LOG, payloadHash, 0, 0, "");
+        emit Op(opCount++, OffLib.LOG, payloadHash, 0, 0, 0, "");
     }
 
-    /// Remaining allowance (ms) of an object at clock reading `reading`; 0 when expired.
-    function remaining(bytes32 object, uint64 reading) external view returns (uint64) {
-        uint64 b = base[object];
+    /// Remaining allowance (ms) of an object at clock time (epoch, reading); 0 when expired.
+    function remaining(bytes32 object, uint64 epoch, uint64 reading) external view returns (uint64) {
+        Base memory b = base[object];
         uint64 a = allowanceMs[object];
-        if (b == 0 || reading < b || reading - b >= a) return 0;
-        return a - (reading - b);
+        if (b.cq == 0 || b.epoch != epoch || reading < b.cq || reading - b.cq >= a) return 0;
+        return a - (reading - b.cq);
     }
 }

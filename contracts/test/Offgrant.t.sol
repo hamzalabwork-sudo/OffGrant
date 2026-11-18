@@ -23,6 +23,7 @@ contract OffgrantTest is Test {
     bytes32 constant PARTS = keccak256("spare-parts");
     bytes32 constant PERMIT = keccak256("loto:pump-7");
     uint64 constant A = 99_000; // allowance, ms
+    uint64 constant EPOCH = 1; // trusted-clock epoch (TPM resetCount/restartCount)
 
     function setUp() public {
         vm.warp(1_000_000);
@@ -110,11 +111,19 @@ contract OffgrantTest is Test {
     }
 
     function _consume(uint64 amount, uint64 runningTotal) internal pure returns (OffLib.Op memory) {
-        return OffLib.Op(OffLib.CONSUME, PARTS, amount, runningTotal, "");
+        return OffLib.Op(OffLib.CONSUME, PARTS, amount, runningTotal, 0, "");
+    }
+
+    function _useE(uint64 epoch, uint64 cq, uint64 reading) internal pure returns (OffLib.Op memory) {
+        return OffLib.Op(OffLib.USE, PERMIT, cq, reading, epoch, _sig(CLOCK, OffLib.clockDigest(SITE, epoch, reading)));
     }
 
     function _use(uint64 cq, uint64 reading) internal pure returns (OffLib.Op memory) {
-        return OffLib.Op(OffLib.USE, PERMIT, cq, reading, _sig(CLOCK, OffLib.clockDigest(SITE, reading)));
+        return _useE(EPOCH, cq, reading);
+    }
+
+    function _clk(uint64 epoch, uint64 reading) internal pure returns (bytes memory) {
+        return _sig(CLOCK, OffLib.clockDigest(SITE, epoch, reading));
     }
 
     function _header(uint64 height, bytes32 prev, OffLib.Op[] memory ops)
@@ -130,7 +139,7 @@ contract OffgrantTest is Test {
     }
 
     function _renew(uint64 cq) internal returns (uint64) {
-        return reg.renew(SITE, PERMIT, cq, _sig(CLOCK, OffLib.requestDigest(SITE, PERMIT, cq)));
+        return reg.renew(SITE, PERMIT, EPOCH, cq, _sig(CLOCK, OffLib.requestDigest(SITE, PERMIT, EPOCH, cq)));
     }
 
     // ------------------------------------------------------------ Theorem 1: wait and reassignment
@@ -153,7 +162,7 @@ contract OffgrantTest is Test {
         uint64 issued = _renew(5_000);
         reg.stop(PERMIT, SITE2);
         vm.expectRevert();
-        reg.renew(SITE, PERMIT, 6_000, _sig(CLOCK, OffLib.requestDigest(SITE, PERMIT, 6_000)));
+        reg.renew(SITE, PERMIT, EPOCH, 6_000, _sig(CLOCK, OffLib.requestDigest(SITE, PERMIT, EPOCH, 6_000)));
         uint64 at = issued + reg.waitSeconds(PERMIT);
         vm.warp(at - 1);
         vm.expectRevert(abi.encodeWithSelector(RightsRegistry.TooEarly.selector, at));
@@ -166,7 +175,7 @@ contract OffgrantTest is Test {
 
     function test_renewRejectsForgedClock() public {
         vm.expectRevert(RightsRegistry.BadClockSig.selector);
-        reg.renew(SITE, PERMIT, 5_000, _sig(vk[0], OffLib.requestDigest(SITE, PERMIT, 5_000)));
+        reg.renew(SITE, PERMIT, EPOCH, 5_000, _sig(vk[0], OffLib.requestDigest(SITE, PERMIT, EPOCH, 5_000)));
     }
 
     function test_sharesNeverExceedCap() public {
@@ -178,7 +187,11 @@ contract OffgrantTest is Test {
     function _provisionSite(uint64 cq) internal {
         siteC.applyShare(PARTS, 40, _cert(OffLib.shareDigest(address(reg), SITE, PARTS, 40)));
         siteC.applyLease(PERMIT, A, _cert(OffLib.leaseDigest(address(reg), SITE, PERMIT, A)));
-        siteC.applyRenewal(PERMIT, cq, 7, _cert(OffLib.renewalDigest(address(reg), SITE, PERMIT, cq, 7)));
+        _applyRenewal(EPOCH, cq);
+    }
+
+    function _applyRenewal(uint64 epoch, uint64 cq) internal {
+        siteC.applyRenewal(PERMIT, epoch, cq, 7, _cert(OffLib.renewalDigest(address(reg), SITE, PERMIT, epoch, cq, 7)));
     }
 
     function test_siteEnforcesShare() public {
@@ -191,9 +204,9 @@ contract OffgrantTest is Test {
 
     function test_siteEnforcesAllowance() public {
         _provisionSite(5_000);
-        siteC.use(PERMIT, 5_000 + A - 1, _sig(CLOCK, OffLib.clockDigest(SITE, 5_000 + A - 1)));
+        siteC.use(PERMIT, EPOCH, 5_000 + A - 1, _clk(EPOCH, 5_000 + A - 1));
         vm.expectRevert();
-        siteC.use(PERMIT, 5_000 + A, _sig(CLOCK, OffLib.clockDigest(SITE, 5_000 + A)));
+        siteC.use(PERMIT, EPOCH, 5_000 + A, _clk(EPOCH, 5_000 + A));
     }
 
     function test_siteRejectsUncertifiedRights() public {
@@ -207,10 +220,10 @@ contract OffgrantTest is Test {
     function test_siteRejectsForgedOrStaleClock() public {
         _provisionSite(5_000);
         vm.expectRevert(SiteRights.BadClockSig.selector);
-        siteC.use(PERMIT, 6_000, _sig(vk[0], OffLib.clockDigest(SITE, 6_000)));
-        siteC.use(PERMIT, 7_000, _sig(CLOCK, OffLib.clockDigest(SITE, 7_000)));
+        siteC.use(PERMIT, EPOCH, 6_000, _sig(vk[0], OffLib.clockDigest(SITE, EPOCH, 6_000)));
+        siteC.use(PERMIT, EPOCH, 7_000, _clk(EPOCH, 7_000));
         vm.expectRevert(SiteRights.StaleReading.selector);
-        siteC.use(PERMIT, 6_500, _sig(CLOCK, OffLib.clockDigest(SITE, 6_500)));
+        siteC.use(PERMIT, EPOCH, 6_500, _clk(EPOCH, 6_500));
     }
 
     // ------------------------------------------------------------ Theorem 2: no framing of honest checkpoints
@@ -261,7 +274,7 @@ contract OffgrantTest is Test {
         (OffLib.Header memory h1, bytes32[] memory lv1) = _header(1, bytes32(0), ops1);
         OffLib.Op[] memory ops2 = new OffLib.Op[](2);
         ops2[0] = _consume(20, 20); // running total reset: claims 20 instead of 55
-        ops2[1] = OffLib.Op(OffLib.LOG, keccak256("x"), 0, 0, "");
+        ops2[1] = OffLib.Op(OffLib.LOG, keccak256("x"), 0, 0, 0, "");
         (OffLib.Header memory h2, bytes32[] memory lv2) = _header(2, OffLib.headerHash(h1), ops2);
         OffLib.Header[] memory chain = new OffLib.Header[](2);
         (chain[0], chain[1]) = (h1, h2);
@@ -308,5 +321,73 @@ contract OffgrantTest is Test {
         bytes[] memory s = _seal(h, _idx(0, 1, 2));
         assertEq(reg.proveOverspend(h, s, ops[0], 0, _proof(lv, 0)), 3);
         assertEq(reg.proveOverspend(h, s, ops[0], 0, _proof(lv, 0)), 0);
+    }
+
+    // ------------------------------------------------------------ clock epochs, stops and the fast path
+    function test_clockResetExpiresAllowance() public {
+        _provisionSite(5_000);
+        // After a power loss the TPM starts a new epoch: the old allowance no longer applies.
+        vm.expectRevert(SiteRights.NoRenewal.selector);
+        siteC.use(PERMIT, EPOCH + 1, 6_000, _clk(EPOCH + 1, 6_000));
+    }
+
+    function test_useInNewEpochIsSlashable() public {
+        _renew(5_000);
+        OffLib.Op[] memory ops = new OffLib.Op[](1);
+        ops[0] = _useE(EPOCH + 1, 5_000, 6_000); // base from epoch 1 used in epoch 2
+        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
+        assertEq(reg.proveOveruse(h, _seal(h, _idx(0, 1, 2)), ops[0], 0, _proof(lv, 0)), 3);
+    }
+
+    function test_stopEndsAllowanceAtOnce() public {
+        _provisionSite(5_000);
+        siteC.applyStop(PERMIT, EPOCH, 5_000, _cert(OffLib.stopDigest(address(reg), SITE, PERMIT, EPOCH, 5_000)));
+        vm.expectRevert(SiteRights.NoRenewal.selector);
+        siteC.use(PERMIT, EPOCH, 6_000, _clk(EPOCH, 6_000));
+    }
+
+    function test_stopCannotCancelLaterRenewal() public {
+        _provisionSite(5_000);
+        siteC.applyStop(PERMIT, EPOCH, 5_000, _cert(OffLib.stopDigest(address(reg), SITE, PERMIT, EPOCH, 5_000)));
+        _applyRenewal(EPOCH, 9_000); // granted again after a later re-assignment
+        siteC.use(PERMIT, EPOCH, 9_500, _clk(EPOCH, 9_500));
+        // Replaying the old stop changes nothing.
+        siteC.applyStop(PERMIT, EPOCH, 5_000, _cert(OffLib.stopDigest(address(reg), SITE, PERMIT, EPOCH, 5_000)));
+        siteC.use(PERMIT, EPOCH, 9_600, _clk(EPOCH, 9_600));
+    }
+
+    function _ack(uint64 reading, uint256[] memory who) internal view returns (bytes[] memory s) {
+        bytes32 d = OffLib.ackDigest(address(reg), SITE, PERMIT, EPOCH, reading);
+        s = new bytes[](who.length);
+        for (uint256 i = 0; i < who.length; i++) {
+            s[i] = _sig(vk[who[i]], d);
+        }
+    }
+
+    function test_fastPathReassignsAtOnce() public {
+        _renew(5_000);
+        reg.stop(PERMIT, SITE2);
+        uint256[] memory two = new uint256[](2);
+        (two[0], two[1]) = (0, 1);
+        vm.expectRevert(RightsRegistry.NoQuorum.selector);
+        reg.reassignAcked(PERMIT, EPOCH, 8_000, _clk(EPOCH, 8_000), _ack(8_000, two));
+        reg.reassignAcked(PERMIT, EPOCH, 8_000, _clk(EPOCH, 8_000), _ack(8_000, _idx(0, 1, 2)));
+        assertTrue(reg.mayRenew(PERMIT, SITE2));
+    }
+
+    function test_useAfterAckSlashesOnlyAckersThatSealedIt() public {
+        _renew(5_000);
+        reg.stop(PERMIT, SITE2);
+        reg.reassignAcked(PERMIT, EPOCH, 8_000, _clk(EPOCH, 8_000), _ack(8_000, _idx(0, 1, 2)));
+        OffLib.Op[] memory ops = new OffLib.Op[](2);
+        ops[0] = _use(5_000, 8_000); // at the acknowledged reading: sealed before the stop, not a violation
+        ops[1] = _use(5_000, 8_001); // after it
+        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
+        bytes[] memory seals = _seal(h, _idx(1, 2, 3));
+        vm.expectRevert(RightsRegistry.NotAViolation.selector);
+        reg.proveUseAfterAck(h, seals, ops[0], 0, _proof(lv, 0));
+        assertEq(reg.proveUseAfterAck(h, seals, ops[1], 1, _proof(lv, 1)), 2);
+        assertEq(reg.bond(SITE, va[0]), reg.BOND()); // acked but did not seal
+        assertEq(reg.bond(SITE, va[3]), reg.BOND()); // sealed but did not ack
     }
 }

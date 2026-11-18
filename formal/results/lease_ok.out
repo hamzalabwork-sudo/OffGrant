@@ -1,0 +1,44 @@
+TLC2 Version 2026.11.06.222357 (rev: d8fb231)
+Running breadth-first search Model-Checking with fp 14 and seed -4084711893556848356 with 20 workers on 28 cores with 21845MB heap and 64MB offheap memory [pid: 3273712] (Linux 6.8.0-138-generic amd64, Ubuntu 21.0.13.0.3 64bit, MSBDiskFPSet, DiskStateQueue).
+Parsing file /home/s28/offline_iiot/formal/Lease.tla
+Parsing file /tmp/tlc-15689129113262772882/Integers.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
+Parsing file /tmp/tlc-15689129113262772882/FiniteSets.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
+Parsing file /tmp/tlc-15689129113262772882/_TLCTrace.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/_TLCTrace.tla)
+Parsing file /tmp/tlc-15689129113262772882/Naturals.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/Naturals.tla)
+Parsing file /tmp/tlc-15689129113262772882/Sequences.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/Sequences.tla)
+Parsing file /tmp/tlc-15689129113262772882/TLC.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/TLC.tla)
+Parsing file /tmp/tlc-15689129113262772882/TLCExt.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/TLCExt.tla)
+Semantic processing of module Naturals
+Semantic processing of module Integers
+Semantic processing of module Sequences
+Semantic processing of module FiniteSets
+Semantic processing of module TLC
+Semantic processing of module TLCExt
+Semantic processing of module _TLCTrace
+Semantic processing of module Lease
+Linting of module TLCExt
+Linting of module _TLCTrace
+Linting of module Lease
+Starting... (2026-11-18 14:55:26)
+Computing initial states...
+Finished computing initial states: 1 distinct state generated at 2026-11-18 14:55:31.
+Progress(13) at 2026-11-18 14:55:34: 869,516 states generated (869,516 s/min), 283,986 distinct states found (283,986 ds/min), 150,147 states left on queue.
+Progress(18) at 2026-11-18 14:56:34: 23,761,024 states generated (22,891,508 s/min), 6,506,972 distinct states found (6,222,986 ds/min), 2,846,268 states left on queue.
+Progress(19) at 2026-11-18 14:57:34: 45,273,575 states generated (21,512,551 s/min), 12,000,024 distinct states found (5,493,052 ds/min), 4,954,058 states left on queue.
+Progress(20) at 2026-11-18 14:58:34: 68,612,463 states generated (23,338,888 s/min), 17,569,051 distinct states found (5,569,027 ds/min), 6,723,955 states left on queue.
+Progress(21) at 2026-11-18 14:59:34: 91,677,655 states generated (23,065,192 s/min), 23,050,824 distinct states found (5,481,773 ds/min), 8,161,218 states left on queue.
+Progress(21) at 2026-11-18 15:00:34: 114,451,665 states generated (22,774,010 s/min), 28,477,244 distinct states found (5,426,420 ds/min), 9,790,904 states left on queue.
+Progress(21) at 2026-11-18 15:01:34: 136,445,418 states generated (21,993,753 s/min), 33,636,420 distinct states found (5,159,176 ds/min), 11,177,725 states left on queue.
+Progress(22) at 2026-11-18 15:02:34: 158,781,598 states generated (22,336,180 s/min), 37,878,551 distinct states found (4,242,131 ds/min), 11,261,501 states left on queue.
+Progress(22) at 2026-11-18 15:03:34: 181,570,536 states generated (22,788,938 s/min), 42,030,336 distinct states found (4,151,785 ds/min), 10,993,920 states left on queue.
+Progress(23) at 2026-11-18 15:04:34: 204,409,515 states generated (22,838,979 s/min), 45,944,525 distinct states found (3,914,189 ds/min), 10,187,265 states left on queue.
+Progress(23) at 2026-11-18 15:05:34: 226,513,556 states generated (22,104,041 s/min), 48,431,833 distinct states found (2,487,308 ds/min), 6,246,516 states left on queue.
+Model checking completed. No error has been found.
+  Estimates of the probability that TLC did not check all reachable states
+  because two distinct states had the same fingerprint:
+  calculated (optimistic):  val = 5.3E-4
+  based on the actual fingerprints:  val = 2.4E-6
+247082842 states generated, 49859586 distinct states found, 0 states left on queue.
+The depth of the complete state graph search is 24.
+The average outdegree of the complete state graph is 1 (minimum is 0, the maximum 7 and the 95th percentile is 3).
+Finished in 11min 01s at (2026-11-18 15:06:26)
