@@ -25,19 +25,34 @@ library OffLib {
     /// A site checkpoint: one per batch of site-ledger operations, hash-chained. The trusted clock attests the
     /// closing reading (closeEpoch, closeReading) over the checkpoint's content, so the coverage a checkpoint
     /// claims cannot run ahead of the site's clock.
+    /// `stateRoot` commits the running total of every resource at the close (leaves stateLeaf(resource, total)),
+    /// so an understatement is always provable against one checkpoint or its parent. (`baseHeight`, `baseHash`)
+    /// name the site's latest checkpoint anchored on G: a site can anchor its newest checkpoint directly after
+    /// an outage of any length.
     struct Header {
         uint64 site;
         uint64 height;
         bytes32 prev;
         bytes32 opsRoot;
         uint64 opCount;
+        bytes32 stateRoot;
+        uint64 baseHeight;
+        bytes32 baseHash;
         uint64 closeEpoch;
         uint64 closeReading;
         bytes closeSig;
     }
 
     function contentTag(Header memory h) internal pure returns (bytes32) {
-        return keccak256(abi.encode("OFFGRANT-CLOSE", h.site, h.height, h.prev, h.opsRoot, h.opCount));
+        return keccak256(
+            abi.encode(
+                "OFFGRANT-CLOSE", h.site, h.height, h.prev, h.opsRoot, h.opCount, h.stateRoot, h.baseHeight, h.baseHash
+            )
+        );
+    }
+
+    function stateLeaf(bytes32 resource, uint64 total) internal pure returns (bytes32) {
+        return keccak256(abi.encode("OFFGRANT-STATE", resource, total));
     }
 
     function headerHash(Header memory h) internal pure returns (bytes32) {

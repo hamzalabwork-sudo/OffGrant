@@ -157,7 +157,19 @@ contract OffgrantTest is Test {
         for (uint256 i = 0; i < ops.length; i++) {
             leaves[i] = OffLib.leaf(ops[i]);
         }
-        h = OffLib.Header(SITE, height, prev, _root(leaves), uint64(ops.length), EPOCH, close, "");
+        h = OffLib.Header(SITE, height, prev, _root(leaves), uint64(ops.length), bytes32(0), 0, bytes32(0), EPOCH, close, "");
+        h.closeSig = _sig(CLOCK, OffLib.clockDigest(SITE, EPOCH, close, OffLib.contentTag(h)));
+    }
+
+    /// Header that commits a running total for PARTS (state root with one leaf) and builds on (bh, bhash).
+    function _hdrS(uint64 height, bytes32 prev, OffLib.Op[] memory ops, uint64 partsTotal, uint64 bh, bytes32 bhash, uint64 close)
+        internal
+        pure
+        returns (OffLib.Header memory h, bytes32[] memory leaves)
+    {
+        (h, leaves) = _hdr(height, prev, ops, close);
+        h.stateRoot = OffLib.stateLeaf(PARTS, partsTotal);
+        (h.baseHeight, h.baseHash) = (bh, bhash);
         h.closeSig = _sig(CLOCK, OffLib.clockDigest(SITE, EPOCH, close, OffLib.contentTag(h)));
     }
 
@@ -332,7 +344,7 @@ contract OffgrantTest is Test {
         vm.expectRevert(RightsRegistry.NotAViolation.selector);
         reg.proveOveruse(h, s, ops[1], 1, _proof(lv, 1));
         vm.expectRevert(RightsRegistry.NotAViolation.selector);
-        reg.proveUnderstate(h, ops[0], 0, _proof(lv, 0), h, s, ops[2], 2, _proof(lv, 2));
+        reg.proveUnderstate(h, s, ops[0], 0, _proof(lv, 0), ops[2], 2, _proof(lv, 2));
         reg.anchor(h, s);
         assertEq(reg.bond(SITE, va[0]), reg.BOND());
     }
@@ -363,32 +375,55 @@ contract OffgrantTest is Test {
         assertEq(reg.proveOverspend(h, _seal(h, _idx(0, 1, 2)), ops[0], 0, _proof(lv, 0)), 3);
     }
 
-    function test_understateAcrossAnchoredCheckpointsSlashesLaterSealers() public {
-        OffLib.Op[] memory ops1 = _one(_consume(35, 35));
-        (OffLib.Header memory h1, bytes32[] memory lv1) = _hdr(1, bytes32(0), ops1, 6_000);
-        reg.anchor(h1, _seal(h1, _idx(0, 1, 2)));
-        OffLib.Op[] memory ops2 = new OffLib.Op[](2);
-        ops2[0] = _consume(20, 20); // running total reset: claims 20 instead of 55
-        ops2[1] = OffLib.Op(OffLib.LOG, keccak256("x"), 0, 0, 0, 0, "");
-        (OffLib.Header memory h2, bytes32[] memory lv2) = _hdr(2, OffLib.headerHash(h1), ops2, 7_000);
-        uint256 n = reg.proveUnderstate(
-            h1, ops1[0], 0, _proof(lv1, 0), h2, _seal(h2, _idx(1, 2, 3)), ops2[0], 0, _proof(lv2, 0)
-        );
+    function test_understateWithinCheckpointSlashes() public {
+        OffLib.Op[] memory ops = new OffLib.Op[](2);
+        ops[0] = _consume(35, 35);
+        ops[1] = _consume(5, 10); // restarts the running total
+        (OffLib.Header memory h, bytes32[] memory lv) = _header(1, bytes32(0), ops);
+        assertEq(reg.proveUnderstate(h, _seal(h, _idx(0, 1, 2)), ops[0], 0, _proof(lv, 0), ops[1], 1, _proof(lv, 1)), 3);
+    }
+
+    function test_understateAgainstParentSlashesChildSealers() public {
+        // Parent commits a total of 35; the child, sealed by {1,2,3}, restarts at 20. Constant cost, no anchoring needed.
+        (OffLib.Header memory p,) = _hdrS(1, bytes32(0), _one(_consume(35, 35)), 35, 0, bytes32(0), 6_000);
+        OffLib.Op[] memory ops2 = _one(_consume(20, 20));
+        (OffLib.Header memory h, bytes32[] memory lv) = _hdrS(2, OffLib.headerHash(p), ops2, 20, 0, bytes32(0), 7_000);
+        uint256 n = reg.proveUnderstateParent(h, _seal(h, _idx(1, 2, 3)), ops2[0], 0, _proof(lv, 0), p, 35, 0, new bytes32[](0));
         assertEq(n, 3);
         assertEq(reg.bond(SITE, va[0]), reg.BOND());
     }
 
-    function test_understateNeedsAnchoredEarlierCheckpoint() public {
-        OffLib.Op[] memory ops1 = _one(_consume(35, 35));
-        (OffLib.Header memory h1, bytes32[] memory lv1) = _hdr(1, bytes32(0), ops1, 6_000);
+    function test_understateParentMustBeTheRealParent() public {
+        (OffLib.Header memory p,) = _hdrS(1, bytes32(0), _one(_consume(35, 35)), 35, 0, bytes32(0), 6_000);
         OffLib.Op[] memory ops2 = _one(_consume(20, 20));
-        (OffLib.Header memory h2, bytes32[] memory lv2) = _hdr(5, keccak256("elsewhere"), ops2, 7_000);
-        bytes[] memory s2 = _seal(h2, _idx(1, 2, 3));
-        bytes32[] memory p1 = _proof(lv1, 0);
-        bytes32[] memory p2 = _proof(lv2, 0);
-        // An unrelated header cannot be paired with h1 to frame the sealers of h2.
+        (OffLib.Header memory h, bytes32[] memory lv) = _hdrS(2, keccak256("other parent"), ops2, 20, 0, bytes32(0), 7_000);
+        bytes[] memory s2 = _seal(h, _idx(1, 2, 3));
+        bytes32[] memory pr = _proof(lv, 0);
         vm.expectRevert(RightsRegistry.BadProof.selector);
-        reg.proveUnderstate(h1, ops1[0], 0, p1, h2, s2, ops2[0], 0, p2);
+        reg.proveUnderstateParent(h, s2, ops2[0], 0, pr, p, 35, 0, new bytes32[](0));
+    }
+
+    function test_stateRootBelowOwnConsumptionSlashes() public {
+        OffLib.Op[] memory ops = _one(_consume(30, 30));
+        (OffLib.Header memory h, bytes32[] memory lv) = _hdrS(1, bytes32(0), ops, 10, 0, bytes32(0), 6_000); // commits 10
+        assertEq(reg.proveStateMismatch(h, _seal(h, _idx(0, 1, 2)), ops[0], 0, _proof(lv, 0), 10, 0, new bytes32[](0)), 3);
+    }
+
+    function test_anchorSkipsToNewestCheckpointAfterOutage() public {
+        OffLib.Op[] memory l = _one(OffLib.Op(OffLib.LOG, keccak256("x"), 0, 0, 0, 0, ""));
+        (OffLib.Header memory h1,) = _hdrS(1, bytes32(0), l, 0, 0, bytes32(0), 6_000);
+        reg.anchor(h1, _seal(h1, _idx(0, 1, 2)));
+        // 1000 checkpoints later, one transaction anchors the newest, which names h1 as its anchored base.
+        (OffLib.Header memory hn,) = _hdrS(1001, keccak256("parent 1000"), l, 0, 1, OffLib.headerHash(h1), 9_000_000);
+        reg.anchor(hn, _seal(hn, _idx(0, 1, 2)));
+        (,,,,,, uint64 ah,,, uint64 covered) = reg.sites(SITE);
+        assertEq(ah, 1001);
+        assertEq(covered, 9_000_000);
+        // A checkpoint that does not build on the anchored one is refused.
+        (OffLib.Header memory bad,) = _hdrS(1002, bytes32(0), l, 0, 1, OffLib.headerHash(h1), 9_100_000);
+        bytes[] memory sb = _seal(bad, _idx(0, 1, 2));
+        vm.expectRevert(RightsRegistry.BadProof.selector);
+        reg.anchor(bad, sb);
     }
 
     function test_overusePastAllowanceSlashes() public {
@@ -535,7 +570,7 @@ contract OffgrantTest is Test {
         OffLib.Op[] memory ops = _one(_consume(50, 50)); // site 5 has no share
         bytes32[] memory leaves = new bytes32[](1);
         leaves[0] = OffLib.leaf(ops[0]);
-        OffLib.Header memory h = OffLib.Header(S5, 1, bytes32(0), _root(leaves), 1, EPOCH, 0, "");
+        OffLib.Header memory h = OffLib.Header(S5, 1, bytes32(0), _root(leaves), 1, bytes32(0), 0, bytes32(0), EPOCH, 0, "");
         bytes32 d = OffLib.checkpointDigest(address(reg), OffLib.headerHash(h));
         bytes[] memory three = new bytes[](3);
         for (uint256 i = 0; i < 3; i++) {

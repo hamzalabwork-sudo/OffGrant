@@ -396,13 +396,16 @@ contract RightsRegistry {
         if (idx >= h.opCount || !OffLib.verifyLeaf(h.opsRoot, OffLib.leaf(op), idx, proof)) revert BadProof();
     }
 
-    /// Records the next sealed checkpoint of a site. Its close is attested by the site's trusted clock and
-    /// advances the coverage that renewals require (anchor before renew).
+    /// Records a sealed checkpoint of a site that builds on its last anchored one (one transaction after an
+    /// outage of any length). Its close is attested by the site's trusted clock and advances the coverage that
+    /// renewals require (anchor before renew).
     function anchor(OffLib.Header calldata h, bytes[] calldata seals) external {
         Site storage st = sites[h.site];
         bytes32 hh = OffLib.headerHash(h);
         _quorum(h.site, OffLib.checkpointDigest(address(this), hh), seals, false);
-        if (h.height != st.anchoredHeight + 1 || h.prev != st.anchoredHash) revert BadProof();
+        if (h.height <= st.anchoredHeight || h.baseHeight != st.anchoredHeight || h.baseHash != st.anchoredHash) {
+            revert BadProof();
+        }
         if (
             OffLib.recover(OffLib.clockDigest(h.site, h.closeEpoch, h.closeReading, OffLib.contentTag(h)), h.closeSig)
                 != st.clockKey
@@ -432,43 +435,66 @@ contract RightsRegistry {
         return _slash(h.site, s, R_OVERSPEND);
     }
 
-    /// Two consumptions of one resource, i before j, where j's running total minus its amount is below i's
-    /// running total: the ledger understates consumption. Either both are in one sealed checkpoint (i first),
-    /// or i is in an anchored checkpoint and j in a later anchored one or in its direct sealed successor, so
-    /// the sealers of j committed to a chain that contains i. Constant cost, whatever the outage length.
+    /// Understatement inside one sealed checkpoint: consumption i precedes j, and j's running total minus its
+    /// amount is below i's running total.
     function proveUnderstate(
-        OffLib.Header calldata hI,
+        OffLib.Header calldata h,
+        bytes[] calldata seals,
         OffLib.Op calldata opI,
         uint256 idxI,
         bytes32[] calldata proofI,
-        OffLib.Header calldata hJ,
-        bytes[] calldata sealsJ,
         OffLib.Op calldata opJ,
         uint256 idxJ,
         bytes32[] calldata proofJ
     ) external returns (uint256) {
-        _ordered(hI, idxI, hJ, idxJ);
-        address[] memory s = _sealers(hJ, sealsJ);
-        _contains(hI, opI, idxI, proofI);
-        _contains(hJ, opJ, idxJ, proofJ);
+        if (idxI >= idxJ) revert BadProof();
+        address[] memory s = _sealers(h, seals);
+        _contains(h, opI, idxI, proofI);
+        _contains(h, opJ, idxJ, proofJ);
         if (opI.kind != OffLib.CONSUME || opJ.kind != OffLib.CONSUME || opI.key != opJ.key) revert NotAViolation();
         if (opJ.b >= opJ.a && opJ.b - opJ.a >= opI.b) revert NotAViolation();
-        return _slash(hJ.site, s, R_UNDERSTATE);
+        return _slash(h.site, s, R_UNDERSTATE);
     }
 
-    /// Checks that operation idxI of hI precedes operation idxJ of hJ on one committed chain.
-    function _ordered(OffLib.Header calldata hI, uint256 idxI, OffLib.Header calldata hJ, uint256 idxJ) internal view {
-        bytes32 hashI = OffLib.headerHash(hI);
-        bytes32 hashJ = OffLib.headerHash(hJ);
-        if (hI.site != hJ.site) revert BadProof();
-        if (hashI == hashJ) {
-            if (idxI >= idxJ) revert BadProof();
-            return;
-        }
-        bool iAnchored = anchoredAt[hI.site][hI.height] == hashI;
-        bool linked = (hJ.height > hI.height && anchoredAt[hJ.site][hJ.height] == hashJ)
-            || (hJ.height == hI.height + 1 && hJ.prev == hashI);
-        if (!iAnchored || !linked) revert BadProof();
+    /// Understatement against the parent: the sealers of `h` extended parent `p` (h.prev = hash(p)), whose
+    /// state root commits a running total `total` for the resource, yet a consumption in `h` restarts below it.
+    /// A correct validator extends only a checkpoint it verified, so the sealers of h are faulty. Constant
+    /// cost, whatever the outage length.
+    function proveUnderstateParent(
+        OffLib.Header calldata h,
+        bytes[] calldata seals,
+        OffLib.Op calldata op,
+        uint256 idx,
+        bytes32[] calldata proof,
+        OffLib.Header calldata p,
+        uint64 total,
+        uint256 sIdx,
+        bytes32[] calldata sProof
+    ) external returns (uint256) {
+        if (h.site != p.site || h.prev != OffLib.headerHash(p)) revert BadProof();
+        address[] memory s = _sealers(h, seals);
+        _contains(h, op, idx, proof);
+        if (!OffLib.verifyLeaf(p.stateRoot, OffLib.stateLeaf(op.key, total), sIdx, sProof)) revert BadProof();
+        if (op.kind != OffLib.CONSUME || (op.b >= op.a && op.b - op.a >= total)) revert NotAViolation();
+        return _slash(h.site, s, R_UNDERSTATE);
+    }
+
+    /// A sealed checkpoint whose state root commits a running total below one of its own consumptions.
+    function proveStateMismatch(
+        OffLib.Header calldata h,
+        bytes[] calldata seals,
+        OffLib.Op calldata op,
+        uint256 idx,
+        bytes32[] calldata proof,
+        uint64 total,
+        uint256 sIdx,
+        bytes32[] calldata sProof
+    ) external returns (uint256) {
+        address[] memory s = _sealers(h, seals);
+        _contains(h, op, idx, proof);
+        if (!OffLib.verifyLeaf(h.stateRoot, OffLib.stateLeaf(op.key, total), sIdx, sProof)) revert BadProof();
+        if (op.kind != OffLib.CONSUME || op.b <= total) revert NotAViolation();
+        return _slash(h.site, s, R_UNDERSTATE);
     }
 
     /// A sealed grant that the rights do not cover: no renewal was issued for its base, the clock attestation
