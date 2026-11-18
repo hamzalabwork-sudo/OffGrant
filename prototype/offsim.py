@@ -1,13 +1,23 @@
-"""Discrete-event simulation (v5) of industrial sites whose uplinks fail, comparing rights-scoped offline
+"""Discrete-event simulation (v6) of industrial sites whose uplinks fail, comparing rights-scoped offline
 operation (OffGrant) with baselines and ablations on identical traces (paired within a run: same outages, power
 losses, requests, clocks, message delays, finality delays and G timestamp errors). Every run draws its own trace
 (seed and grid point), so runs are independent.
 
-Sites hold exclusive objects (permits held for a duration), credentials (operators) and resource shares (spare
-parts). G reassigns objects and revokes credentials at random times (the same decisions for every protocol);
-sites learn of them through delayed messages. Operation classes:
+What this simulation is evidence of. The simulator ENFORCES each protocol's rules as stated (for OffGrant those of
+Proposition 1(b), with every clock inside its drift bound and every G timestamp inside eps_G). OffGrant's zero
+conflicts therefore hold by construction: they are a consistency check of the implementation against the
+proposition, checked by the assertions in run(), not independent evidence of safety. What the simulation measures
+is the price of the rules: availability while cut off and while connected, hand-over delays, idle time, refused
+locks, and the violations that the baselines and the ablations (each drops one rule) actually produce.
+
+Sites hold exclusive objects (bounded-class permits held for a duration, and open-class isolation points held by
+locks until released), credentials (operators) and resource shares (spare parts). G reassigns objects and revokes
+credentials at random times (the same decisions for every protocol); sites learn of them through delayed
+messages. Operation classes:
   X  hold an exclusive object for h        authority overlap = a hold in effect while G gives the object to
-                                           another site; double use = executed holds of two sites overlap
+     (bounded class)                       another site; double use = executed holds of two sites overlap
+  O  apply a lock on an open-class object  the lock stays on until its crew releases it (lognormal duration,
+     (lockout / isolation point)           median 2 h, at most 24 h); same two conflict metrics as X
   V  accept an operator credential         stale = acceptance after revocation
   B  consume one unit of a capped resource over-consumption = units beyond the global cap
   C  append a commutative record (log)     never conflicts
@@ -30,6 +40,23 @@ Ablations of OffGrant (each drops exactly one rule):
   receipt   the allowance is counted from the RECEIPT of the renewal response instead of the request's send
   eps1      G waits ceil(A/(1-rho)) + eps_G (one eps_G only)
 Sites also lose power (about weekly, 5 min to 4 h): they are then down and their trusted clock stops.
+
+Open class (v6, after review round 4: R06 M4a, R05 M1d, R09 M2.6). Each site also holds open_per_site isolation
+points. A lock is a grant: under OffGrant and its ablations a site applies a new lock only inside a valid allowance
+(request and execution after F, like a bounded hold but with no hold end), and a lock never ends by expiry or power
+loss; it stays on until its crew releases it. G never moves an open-class object by expiry: it moves it only on the
+holder's acknowledgement, which the holder gives once the stop has reached it, no lock is on and its link is up; a
+cut-off holder's move waits until it reconnects. Wait-for-release behaves the same, without the allowance. The
+global chain moves it once every lock granted before the decision is released and the release is recorded (which
+needs the old holder's link). Merging baselines move the object at once at the decision, so a lock still on
+conflicts. The open-class trace is drawn from its own random stream, so the bounded-class, credential and
+consumption traces of a run are those of v5 for the same seed and grid point. For lease protocols the run also
+records the counterfactual "move by expiry": the moves for which G's wait W would have ended while a lock of the
+old holder was still on (O_expiry_moves).
+
+Hold-end cost while connected (R06 M4b, R05 M4): lease protocols count, separately for connected and cut-off
+requests, the bounded requests refused by the hold-end rule (the hold would end after the allowance) and the
+max-fit requests whose hold was shortened to fit, and the connected availability is written beside the offline one.
 
 v5 changes (after review round 3; see docs/SIMULATOR.md, "Changes in v5"):
   * Fair handover (R06 M1): when the old holder is connected at a decision, EVERY protocol (merging baselines
@@ -110,6 +137,15 @@ class Cfg:
     power_rate_per_week: float = 1.0       # site power losses
     power_min: float = 300.0
     power_max: float = 4 * 3600.0
+    # Open class (lockouts): isolation points per site, locks per object per day at its holder, lock duration
+    # lognormal(log(lock_med), lock_sigma) capped at lock_cap (real time: a physical lock survives power losses),
+    # and G's moves of open-class objects (same rules as for bounded objects, own rate).
+    open_per_site: int = 3
+    lock_rate_day: float = 2.0
+    lock_med: float = 2 * HOUR
+    lock_sigma: float = 1.0
+    lock_cap: float = 24 * HOUR
+    open_reassign_rate_day: float = 1.0    # global, per day of the decision window
 
 
 # ------------------------------------------------------------------------------------------ traces
@@ -250,6 +286,18 @@ class Responses:
         self.pmax_ts = np.maximum.accumulate(ts[o]).tolist() if len(o) else []
 
 
+class Objects:
+    """One class of exclusive objects (bounded or open): home sites, G's moves and when the old and new holders
+    learn of them, G's timestamp error per move, and the requests (time, site, length, max-fit?, finality delay).
+    For the open class the length is the lock's duration (real time) and max-fit is always False."""
+
+    def __init__(self, open_cls):
+        self.open = open_cls
+        self.home, self.decisions, self.dec_err, self.dec_applied, self.dec_learned = [], {}, {}, {}, {}
+        self.req = []
+        self.n_decisions = 0
+
+
 # ------------------------------------------------------------------------------------------ model
 class World:
     def __init__(self, cfg: Cfg):
@@ -294,36 +342,9 @@ class World:
             self.resp_arr_issue.append(arr.tolist())
             self.resp_all.append(Responses(ts, ti, arr))
             self.resp_valid.append(Responses(ts[same_epoch], ti[same_epoch], arr[same_epoch]))
-        n_obj = S * cfg.objects_per_site
-        self.home = [o // cfg.objects_per_site for o in range(n_obj)]
-        # Decisions (the same for every protocol): about reassign_rate_day per day of the decision window. Each
-        # picks an object uniformly among those not moved in the last min_gap_days, and a new holder uniformly
-        # among the other sites. Per decision: G's timestamp error on the move, the delay of the stop to the old
-        # holder and of the notice to the new holder.
         Td = T * cfg.decide_frac
-        times = np.sort(rng.uniform(0, Td, rng.poisson(cfg.reassign_rate_day * cfg.days * cfg.decide_frac)))
-        self.decisions = {o: [] for o in range(n_obj)}
-        cur = list(self.home)
-        last = [-math.inf] * n_obj
-        u_obj, u_to = rng.random(len(times)), rng.integers(1, S, len(times))
-        for t, uo, k in zip(times, u_obj, u_to):
-            elig = [o for o in range(n_obj) if t - last[o] >= cfg.min_gap_days * DAY]
-            if not elig:
-                continue
-            o = elig[int(uo * len(elig))]
-            to = (cur[o] + int(k)) % S
-            self.decisions[o].append((float(t), cur[o], to))
-            cur[o], last[o] = to, float(t)
-        self.n_decisions = sum(len(v) for v in self.decisions.values())
-        self.dec_err, self.dec_applied, self.dec_learned = {}, {}, {}
-        for o in range(n_obj):
-            k = len(self.decisions[o])
-            err = rng.uniform(-cfg.eps_G, cfg.eps_G, k)
-            d_stop, d_note = msg_delays(rng, cfg, k), msg_delays(rng, cfg, k)
-            self.dec_err[o] = err.tolist()
-            # The old holder learns of the move from the stop or from any renewal response issued after it.
-            self.dec_applied[o] = [self.learn(fr, t, d) for (t, fr, _), d in zip(self.decisions[o], d_stop)]
-            self.dec_learned[o] = [self.learn(to, t, d) for (t, _, to), d in zip(self.decisions[o], d_note)]
+        self.bounded = self.moves(rng, cfg.objects_per_site, cfg.reassign_rate_day, False)
+        n_obj = S * cfg.objects_per_site
         n_op = S * cfg.operators_per_site
         n = rng.poisson(cfg.revoke_rate_day * cfg.days * cfg.decide_frac)
         ops = rng.choice(n_op, size=min(n, n_op), replace=False)
@@ -335,7 +356,7 @@ class World:
         # Permit requests: per object and site a Poisson process at permit_rate_day; a site asks only while it
         # believes it holds the object (filtered in simulate_permits), so the holder sees about permit_rate_day.
         # Each: (time, site, hold length in site-clock seconds, max-fit?, finality delay).
-        self.permit_req = []
+        self.permit_req = self.bounded.req
         for _ in range(n_obj):
             ts_, ss_ = [], []
             for s in range(S):
@@ -360,6 +381,58 @@ class World:
         self.consume_req = [np.sort(rng.uniform(0, T, rng.poisson(cfg.consume_rate_day * cfg.days)))
                             for _ in range(S)]
         self.log_req = [np.sort(rng.uniform(0, T, rng.poisson(cfg.log_rate_day * cfg.days))) for _ in range(S)]
+        # Open class (v6), from its own random stream so that the trace above is that of v5. Lock requests: per
+        # object and site a Poisson process at lock_rate_day, filtered like permit requests (a site asks only while
+        # it believes it holds the object). Each: (time, site, lock duration in real seconds, False, finality).
+        rng_o = np.random.default_rng([cfg.seed, cfg.trace, 1])
+        self.open = self.moves(rng_o, cfg.open_per_site, cfg.open_reassign_rate_day, True)
+        for _ in range(S * cfg.open_per_site):
+            ts_, ss_ = [], []
+            for s in range(S):
+                k = rng_o.poisson(cfg.lock_rate_day * cfg.days)
+                ts_.append(rng_o.uniform(0, T, k))
+                ss_.append(np.full(k, s))
+            t_all = np.concatenate(ts_)
+            o_ = np.argsort(t_all, kind="stable")
+            k = len(t_all)
+            dur = np.minimum(cfg.lock_cap, cfg.lock_med * rng_o.lognormal(0.0, cfg.lock_sigma, k))
+            self.open.req.append(list(zip(t_all[o_].tolist(), np.concatenate(ss_)[o_].tolist(), dur.tolist(),
+                                          [False] * k, finality(rng_o, cfg, k).tolist())))
+
+    def moves(self, rng, per_site, rate_day, open_cls):
+        """G's moves of one object class (the same for every protocol): about rate_day per day of the decision
+        window. Each picks an object uniformly among those not moved in the last min_gap_days, and a new holder
+        uniformly among the other sites. Per decision: G's timestamp error on the move, the delay of the stop to
+        the old holder and of the notice to the new holder. (For the bounded class this consumes the main random
+        stream in exactly the order of v5.)"""
+        cfg, S = self.cfg, self.cfg.sites
+        oc = Objects(open_cls)
+        n_obj = S * per_site
+        oc.home = [o // per_site for o in range(n_obj)]
+        Td = self.T * cfg.decide_frac
+        times = np.sort(rng.uniform(0, Td, rng.poisson(rate_day * cfg.days * cfg.decide_frac)))
+        oc.decisions = {o: [] for o in range(n_obj)}
+        cur = list(oc.home)
+        last = [-math.inf] * n_obj
+        u_obj, u_to = rng.random(len(times)), rng.integers(1, S, len(times))
+        for t, uo, k in zip(times, u_obj, u_to):
+            elig = [o for o in range(n_obj) if t - last[o] >= cfg.min_gap_days * DAY]
+            if not elig:
+                continue
+            o = elig[int(uo * len(elig))]
+            to = (cur[o] + int(k)) % S
+            oc.decisions[o].append((float(t), cur[o], to))
+            cur[o], last[o] = to, float(t)
+        oc.n_decisions = sum(len(v) for v in oc.decisions.values())
+        for o in range(n_obj):
+            k = len(oc.decisions[o])
+            err = rng.uniform(-cfg.eps_G, cfg.eps_G, k)
+            d_stop, d_note = msg_delays(rng, cfg, k), msg_delays(rng, cfg, k)
+            oc.dec_err[o] = err.tolist()
+            # The old holder learns of the move from the stop or from any renewal response issued after it.
+            oc.dec_applied[o] = [self.learn(fr, t, d) for (t, fr, _), d in zip(oc.decisions[o], d_stop)]
+            oc.dec_learned[o] = [self.learn(to, t, d) for (t, _, to), d in zip(oc.decisions[o], d_note)]
+        return oc
 
     def powered(self, s, t):
         return self.power[s].up(t)
@@ -440,21 +513,32 @@ def lease_params(cfg: Cfg, proto: str):
 
 
 # ------------------------------------------------------------------------------------------ X: permits
-def simulate_permits(w: World, proto: str):
+def simulate_permits(w: World, proto: str, oc: Objects = None):
+    """Exclusive objects of one class: bounded-class permits (oc = w.bounded, the default) or open-class locks
+    (oc = w.open). For the open class a grant is a lock that stays on (real time, through power losses) until its
+    crew releases it; G never moves the object by expiry (lease protocols and wait-for-release move it on the
+    holder's acknowledgement only), and merging baselines move it at once."""
     cfg = w.cfg
+    oc = oc if oc is not None else w.bounded
+    opn = oc.open
     lease = proto in LEASES
     merge = proto in MERGES
     epoch = proto != "noepoch"
     receipt = proto == "receipt"
     A, W = lease_params(cfg, proto) if lease else (0.0, 0.0)
-    n_obj = len(w.home)
+    n_obj = len(oc.home)
     out = dict(req=0, req_out=0, acc=0, acc_out=0, req_out_fixed=0, acc_out_fixed=0, lapsed=0, conflicts=0,
                overlap=0.0, double=0, double_max=0.0, acc_sets=[], conflict_sets=[], authority_after=[],
-               reassign_delay=[], idle=[], fast=0, rights_beyond=0, rights_excess=0.0)
+               reassign_delay=[], idle=[], fast=0, rights_beyond=0, rights_excess=0.0,
+               # v6: refusals by the allowance (no valid allowance at the request, or, open class, the allowance
+               # ended before execution), by the hold-end rule, and max-fit holds shortened to fit, each split into
+               # connected (_conn) and cut off (_out); open class: locks on at the decision, counterfactual expiry.
+               refused_allow_conn=0, refused_allow_out=0, holdend_conn=0, holdend_out=0, trunc_conn=0, trunc_out=0,
+               locked_at_decision=0, expiry_moves=0, expiry_locks=0)
     for o in range(n_obj):
-        decs = w.decisions[o]
+        decs = oc.decisions[o]
         nd = len(decs)
-        applied, learned, g_err = w.dec_applied[o], w.dec_learned[o], w.dec_err[o]
+        applied, learned, g_err = oc.dec_applied[o], oc.dec_learned[o], oc.dec_err[o]
         # Holds of the old holder per decision: granted before the stop reached it (all of them), and granted
         # while connected before the decision (those G and the other sites know of at the decision).
         before_applied = [0.0] * nd
@@ -480,22 +564,33 @@ def simulate_permits(w: World, proto: str):
             if switch[i] is not None:
                 return switch[i]
             t_d, fr, _ = decs[i]
-            if proto == "global" or (merge and not w.links[fr].up(t_d)):
+            if opn and merge:
+                # Open class, merging baselines: no notion of a lock that must be released first; the object
+                # moves at once at the decision, so a lock still on (or applied before the stop arrives)
+                # conflicts.
+                sw = t_d
+            elif proto == "global" or (merge and not w.links[fr].up(t_d)):
                 # Global chain: it orders the decision and knows every hold, so the new holder may act once the
                 # old holder's holds end. Merging baselines with the old holder cut off: they know only the
                 # holds granted while it was connected; offline holds are invisible (inherent to merging).
                 if t < t_d:
                     return math.inf
                 sw = max(t_d, known[i])
+                if opn and known[i] > t_d:
+                    # Open class: a lock ends only when its crew releases it, and the chain learns of the
+                    # release when the old holder's link is up (a cut-off site can finalize nothing).
+                    sw = w.links[fr].next_up(known[i])
             else:
                 # Connected handover, the same for every site-local protocol (merging baselines when the old
                 # holder is connected at the decision, wait-for-release, leases' fast path): the stop reaches
                 # the old holder (applied), it grants nothing more, and its acknowledgement reaches G once its
-                # running holds have ended and its link is up.
+                # running holds have ended and its link is up. Open class: the acknowledgement is the ONLY way
+                # (never moved by expiry), so a cut-off holder's move waits until it reconnects.
+                slow = lease and not opn
                 if t < applied[i]:
-                    return release_of(i, t) if lease else math.inf
+                    return release_of(i, t) if slow else math.inf
                 fast = w.links[fr].next_up(max(applied[i], before_applied[i])) + cfg.rtt / 2
-                sw = min(release_of(i, t), fast) if lease else fast
+                sw = min(release_of(i, t), fast) if slow else fast
             if i > 0:
                 # A move cannot complete before the previous move of the object did (G hands an object on only
                 # once it has it; matters only when a merged outage outlasts the 7-day gap between moves).
@@ -509,7 +604,7 @@ def simulate_permits(w: World, proto: str):
         def believes(s, t):
             """Site s believes it holds o at t: its latest learned move to it is newer than its latest learned
             move away from it (the home site holds it from the start)."""
-            t_in = -1.0 if w.home[o] == s else -math.inf
+            t_in = -1.0 if oc.home[o] == s else -math.inf
             t_out = -math.inf
             for i, (t_d, fr, to) in enumerate(decs):
                 if t_d > t:
@@ -520,8 +615,8 @@ def simulate_permits(w: World, proto: str):
                     t_out = t_d
             return t_in > t_out
 
-        grants = []   # (s, e0, e1, offline, t)
-        for t, s, h, maxfit, F in w.permit_req[o]:
+        grants = []   # (s, e0, e1, offline, t, idx_out)
+        for t, s, h, maxfit, F in oc.req[o]:
             s = int(s)
             if not w.powered(s, t) or not believes(s, t):
                 continue
@@ -534,7 +629,7 @@ def simulate_permits(w: World, proto: str):
             for i, d in enumerate(decs):
                 if d[0] <= t and d[2] == s:
                     idx_in = i
-            if idx_in < 0 and w.home[o] != s:
+            if idx_in < 0 and oc.home[o] != s:
                 continue
             idx_out = idx_in + 1 if idx_in + 1 < nd else None
             assert idx_out is None or decs[idx_out][1] == s
@@ -544,6 +639,8 @@ def simulate_permits(w: World, proto: str):
             t_out = decs[idx_out][0] if idx_out is not None else math.inf
             ap = applied[idx_out] if idx_out is not None else math.inf
             e0 = e1 = None
+            trunc = False
+            sfx = "_out" if offline else "_conn"
             if proto == "global":
                 if offline or t >= t_out:      # a cut-off site finalizes nothing; the chain orders the move first
                     continue
@@ -554,30 +651,46 @@ def simulate_permits(w: World, proto: str):
                 if t >= ap:
                     continue
                 e0 = t + F
-                e1 = w.auth_end(s, e0, h, True)
+                # A bounded hold fails closed with the gateway's power; a lock is physical and stays on.
+                e1 = e0 + h if opn else w.auth_end(s, e0, h, True)
             else:
                 if t >= ap:
                     continue
                 # Allowance: A site-clock seconds from the send (receipt: the receipt) of the latest renewal
                 # response that covers the object (issued after s became holder, before the move away).
                 st = w.best_start(s, t, start_ok, t_out, receipt, epoch)
-                if st is None:
+                allow_end = None if st is None else w.auth_end(s, st, A, epoch)
+                if allow_end is None or t >= allow_end:
+                    out["refused_allow" + sfx] += 1
                     continue
-                allow_end = w.auth_end(s, st, A, epoch)
-                if t >= allow_end:
-                    continue
-                rem = A - w.clock_elapsed(s, st, t)          # what the site's own clock says is left
-                if proto == "nohold" or h < rem:
-                    hh = h                                   # nohold: runs its full length, may outlast A
-                elif maxfit and rem - 1.0 >= cfg.fit_min:
-                    hh = rem - 1.0                           # max-fit: shortened to end 1 s before the edge
+                if opn:
+                    # A lock is a grant: applied only inside the allowance, executed after F if a fresh clock
+                    # reading is still inside the allowance (not for nofresh); no hold end, it stays on until its
+                    # crew releases it.
+                    e0 = t + F
+                    if not w.powered(s, e0):
+                        out["lapsed"] += 1
+                        continue
+                    if proto != "nofresh" and e0 >= allow_end:
+                        out["refused_allow" + sfx] += 1
+                        continue
+                    e1 = e0 + h
                 else:
-                    continue                                 # hold-end rule: the hold must end inside A
-                hold_end = w.auth_end(s, t, hh, epoch)       # hold window measured on the site clock
-                e0 = t + F
-                if not w.powered(s, e0):                     # the gateway cannot execute while down
-                    out["lapsed"] += 1
-                    continue
+                    rem = A - w.clock_elapsed(s, st, t)          # what the site's own clock says is left
+                    if proto == "nohold" or h < rem:
+                        hh = h                                   # nohold: runs its full length, may outlast A
+                    elif maxfit and rem - 1.0 >= cfg.fit_min:
+                        hh = rem - 1.0                           # max-fit: shortened to end 1 s before the edge
+                        trunc = True
+                    else:
+                        out["holdend" + sfx] += 1                # hold-end rule: the hold must end inside A
+                        continue
+                    hold_end = w.auth_end(s, t, hh, epoch)       # hold window measured on the site clock
+                    e0 = t + F
+                    if not w.powered(s, e0):                     # the gateway cannot execute while down
+                        out["lapsed"] += 1
+                        continue
+            if lease and not opn:
                 if proto == "nofresh":
                     e1 = w.auth_end(s, e0, hh, epoch)        # runs for hh from the delayed execution
                 else:
@@ -590,23 +703,35 @@ def simulate_permits(w: World, proto: str):
             out["acc"] += 1
             out["acc_out"] += offline
             out["acc_out_fixed"] += offline and not maxfit
+            out["trunc" + sfx] += trunc
             if offline:
                 out["acc_sets"].append((s, w.links[s].down_at(t)[0]))
-            grants.append((s, e0, e1, offline, t))
+            grants.append((s, e0, e1, offline, t, idx_out))
             if idx_out is not None:
                 if t < ap:
                     before_applied[idx_out] = max(before_applied[idx_out], e1)
                 if t < t_out and not offline:
                     known[idx_out] = max(known[idx_out], e1)
         # Holder timeline in force, and authority overlaps: any part of a hold while another site holds it.
-        tl = Timeline(w.home[o])
+        tl = Timeline(oc.home[o])
         prev_sw = 0.0
         for i, (t_d, fr, to) in enumerate(decs):
             sw = switch_of(i, math.inf)
             tl.add(sw, to)
             out["reassign_delay"].append(sw - t_d)
+            if opn:
+                out["locked_at_decision"] += any(g[0] == fr and g[1] <= t_d < g[2] for g in grants)
+            if lease and opn:
+                # Counterfactual "move by expiry": G's slow-path time for this move (W after its last renewal
+                # to the old holder) and the old holder's locks (granted before the stop reached it) still on
+                # then. OffGrant never moves an open-class object this way; this shows what the rule prevents.
+                rel = release_of(i, math.inf)
+                n_on = sum(1 for g in grants if g[5] == i and g[4] < applied[i] and g[2] > rel)
+                out["expiry_locks"] += n_on
+                out["expiry_moves"] += n_on > 0
             if lease:
-                out["fast"] += sw < release_of(i, math.inf)
+                # Open class: every move is acknowledged (fast); bounded: fast unless W came first.
+                out["fast"] += True if opn else sw < release_of(i, math.inf)
                 st = w.best_start(fr, applied[i], prev_sw, t_d, receipt, epoch)
                 old_end = t_d if st is None else min(max(t_d, w.auth_end(fr, st, A, epoch)), applied[i])
             elif proto == "waitrel":
@@ -623,7 +748,7 @@ def simulate_permits(w: World, proto: str):
                 out["rights_beyond"] += 1
                 out["rights_excess"] = max(out["rights_excess"], old_end - sw)
             prev_sw = sw
-        for s, e0, e1, offline, t in grants:
+        for s, e0, e1, offline, t, _ in grants:
             f = tl.foreign(s, e0, e1)
             if f > 0:
                 out["conflicts"] += 1
@@ -632,7 +757,7 @@ def simulate_permits(w: World, proto: str):
                     out["conflict_sets"].append((s, w.links[s].down_at(t)[0]))
         # Double use: executed holds of two different sites overlap in time.
         act = []
-        for s, e0, e1, _, _ in sorted(grants, key=lambda g: g[1]):
+        for s, e0, e1, *_ in sorted(grants, key=lambda g: g[1]):
             act = [x for x in act if x[1] > e0]
             for s2, b2 in act:
                 if s2 != s:
@@ -760,17 +885,15 @@ def simulate_consume(w: World, proto: str):
 
 
 # ------------------------------------------------------------------------------------------ driver
-def trace_stats(w: World):
-    """Protocol-independent statistics of the trace (measured rates, outages, delays)."""
-    cfg = w.cfg
-    n_obj = len(w.home)
+def believed_requests(w: World, oc: Objects):
+    """Requests of one object class made while the site is powered and believes it holds the object."""
     n_req = 0
-    for o in range(n_obj):
-        decs, applied, learned = w.decisions[o], w.dec_applied[o], w.dec_learned[o]
-        for t, s, *_ in w.permit_req[o]:
+    for o in range(len(oc.home)):
+        decs, applied, learned = oc.decisions[o], oc.dec_applied[o], oc.dec_learned[o]
+        for t, s, *_ in oc.req[o]:
             if not w.powered(s, t):
                 continue
-            t_in = -1.0 if w.home[o] == s else -math.inf
+            t_in = -1.0 if oc.home[o] == s else -math.inf
             t_out = -math.inf
             for i, (t_d, fr, to) in enumerate(decs):
                 if t_d > t:
@@ -780,13 +903,26 @@ def trace_stats(w: World):
                 if fr == s and applied[i] <= t:
                     t_out = t_d
             n_req += t_in > t_out
+    return n_req
+
+
+def trace_stats(w: World):
+    """Protocol-independent statistics of the trace (measured rates, outages, delays)."""
+    cfg = w.cfg
+    n_obj = len(w.bounded.home)
+    n_open = len(w.open.home)
     longest = float(max((b - a for lk in w.links for a, b in lk.iv), default=0.0))
     Fs = np.concatenate([np.array([r[4] for r in w.permit_req[o]]) for o in range(n_obj)])
+    lock_dur = np.concatenate([np.array([r[2] for r in w.open.req[o]]) for o in range(n_open)] + [np.zeros(0)])
     win = cfg.days * cfg.decide_frac
     rd = np.concatenate(w.resp_delays)       # renewal response issue -> arrival (incl. store-and-forward)
     return dict(
-        permit_req_per_obj_day=n_req / (n_obj * cfg.days),
-        decisions=w.n_decisions, decisions_per_day=w.n_decisions / win,
+        permit_req_per_obj_day=believed_requests(w, w.bounded) / (n_obj * cfg.days),
+        lock_req_per_obj_day=believed_requests(w, w.open) / max(1, n_open * cfg.days),
+        lock_mean_h=float(lock_dur.mean()) / HOUR if len(lock_dur) else 0.0,
+        lock_frac_capped=float((lock_dur >= cfg.lock_cap).mean()) if len(lock_dur) else 0.0,
+        open_decisions=w.open.n_decisions, open_decisions_per_day=w.open.n_decisions / win,
+        decisions=w.bounded.n_decisions, decisions_per_day=w.bounded.n_decisions / win,
         revocations=len(w.revocations), revocations_per_day=len(w.revocations) / win,
         longest_offline_h=longest / HOUR,
         offline_frac=float(np.mean([sum(b - a for a, b in lk.iv) / w.T for lk in w.links])),
@@ -808,32 +944,50 @@ def run(cfg: Cfg):
     for proto in PROTOCOLS:
         key = "merge" if proto in MERGES else proto     # the three merges differ only in rollback accounting
         if key not in cache:
-            cache[key] = (simulate_permits(w, proto), simulate_auth(w, proto), simulate_consume(w, proto))
-        px, pv, pb = cache[key]
+            cache[key] = (simulate_permits(w, proto), simulate_auth(w, proto), simulate_consume(w, proto),
+                          simulate_permits(w, proto, w.open))
+        px, pv, pb, po = cache[key]
+        # The simulator enforces each protocol's rules, so these invariants hold by construction (Proposition
+        # 1(b) for OffGrant); the assertions check the implementation, they are not a measurement.
         if proto in ("ours", "global"):
-            # Cheap invariants: OffGrant and the global chain never give two sites the same object at once.
+            # OffGrant and the global chain never give two sites the same object at once (both classes).
             assert px["conflicts"] == 0 and px["double"] == 0, (proto, px["conflicts"], px["double"])
+            assert po["conflicts"] == 0 and po["double"] == 0, (proto, po["conflicts"], po["double"])
         if proto == "ours":
-            assert pb["over"] == 0 and pv["late"] == 0 and px["rights_beyond"] == 0
-        bad_sets = set(px["conflict_sets"]) | set(pv["conflict_sets"]) | set(pb["conflict_sets"])
+            assert pb["over"] == 0 and pv["late"] == 0 and px["rights_beyond"] == 0 and po["rights_beyond"] == 0
+        bad_sets = (set(px["conflict_sets"]) | set(pv["conflict_sets"]) | set(pb["conflict_sets"])
+                    | set(po["conflict_sets"]))
         rolled_excl = rolled_log = 0
         if proto == "discard":
             accepted = {}
-            for k in px["acc_sets"] + pv["acc_sets"] + pb["acc_sets"]:
+            for k in px["acc_sets"] + pv["acc_sets"] + pb["acc_sets"] + po["acc_sets"]:
                 accepted[k] = accepted.get(k, 0) + 1
             for s, start in bad_sets:
                 end = w.links[s].down_at(start)[1]
                 rolled_log += int(((w.log_req[s] >= start) & (w.log_req[s] < end)).sum())
                 rolled_excl += accepted.get((s, start), 0)
         elif proto == "timestamp":
-            rolled_excl = px["conflicts"] + pv["stale_acc"] + int(pb["over"])
+            rolled_excl = px["conflicts"] + pv["stale_acc"] + int(pb["over"]) + po["conflicts"]
         rd = px["reassign_delay"]
+        od = po["reassign_delay"]
+        req_conn, acc_conn = px["req"] - px["req_out"], px["acc"] - px["acc_out"]
+        oreq_conn, oacc_conn = po["req"] - po["req_out"], po["acc"] - po["acc_out"]
         out[proto] = dict(
             X_avail_out=px["acc_out"] / max(1, px["req_out"]),
             X_avail_out_fixed=px["acc_out_fixed"] / max(1, px["req_out_fixed"]),
             X_avail=px["acc"] / max(1, px["req"]),
+            X_avail_conn=acc_conn / max(1, req_conn),     # v6: availability while connected (R06 M4b)
             X_req=px["req"],
             X_req_out=px["req_out"],
+            # v6: hold-end rule (lease protocols): bounded requests refused because the hold would end after the
+            # allowance, and max-fit holds shortened to fit (accepted), while connected and while cut off;
+            # requests refused for want of an allowance.
+            X_holdend_refused_conn=px["holdend_conn"],
+            X_holdend_refused_out=px["holdend_out"],
+            X_truncated_conn=px["trunc_conn"],
+            X_truncated_out=px["trunc_out"],
+            X_refused_allow_conn=px["refused_allow_conn"],
+            X_refused_allow_out=px["refused_allow_out"],
             X_lapsed=px["lapsed"],
             X_conflicts=px["conflicts"],              # authority overlaps
             X_overlap_max=px["overlap"],
@@ -860,13 +1014,36 @@ def run(cfg: Cfg):
             rolled_back_excl=rolled_excl,
             rolled_back_log=rolled_log,
             offline_frac=out["trace"]["offline_frac"],
+            # v6: open class (locks on isolation points).
+            O_req=po["req"],
+            O_req_out=po["req_out"],
+            O_acc=po["acc"],
+            O_acc_out=po["acc_out"],                  # lock requests accepted (and executed) while cut off
+            O_avail_out=po["acc_out"] / max(1, po["req_out"]),
+            O_avail_conn=oacc_conn / max(1, oreq_conn),
+            O_refused_allow=po["refused_allow_conn"] + po["refused_allow_out"],   # allowance lapsed
+            O_refused_allow_out=po["refused_allow_out"],
+            O_lapsed=po["lapsed"],                    # gateway down at execution
+            O_conflicts=po["conflicts"],              # authority overlaps (a lock on while another site holds it)
+            O_overlap_max=po["overlap"],
+            O_double=po["double"],                    # locks of two sites on at once
+            O_double_max=po["double_max"],
+            O_decisions=len(od),
+            O_handover_mean=float(np.mean(od)) if od else 0.0,
+            O_handover_max=max(od) if od else 0.0,
+            O_handover=od,
+            O_idle_mean=float(np.mean(po["idle"])) if po["idle"] else 0.0,
+            O_locked_at_decision=po["locked_at_decision"],
+            O_expiry_moves=po["expiry_moves"],        # lease protocols: moves by expiry that would hit a lock
+            O_expiry_locks=po["expiry_locks"],
+            O_rights_beyond=po["rights_beyond"],
         )
     return out
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default="experiments/results/offsim_v5.jsonl")
+    ap.add_argument("--out", default="experiments/results/offsim_v6.jsonl")
     ap.add_argument("--seeds", type=int, default=20)
     ap.add_argument("--workers", type=int, default=os.cpu_count())
     ap.add_argument("--quick", action="store_true")
@@ -880,7 +1057,7 @@ def main():
     if args.quick:
         cfgs = [Cfg(seed=0, trace=999, days=5, rho=0.15, D=6 * HOUR, L=24 * HOUR)]
     os.makedirs(os.path.dirname(args.out) or ".", exist_ok=True)
-    with Pool(args.workers) as pool, open(args.out, "w") as f:
+    with Pool(args.workers) as pool, open(args.out, "w", encoding="utf-8") as f:
         for r in pool.imap_unordered(run, cfgs):
             f.write(json.dumps(r) + "\n")
             f.flush()

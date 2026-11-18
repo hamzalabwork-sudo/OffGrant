@@ -1,6 +1,6 @@
 TLC2 Version 2026.11.06.222357 (rev: d8fb231)
 Running breadth-first search Model-Checking with fp 2 and seed -7148836672494611424 with 20 workers on 28 cores with 21845MB heap and 64MB offheap memory [pid: 418540] (Linux 6.8.0-138-generic amd64, Ubuntu 21.0.13.0.3 64bit, MSBDiskFPSet, DiskStateQueue).
-Parsing file /home/s28/offgrant/formal/Lease.tla
+Parsing file Lease.tla
 Parsing file /tmp/tlc-14542878532782220176/Integers.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/Integers.tla)
 Parsing file /tmp/tlc-14542878532782220176/FiniteSets.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/FiniteSets.tla)
 Parsing file /tmp/tlc-14542878532782220176/_TLCTrace.tla (jar:file:tla2tools.jar!/tla2sany/StandardModules/_TLCTrace.tla)

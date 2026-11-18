@@ -1,0 +1,127 @@
+{
+ "runs": [
+  "v6flap_r1",
+  "v6flap_r2",
+  "v6flap_r3"
+ ],
+ "all_safe": true,
+ "all_attacks_slashed": true,
+ "all_forgeries_rejected": true,
+ "all_no_framing": true,
+ "no_framing_attempts": 4075,
+ "unlogged_anchors": 0,
+ "margin_P11_s": {
+  "min": 8.61,
+  "median": 9.02,
+  "max": 29.39,
+  "n": 3
+ },
+ "margin_L11_s": {
+  "min": 91.23,
+  "median": 92.18,
+  "max": 111.14,
+  "n": 3
+ },
+ "margin_P21_s": {
+  "min": 30.05,
+  "median": 49.09,
+  "max": 56.16,
+  "n": 3
+ },
+ "margin_P22_s": {
+  "min": 49.27,
+  "median": 53.95,
+  "max": 55.21,
+  "n": 3
+ },
+ "P22_stop_to_reassign_s": {
+  "min": 45.3,
+  "median": 49.9,
+  "max": 50.9,
+  "n": 3
+ },
+ "P21_stop_to_reassign_s": {
+  "min": 37.8,
+  "median": 44.7,
+  "max": 57.8,
+  "n": 3
+ },
+ "L11_ack_after_heal_s": {
+  "min": 25.4,
+  "median": 29.6,
+  "max": 47.3,
+  "n": 3
+ },
+ "catch_up_s": {
+  "min": 2.5,
+  "median": 9.6,
+  "max": 12.4,
+  "n": 3
+ },
+ "catch_up_checkpoints": {
+  "min": 13,
+  "median": 18,
+  "max": 24,
+  "n": 3
+ },
+ "renewal_latency_median_s": {
+  "min": 5.89,
+  "median": 5.89,
+  "max": 6.02,
+  "n": 3
+ },
+ "renewal_latency_max_s": {
+  "min": 6.36,
+  "median": 6.38,
+  "max": 6.38,
+  "n": 3
+ },
+ "site1_outage_renewals": {
+  "min": 0,
+  "median": 1,
+  "max": 1,
+  "n": 3
+ },
+ "site1_outage_renewal_latency_max_s": null,
+ "lock_attempts": {
+  "min": 9,
+  "median": 11,
+  "max": 12,
+  "n": 3
+ },
+ "locks_refused": {
+  "min": 8,
+  "median": 9,
+  "max": 10,
+  "n": 3
+ },
+ "lapses": {
+  "min": 3,
+  "median": 3,
+  "max": 4,
+  "n": 3
+ },
+ "executed": {
+  "min": 84,
+  "median": 85,
+  "max": 89,
+  "n": 3
+ },
+ "receipt_count_would_overlap": [
+  false,
+  false,
+  false
+ ],
+ "gas_anchor_median": {
+  "min": 159915,
+  "median": 159916,
+  "max": 159928,
+  "n": 3
+ },
+ "gas_reassignAcked": {
+  "min": 172976,
+  "median": 173046,
+  "max": 173102,
+  "n": 3
+ }
+}

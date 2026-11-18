@@ -3,20 +3,18 @@ pragma solidity 0.8.30;
 
 import {OffLib} from "./OffLib.sol";
 
-/// Site-ledger side of rights-scoped offline operation (version 5). Runs on the site's own BFT ledger, which
+/// Site-ledger side of rights-scoped offline operation (version 6). Runs on the site's own BFT ledger, which
 /// stays live while the site's uplink is cut. It accepts rights only with a certificate from the global
 /// ledger's authorities and enforces them locally:
 ///   - resources: the running total stays within the newest applied share version;
 ///   - leases and credentials: a grant is valid while the trusted clock, in the epoch of the renewal, is below
 ///     cq + A, where cq is the reading at the SEND of the renewal request that G answered (Proposition 1). A
-///     bounded hold must END before cq + A; an open hold (a lockout) lasts until it is released, and its
-///     object is moved only after an acknowledgement;
+///     bounded hold must END before cq + A; an open hold (a lockout) is applied by a named crew and lasts until
+///     that crew releases it; its object is moved only after an acknowledgement;
 ///   - commutative records are always accepted.
 /// Every attested operation carries the site clock's attestation of its full content (OffLib.opTag), and the
-/// readings of attested operations strictly increase, so no attestation can be replayed or reordered.
-/// The gateway, which holds the clock, attests an operation only when it requests it, and executes a grant
-/// only once the grant is in a sealed checkpoint and a fresh reading is still before its end.
-/// Every accepted operation is emitted as an OpRecorded event; validators batch them into sealed checkpoints.
+/// readings of attested operations strictly increase, so no attestation can be replayed or reordered. Open holds
+/// and releases carry running counters, so a lockout still on at an acknowledgement is provable.
 contract SiteRights {
     uint64 public immutable site;
     address public immutable registry; // RightsRegistry on the global ledger
@@ -39,8 +37,10 @@ contract SiteRights {
     mapping(bytes32 => Base) public stoppedUpTo; // renewals up to this one are cancelled
     mapping(bytes32 => uint64) public heldEpoch; // epoch of the latest bounded hold
     mapping(bytes32 => uint64) public heldUntil; // its end (site clock); bounded holds end at power loss
-    mapping(bytes32 => uint64) public openCount; // open holds not yet released
-    mapping(bytes32 => mapping(uint64 => bool)) public openHolds; // object => hold id (grant reading) => held
+    mapping(bytes32 => uint64) public opens; // open holds ever applied, per object
+    mapping(bytes32 => uint64) public releases; // releases, per object
+    mapping(bytes32 => mapping(uint64 => uint64)) public holdCrew; // object => hold id => crew (0: none)
+    mapping(bytes32 => mapping(uint64 => uint64)) public holdEpoch; // object => hold id => epoch of the grant
     uint64 public lastEpoch;
     uint64 public lastReading;
     uint64 public opCount;
@@ -105,9 +105,8 @@ contract SiteRights {
 
     /// Checks the attestation of an operation and that its reading is strictly newer than every earlier one.
     function _clock(OffLib.Op memory op) internal {
-        if (OffLib.recover(OffLib.clockDigest(dom, site, op.epoch, op.reading, OffLib.opTag(op)), op.clockSig) != clockKey) {
-            revert BadClockSig();
-        }
+        bytes32 d = OffLib.clockDigest(dom, site, op.epoch, op.reading, OffLib.opTag(op));
+        if (OffLib.recover(d, op.clockSig) != clockKey) revert BadClockSig();
         if (!OffLib.after_(op.epoch, op.reading, lastEpoch, lastReading)) revert StaleReading();
         lastEpoch = op.epoch;
         lastReading = op.reading;
@@ -115,6 +114,11 @@ contract SiteRights {
 
     function _emit(OffLib.Op memory op) internal {
         emit OpRecorded(opCount++, op);
+    }
+
+    /// Open holds of an object that are still on.
+    function openCount(bytes32 object) public view returns (uint64) {
+        return opens[object] - releases[object];
     }
 
     // ---------------------------------------------------------------- rights (relayed while connected)
@@ -157,9 +161,7 @@ contract SiteRights {
     function applyStop(bytes32 object, uint64 epoch, uint64 cq, bytes[] calldata sigs) external {
         _certified(OffLib.stopDigest(dom, site, object, epoch, cq), sigs);
         Base memory b = Base(epoch, cq);
-        if (_after(b, stoppedUpTo[object]) || (stoppedUpTo[object].epoch == 0 && stoppedUpTo[object].cq == 0)) {
-            stoppedUpTo[object] = b;
-        }
+        if (_after(b, stoppedUpTo[object])) stoppedUpTo[object] = b;
         if (!_after(base[object], b)) delete base[object];
         emit RightApplied(object, 4, cq);
     }
@@ -180,22 +182,25 @@ contract SiteRights {
     }
 
     /// Grants an exclusive object or accepts a credential at trusted-clock time (epoch, reading) under the renewal
-    /// (epoch, cq), which must be the newest applied one, as a hold that ends at `until` (a bounded hold,
-    /// until > reading) or lasts until released (until = OffLib.OPEN).
-    function use(bytes32 object, uint64 cq, uint64 epoch, uint64 reading, uint64 until, bytes calldata clockSig) external {
+    /// (epoch, cq), which must be the newest applied one: a bounded hold ending at `until` (until > reading), or an
+    /// open hold (until = OffLib.OPEN) applied by crew `crew` (non-zero), which only that crew may release.
+    function use(bytes32 object, uint64 cq, uint64 epoch, uint64 reading, uint64 until, uint64 crew, bytes calldata clockSig)
+        external
+    {
         Base memory b = base[object];
         if (b.cq == 0 || b.cq != cq || b.epoch != epoch || reading < cq) revert NoRenewal();
-        OffLib.Op memory op = OffLib.Op(OffLib.USE, object, epoch, reading, cq, until, 0, 0, 0, clockSig);
-        _clock(op);
         uint64 a = allowanceMs[object];
-        if (reading - b.cq >= a) revert AllowanceExpired(reading, b.cq + a);
-        if (openHold[object]) {
-            if (until != OffLib.OPEN) revert BadHold();
-            openHolds[object][reading] = true;
-            openCount[object]++;
+        if (reading - cq >= a) revert AllowanceExpired(reading, cq + a);
+        bool isOpen = openHold[object];
+        if (isOpen ? (until != OffLib.OPEN || crew == 0) : (until <= reading || crew != 0)) revert BadHold();
+        OffLib.Op memory op = OffLib.Op(OffLib.USE, object, epoch, reading, cq, until, crew, 0, 0, clockSig);
+        _clock(op);
+        if (isOpen) {
+            holdCrew[object][reading] = crew;
+            holdEpoch[object][reading] = epoch;
+            op.total = ++opens[object];
         } else {
-            if (until <= reading) revert BadHold();
-            if (until - b.cq >= a) revert AllowanceExpired(until, b.cq + a);
+            if (until - cq >= a) revert AllowanceExpired(until, cq + a);
             if (epoch > heldEpoch[object]) {
                 heldEpoch[object] = epoch;
                 heldUntil[object] = until;
@@ -206,27 +211,31 @@ contract SiteRights {
         _emit(op);
     }
 
-    /// Ends one open hold (named by its id, the reading of the grant that started it). Allowed after a stop.
-    function release(bytes32 object, uint64 holdId, uint64 epoch, uint64 reading, bytes calldata clockSig) external {
-        if (!openHolds[object][holdId]) revert NotHeld();
-        OffLib.Op memory op = OffLib.Op(OffLib.RELEASE, object, epoch, reading, holdId, 0, 0, 0, 0, clockSig);
+    /// Ends one open hold, named by its id (the reading of the grant that started it), by the crew that applied it.
+    /// Allowed after a stop.
+    function release(bytes32 object, uint64 holdId, uint64 crew, uint64 epoch, uint64 reading, bytes calldata clockSig)
+        external
+    {
+        if (crew == 0 || holdCrew[object][holdId] != crew) revert NotHeld();
+        OffLib.Op memory op =
+            OffLib.Op(OffLib.RELEASE, object, epoch, reading, holdId, holdEpoch[object][holdId], crew, 0, 0, clockSig);
         _clock(op);
-        delete openHolds[object][holdId];
-        openCount[object]--;
+        delete holdCrew[object][holdId];
+        op.total = ++releases[object];
         _emit(op);
     }
 
     /// Fast path: the site acknowledges a stop at trusted-clock time (epoch, reading). Accepted only after the
-    /// stop, with no newer renewal, no open hold and no bounded hold running in this epoch. As the reading is
-    /// newer than every earlier operation, and no grant of the object is possible afterwards under the stopped
-    /// renewals, no correct ledger ever records a grant, hold or release of the object past it under them.
+    /// stop, with no newer renewal, no open hold on and no bounded hold running in this epoch. The operation
+    /// records the lock counters, so an acknowledgement given while a lock is on is provable.
     function acknowledge(bytes32 object, uint64 epoch, uint64 reading, bytes calldata clockSig) external {
         Base memory s = stoppedUpTo[object];
         if (s.epoch == 0 && s.cq == 0) revert NotStopped();
         if (base[object].cq != 0) revert NotStopped();
-        if (openCount[object] != 0) revert StillHeld();
+        if (opens[object] != releases[object]) revert StillHeld();
         if (heldEpoch[object] == epoch && heldUntil[object] > reading) revert StillHeld();
-        OffLib.Op memory op = OffLib.Op(OffLib.ACK, object, epoch, reading, s.cq, 0, 0, 0, 0, clockSig);
+        OffLib.Op memory op =
+            OffLib.Op(OffLib.ACK, object, epoch, reading, s.cq, 0, opens[object], releases[object], 0, clockSig);
         _clock(op);
         stoppedUpTo[object] = Base(epoch, reading); // later grants need a renewal newer than the acknowledgement
         _emit(op);

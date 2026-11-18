@@ -1,0 +1,84 @@
+Compiling 20 files with Solc 0.8.30
+Solc 0.8.30 finished in 64.57s
+Warning (2018): Function state mutability can be restricted to view
+    --> test/Offgrant.t.sol:1002:5:
+     |
+1002 |     function test_historyBeyond2pow20_v5exploit() public {
+     |     ^ (Relevant source part starts here and spans across multiple lines).
+
+
+Ran 61 tests for test/Offgrant.t.sol:OffgrantTest
+[PASS] testFuzz_waitFormula(uint64) (runs: 2000, μ: 63083, ~: 62992)
+[PASS] test_ackBelowAncestorLockCounter() (gas: 465829)
+[PASS] test_ackEvidenceSurvivesLaterHandOver_v4exploit() (gas: 844314)
+[PASS] test_acknowledgeNeedsStopAndNoHold() (gas: 884017)
+[PASS] test_ancestorMustBeInHistory() (gas: 350149)
+[PASS] test_anchorCatchUpAndHistory() (gas: 618087)
+[PASS] test_anchorGriefingHarmless() (gas: 608896)
+[PASS] test_anchorRejectsForeignHistoryAndForgedClose() (gas: 725071)
+[PASS] test_attestationBindsContent_v4exploit() (gas: 585699)
+[PASS] test_badOp() (gas: 476063)
+[PASS] test_badRegistrationsRejected() (gas: 255957)
+[PASS] test_batchRenewalOneTransaction() (gas: 169258)
+[PASS] test_confirmShareNeedsAppliedVersion() (gas: 398511)
+[PASS] test_credentialRevocation() (gas: 827478)
+[PASS] test_fastPathMovesObject() (gas: 947779)
+[PASS] test_forceReassignWaitsAllowance_v5exploit() (gas: 270462)
+[PASS] test_forkAcrossHeights_v4exploit() (gas: 2011941)
+[PASS] test_forkSameHeight() (gas: 351586)
+[PASS] test_grantAttestationIsNoAck_v4exploit() (gas: 778892)
+[PASS] test_grantInsideAllowanceOnly() (gas: 730215)
+[PASS] test_historyBeyond2pow20_v5exploit() (gas: 95672)
+[PASS] test_holdRunningPastAckSlashes() (gas: 643359)
+[PASS] test_honestConsumptionNotSlashable() (gas: 757363)
+[PASS] test_honestGrantsNotOveruse() (gas: 697997)
+[PASS] test_honestHistoryNotSlashable() (gas: 814438)
+[PASS] test_honestOpsNotBadOps() (gas: 1540349)
+[PASS] test_honestReleaseNotFramed_v4exploit() (gas: 1470673)
+[PASS] test_honestUseAfterReturnNotFramed() (gas: 548698)
+[PASS] test_inconsistentOrder() (gas: 313259)
+[PASS] test_inconsistentStaleVersionAndUnderstate() (gas: 513719)
+[PASS] test_largerSiteQuorum() (gas: 505390)
+[PASS] test_lockOnAtAckProvable_v5exploit() (gas: 726343)
+[PASS] test_maxStateProofCost() (gas: 663321)
+Logs:
+  regress proof gas with a 64-entry ancestor state: 397555
+
+[PASS] test_newEpochEndsBoundedHolds() (gas: 775926)
+[PASS] test_openHoldNeverMovedByExpiry() (gas: 187533)
+[PASS] test_oversizedStateProvable_v5exploit() (gas: 291092)
+[PASS] test_overspend() (gas: 296776)
+[PASS] test_overuse() (gas: 800106)
+[PASS] test_proofCostIndependentOfHistory() (gas: 2177566)
+Logs:
+  proof gas, ancestor 1 height back: 242455
+  proof gas, ancestor 900 heights back: 237520
+
+[PASS] test_regressDroppedEntryOrClock() (gas: 739768)
+[PASS] test_regressLockCounter() (gas: 460023)
+[PASS] test_regressThroughEmptyCheckpoint_v4exploit() (gas: 461105)
+[PASS] test_releaseAfterAckUsesGrantEpoch_v5exploit() (gas: 643223)
+[PASS] test_releaseOnlyByItsCrew_v5exploit() (gas: 775485)
+[PASS] test_releaseReplayRejected_v4exploit() (gas: 1044725)
+[PASS] test_renewAfterAnchor() (gas: 380133)
+[PASS] test_renewNeedsCoverageInEpoch() (gas: 92593)
+[PASS] test_replayedAttestationAcrossCheckpoints() (gas: 449887)
+[PASS] test_requestFromOtherDeploymentRejected() (gas: 51946)
+[PASS] test_restartBelowAncestor_v4exploit() (gas: 2142726)
+[PASS] test_retireKeepsOldHistoryJudgeable_v5exploit() (gas: 304551)
+[PASS] test_shareVersionedAndAttested() (gas: 344141)
+[PASS] test_slashedExcludedFromQuorums() (gas: 543213)
+[PASS] test_slowPathWaitsW() (gas: 237439)
+[PASS] test_staleAckRejected() (gas: 220180)
+[PASS] test_staleRequestRejected() (gas: 150443)
+[PASS] test_staleVersionAfterConfirmShare_v4exploit() (gas: 862164)
+[PASS] test_stateAboveShareProvable_v5exploit() (gas: 307715)
+[PASS] test_stateMalformedOrClockBehind() (gas: 497424)
+[PASS] test_stateMismatch() (gas: 320845)
+[PASS] test_useAfterAckSlashesBoth() (gas: 640770)
+Suite result: ok. 61 passed; 0 failed; 0 skipped; finished in 130.33ms (380.32ms CPU time)
+
+Ran 1 test suite in 193.76ms (130.33ms CPU time): 61 tests passed, 0 failed, 0 skipped (61 total tests)
+| Contract       | Runtime Size (B) | Initcode Size (B) | Runtime Margin (B) | Initcode Margin (B) |
+| RightsRegistry | 24,178           | 24,677            | 398                | 24,475              |
+| SiteRights     | 9,514            | 10,417            | 15,062             | 38,735              |

@@ -1,4 +1,4 @@
-"""Figures for the OffGrant paper (written to paper/figures/)."""
+"""Figures for the OffGrant paper (written to paper_iotj/figures/)."""
 import json
 from collections import defaultdict
 from pathlib import Path
@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "paper" / "figures"
+OUT = ROOT / "paper_iotj" / "figures"
 H = 3600.0
 plt.rcParams.update({"font.family": "serif", "font.size": 7, "axes.linewidth": 0.6, "legend.fontsize": 6,
                      "xtick.major.width": 0.5, "ytick.major.width": 0.5, "pdf.fonttype": 42})
@@ -21,7 +21,7 @@ BOUND_LABEL = "bound $(1+\\rho)/(1-\\rho)$"
 
 def load(path=None):
     g = defaultdict(list)
-    for line in open(path or ROOT / "experiments" / "results" / "offsim_v5.jsonl", encoding="utf-8"):
+    for line in open(path or ROOT / "experiments" / "results" / "offsim_v6.jsonl", encoding="utf-8"):
         r = json.loads(line)
         c = r["cfg"]
         g[(c["rho"], c["clock"], c["L"], c["D"])].append(r)
@@ -94,31 +94,42 @@ def tradeoff(path=None):
     print("wrote", OUT / "tradeoff.pdf")
 
 
-def timeline(tag="v5"):
-    """End-to-end PureChain run: holds in effect per object and site, with the cut, stops and moves."""
+def timeline(tag="v6_r1"):
+    """End-to-end PureChain run: holds in effect per object and site (ending at the OBSERVED effect end), with the
+    cut, stops and moves."""
     d = json.loads((ROOT / "experiments" / "results" / f"e2e_{tag}.json").read_text())
     ev = d["events"]
     first = lambda k, **kw: next(e for e in ev if e["kind"] == k and all(e.get(a) == b for a, b in kw.items()))
     cut, heal = first("uplink_cut", site=1)["t"], first("uplink_heal", site=1)["t"]
     t_end = max(e["t"] for e in ev if e["kind"] in ("exec", "op")) + 3
-    rel = {e["obj"]: e["t"] for e in ev if e["kind"] == "op" and e.get("op") == "release" and e.get("ok")}
-    lanes = ["P11", "L11", "C11", "P21"]
+    ends = [e for e in ev if e["kind"] == "effect_end"]
+
+    def observed_end(e):
+        if e["until"] == 2**64 - 1:
+            xs = [x["t"] for x in ends if x["site"] == e["site"] and x["obj"] == e["obj"] and x.get("hold") == e.get("hold")
+                  and x["t"] >= e["t"]]
+        else:
+            xs = [x["t"] for x in ends if x["site"] == e["site"] and x["obj"] == e["obj"] and x["until"] == e["until"]
+                  and x["epoch"] == e["epoch"]]
+        return min(xs, default=None)
+
+    lanes = ["P11", "L11", "C11", "P21", "P22"]
     y = {o: len(lanes) - 1 - k for k, o in enumerate(lanes)}
     col = {1: C_OURS, 2: "#e08a2c"}
-    fig, ax = plt.subplots(figsize=(3.45, 1.55))
+    fig, ax = plt.subplots(figsize=(3.45, 1.8))
     ax.axvspan(cut, heal, color=C_NODRIFT, alpha=0.08, lw=0)
     ax.text((cut + heal) / 2, len(lanes) - 0.35, "site 1 uplink cut", ha="center", va="center", fontsize=5.5,
             color=C_NODRIFT)
     for e in ev:
         if e["kind"] == "exec" and e["obj"] in y:
-            end = e.get("hold_end_t") or rel.get(e["obj"]) if e["site"] == 1 else e.get("hold_end_t")
+            end = observed_end(e)
             end = end if end and end > e["t"] else t_end
             ax.add_patch(plt.Rectangle((e["t"], y[e["obj"]] - 0.17), end - e["t"], 0.34, color=col[e["site"]],
                                        alpha=0.55, lw=0))
         if e["kind"] == "lapse" and e["obj"] in y:
             ax.plot(e["t"], y[e["obj"]], "x", color="k", ms=2.6, mew=0.7)
     moves = [(first("reassigned_slow", obj="P11")["t"], "P11"), (first("reassign_acked", obj="L11")["t"], "L11"),
-             (first("reassign_acked", obj="P21")["t"], "P21")]
+             (first("reassign_acked", obj="P21")["t"], "P21"), (first("reassign_acked", obj="P22")["t"], "P22")]
     for t, o in moves:
         ax.plot([t, t], [y[o] - 0.33, y[o] + 0.33], color=C_NODRIFT, lw=1.3)
     ax.plot(first("reassign_refused", obj="L11")["t"], y["L11"] + 0.33, "v", color=C_BOUND, ms=2.6, mew=0)
@@ -126,7 +137,8 @@ def timeline(tag="v5"):
         if e["kind"] in ("stop", "revoke") and e["obj"] in y:
             ax.plot(e["t"], y[e["obj"]] + 0.33, "v", color="k", ms=2.6, mew=0)
     tr = first("clock_reset", site=2)["t"]
-    ax.text(tr, y["P21"] - 0.5, "S2 power loss", fontsize=5, ha="center", va="center", color=C_BOUND)
+    ax.axvline(tr, color=C_BOUND, lw=0.6, ls=":")
+    ax.text(tr, y["P22"] - 0.5, "S2 power loss", fontsize=5, ha="center", va="center", color=C_BOUND)
     h = [plt.Rectangle((0, 0), 1, 1, color=col[1], alpha=0.55, lw=0),
          plt.Rectangle((0, 0), 1, 1, color=col[2], alpha=0.55, lw=0),
          plt.Line2D([], [], color="k", marker="v", ls="", ms=2.6), plt.Line2D([], [], color=C_NODRIFT, lw=1.3),
@@ -146,6 +158,41 @@ def timeline(tag="v5"):
     print("wrote", OUT / "timeline.pdf")
 
 
+def storm(tag="v6", pub="v6"):
+    """(a) Reconnection storm on G: time until each site holds a renewal again, against the number of sites that
+    reconnect at once. (b) Renewal gas against the number of objects in one batch (public testnet)."""
+    d = json.loads((ROOT / "experiments" / "results" / f"storm_{tag}.json").read_text())
+    p = json.loads((ROOT / "experiments" / "results" / f"pubtest_{pub}.json").read_text())
+    fig, (a, b) = plt.subplots(1, 2, figsize=(3.45, 1.45))
+    ns = [r["sites"] for r in d["runs"]]
+    for key, lab, style in (("median", "median", "-o"), ("p90", "90th pct.", "--s"), ("max", "max", ":^")):
+        a.plot(ns, [r["renewed_s"][key] for r in d["runs"]], style, color=C_OURS, ms=2.5, lw=0.9, label=lab)
+    a.set_xlabel("sites reconnecting at once")
+    a.set_ylabel("renewed after (s)")
+    a.set_yticks([0, 5, 10])
+    a.set_xscale("log")
+    a.set_xticks(ns)
+    a.get_xaxis().set_major_formatter(matplotlib.ticker.ScalarFormatter())
+    a.set_ylim(bottom=0)
+    a.legend(frameon=False, loc="upper left", handlelength=1.6)
+    a.grid(alpha=0.25, lw=0.4)
+    a.set_title("(a)", fontsize=7, pad=2)
+    sw = p["renew_batch_sweep"]
+    xs = sorted(int(k) for k in sw)
+    b.plot(xs, [sw[str(x)]["gas"] / 1000 for x in xs], "-o", color=C_OURS, ms=2.5, lw=0.9)
+    b.set_xlabel("objects per batch renewal")
+    b.set_ylabel("gas (k)")
+    b.set_xticks(xs)
+    b.set_ylim(bottom=0)
+    b.grid(alpha=0.25, lw=0.4)
+    b.set_title("(b)", fontsize=7, pad=2)
+    fig.tight_layout(pad=0.3, w_pad=0.8)
+    fig.savefig(OUT / "storm.pdf")
+    fig.savefig(OUT / "storm.png", dpi=220)
+    print("wrote", OUT / "storm.pdf")
+
+
 if __name__ == "__main__":
     tradeoff()
     timeline()
+    storm()

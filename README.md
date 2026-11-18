@@ -96,7 +96,7 @@ The guarantees and their exact conditions are in [docs/CONCEPTS.md](docs/CONCEPT
 | `contracts/test/` | Foundry tests, one or more per property and per attack | [docs/CONTRACTS.md](docs/CONTRACTS.md#tests) |
 | `formal/` | TLA+ models of the lease bound (`LeaseV3.tla`) and of site-ledger accountability (`RightsV3.tla`), TLC configurations, outputs in `formal/results/` | [docs/FORMAL.md](docs/FORMAL.md) |
 | `prototype/` | `offsim.py` (30-day simulator with baselines and ablations), `analyze.py` (summaries), `figs.py` (figures) | [docs/SIMULATOR.md](docs/SIMULATOR.md) |
-| `experiments/offgrant/` | End-to-end runs on real PureChain networks (`e2e.py`, `e2e_analyze.py`, shared helpers in `chain.py`) and the public-testnet run (`pubtest.py`) | [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) |
+| `experiments/offgrant/` | End-to-end runs on real PureChain networks (`e2e.py`, `e2e_analyze.py`, shared helpers in `chain.py`), the public-testnet run (`pubtest.py`), the reconnection storm (`storm.py`) and the repeated runs (`run_e2e_v6.sh`) | [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md) |
 | `experiments/span_demo.py` | Shows the problem: one chain stretched over three sites halts the cut-off site | [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md#1-the-problem-one-chain-across-sites) |
 | `experiments/results/` | Every result file (JSON, logs, summaries). Earlier versions are kept for comparison | [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md#result-files) |
 | `testbed/purechain/` | Docker image of the official PureChain v1.0.1 node and a generator of local networks (`mknet.py`) | [docs/EXPERIMENTS.md](docs/EXPERIMENTS.md#testbed) |
@@ -128,42 +128,66 @@ The model checking, the full simulation grid and the PureChain experiments are d
 
 ## Results at a glance
 
-All results are for contract version 5.
+All results are for contract version 6.
 
-**End to end on PureChain** (`experiments/results/e2e_v5_summary.json`). Site 1's clock ran 15% slow, the lease
-was time-compressed to `D = 60 s`, and site 1's uplink was cut for 150 s:
+**End to end on PureChain** (`experiments/results/e2e_v6_r{1,2,3}_summary.json`, `e2e_v6flap_r{1,2,3}_summary.json`,
+aggregated in `e2e_v6_agg.json` and `e2e_v6flap_agg.json`). Three runs with a clean 150 s cut of site 1's uplink
+and three with a flapping, lossy uplink instead. Site 1's clock ran 15% slow, site 2's 5% fast, and the lease was
+time-compressed to `D = 60 s` (`A = 69 s`, `W = 86 s`). Values are minimum / median / maximum over three runs, or
+totals:
 
-| What was checked | Outcome |
-|---|---|
-| Old holder never acts after its object moves | 0 effects ended after any move. P11 (slow path): margin 31.3 s. L11 and P21 (by acknowledgement): margins 106.1 s and 47.2 s |
-| A grant that would end too late | Lapsed at the gateway instead of taking effect |
-| Lockout object (open hold) | Refused by expiry (`HoldMayBeOpen`); moved only after release and acknowledgement |
-| Catch-up after the 150 s outage | One anchor transaction, 2.2 s after reconnection, covering 24 checkpoints |
-| Lowering a share | Applied on the site ledger, then confirmed on `G` from a sealed checkpoint |
-| Batch renewals | Each object renewed every 16 s (median) |
-| 15 kinds of injected violation | Each slashed 3 validators (2 for use or release after acknowledgement and for both forks, where only the validators in both quorums are provably faulty) |
-| Forged checkpoint close; grant attestation used as an acknowledgement | Both rejected (`BadClockSig`) |
-| Proof attempts against honest data | 1,255 attempts, all reverted with `NotAViolation` |
+| What was checked | Clean cut | Flapping uplink |
+|---|---|---|
+| Effects of an old holder that ended after its object moved | 0 | 0 |
+| Margin from the old holder's last effect to the move: P11 (slow path) | 42 / 47 / 47 s | 8.6 / 9.0 / 29 s |
+| Margin: L11 (lock, by acknowledgement) | 107 / 112 / 115 s | 91 / 92 / 111 s |
+| Margin: P21 (by acknowledgement) | 55 / 57 / 102 s | 30 / 49 / 56 s |
+| Margin: P22 (acknowledged after site 2 lost power) | 43 / 52 / 54 s | 49 / 54 / 55 s |
+| Renewal, send to site (median per run) | 5.7 / 5.9 / 5.9 s | 5.9 / 5.9 / 6.0 s |
+| Grant to effect (median per run) | 9.3 / 9.7 / 9.7 s | 9.4 / 9.5 / 10.1 s |
+| Catch-up anchor after reconnection | 2.3 / 3.2 / 3.3 s, covering 23-25 checkpoints | 2.5 / 9.6 / 12 s, covering 13-24 |
+| Anchors logged by the relayer / found on chain | 182 / 182 | 180 / 180 |
+| Lock requests / recorded (the rest refused by the gateway: allowance expired, no renewal, earlier epoch, acknowledged) | 31 / 4 | 32 / 5 |
+| Release attempts by another crew | all refused | all refused |
+| 22 kinds of injected violation / 5 forgeries | all slashed / all rejected, in every run | same |
+| Proof attempts against honest data | 4,001, all `NotAViolation` | 4,075, all `NotAViolation` |
 
-*Flapping uplink (`e2e_v5flap_summary.json`): site 1's uplink alternated for 150 s between cuts of 3-15 s and slow, lossy periods of 10-30 s (800 +- 400 ms delay, 20% loss). A batch renewal sent just before the first cut arrived 7.4 s later through the lossy link; because the allowance counts from the send, site 1's last P11 hold ended exactly at the allowance end computed from the send, 8.1 s before G moved P11. One anchor also crossed during the flapping. L11 and P21 moved by acknowledgement 94 s and 49 s after their old holders' last effects, all fifteen attacks were attributed, and all 1,245 proof attempts on honest data were rejected.*
+`G` refused to move the lockout L11 by expiry (`HoldMayBeOpen`); it moved only after its crew released it and the
+site acknowledged. After site 2 lost power, the gateway carried the P22 holds of the old epoch and waited out their
+remaining time, scaled by `(1+ρ)/(1−ρ)`, before acknowledging. All four validators agreed on every checkpoint, and
+none had to retry or halt.
 
-**Public PureChain testnet** (`experiments/results/pubtest_v5.json`). Batch renewals confirmed in 1.98 s median
-(at most 3.07 s) at 72,952 gas, and anchors of 24 operations cost 133,897 gas. All 313 proof attempts against
-honest data reverted with `NotAViolation`, and two real fraud proofs slashed 3 and 2 validators.
+*Send versus receipt.* In an earlier batch of three flapping runs (`experiments/results/superseded_v6_prefix/`,
+whose harness differed only in a fix to the scripted P22 grant), a renewal sent just before a cut arrived 8.5 s
+and 8.8 s late in two runs. Counted from the send, the allowance ended 8.4 s and 8.7 s before `G` moved P11;
+counted from the delayed receipt, it would have run past the move.
 
-**Simulation** (`experiments/results/offsim_v5_summary.txt`, 720 runs of 30 days). OffGrant had 0 authority
-overlaps, 0 double use and 0 over-consumption in every run. The merging baselines had authority overlaps in 569
-runs and double use in 514. Each ablation that drops one rule fails: without the hold-end rule (`nohold`) 306 runs
-had overlaps, without drift (`nodrift`) 143, without epochs (`noepoch`) 77, and without the fresh check
-(`nofresh`) 44. Counting from receipt (`receipt`) left rights beyond the move in 109 runs, and a single `ε_G` of
-slack (`eps1`) in 12.
+**Public PureChain testnet** (`experiments/results/pubtest_v6.json`, registry
+`0xeCD9df26d3D9b59f90E5c89C2DE7C085DF210c33`). Batch renewals confirmed in 1.95 s median (at most 2.5 s over 24)
+at 73,696 gas for one object; a batch of 8 objects cost 393,233 gas. Anchors of 24 operations cost 147,869 gas.
+All 313 proof attempts against honest data reverted with `NotAViolation`, and two real fraud proofs slashed 3 and
+2 validators.
 
-**Contracts.** All 51 Foundry tests pass (`experiments/results/forge_test_v5.log`), including regression tests
-for every exploit of v4 found in review.
+**Reconnection storm** (`experiments/results/storm_v6.json`). 10 to 100 sites, each with 3 objects and 600 checkpoints sealed during a
+simulated one-hour outage, reconnected to the local `G` at once. With 100 sites, every site held a renewal again
+within 9.7 s (median 8.4 s, against 4.3 s for 10 sites). The storm spanned 8 blocks of at most 8.9M gas, under a
+third of the 30M block limit; each site needed one anchor (148k gas) and one batch renewal (197k gas).
 
-**Model checking.** TLC finds a counterexample for each lease rule that is dropped, and the accountability model
-holds with zero, one, three and four faulty validators. The safe lease configuration (`lease_v3_ok`) and the
-two-faulty configuration (`rights_v3_byz2`) are still running. See [docs/FORMAL.md](docs/FORMAL.md).
+**Simulation** (`experiments/results/offsim_v6_summary.txt`, 720 runs of 30 days). The simulator enforces each
+protocol's rules, so OffGrant's zero conflicts hold by construction; what it measures is how the alternatives fail
+and what OffGrant costs. The merging baselines had authority overlaps in 569 runs and double use in 514. Each
+ablation that drops one rule fails: without the hold-end rule (`nohold`) 306 runs had overlaps, without drift
+handling (`nodrift`) 143, without epochs (`noepoch`) 77, and without the fresh check (`nofresh`) 44. Counting from
+receipt (`receipt`) left rights beyond the move in 109 runs, and a single `ε_G` of slack (`eps1`) in 12. Waiting
+for release left objects with unreachable holders for up to 216 h; OffGrant never exceeded `W`.
+
+**Contracts.** All 61 Foundry tests pass (`experiments/results/forge_test_v6.log`), including regression tests
+for every exploit of v4 and v5 found in review.
+
+**Model checking** ([docs/FORMAL.md](docs/FORMAL.md)). The full lease protocol satisfies `Safe` and `Tolerance` in
+all 85.3 million states of a small instance; on a larger instance every configuration that drops one rule yields a
+counterexample of 7-17 states. The accountability model holds with zero, one, three and four faulty validators
+and with two faulty validators shows no violation in the 288 million states explored so far.
 
 ## Documentation
 

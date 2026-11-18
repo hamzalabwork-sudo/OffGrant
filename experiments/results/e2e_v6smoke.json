@@ -1,0 +1,6572 @@
+{
+ "params": {
+  "rho_ppm": 150000,
+  "D_s": 60,
+  "A_ms": 69000,
+  "renew_period_s": 4.0,
+  "ckpt_every_s": 6.0,
+  "window_ms": 25000,
+  "g_slack_s": 2,
+  "W_s": 86,
+  "cut_s": 40,
+  "drift": {
+   "1": -0.15,
+   "2": 0.05
+  },
+  "flap": false,
+  "seed": 7,
+  "g_timeout_s": 8,
+  "tx_deadline_s": 90,
+  "confirm_site": 3,
+  "confirm_g": 2
+ },
+ "gas": {
+  "deploy_registry": 5279915,
+  "deploy_site": 2210991
+ },
+ "events": [
+  {
+   "t": 1.019,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 1.774,
+   "kind": "renew_sent",
+   "site": 2,
+   "tx": "8987908d10d936f931828fb7bcb5412cfba23e751514cae333f2c46a86f28e63",
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "cq": 10081766
+  },
+  {
+   "t": 1.916,
+   "kind": "renew_refused",
+   "site": 1,
+   "objs": [
+    "P11",
+    "P12",
+    "C11",
+    "L11"
+   ],
+   "why": "AnchorDebt"
+  },
+  {
+   "t": 1.916,
+   "kind": "uplink_seen",
+   "site": 1,
+   "up": true
+  },
+  {
+   "t": 3.025,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 2.006,
+   "gas": 32895,
+   "block": 31057,
+   "until": null
+  },
+  {
+   "t": 4.066,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.034,
+   "gas": 70074,
+   "block": 31069,
+   "until": null
+  },
+  {
+   "t": 5.988,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.954,
+   "gas": 32895,
+   "block": 31060,
+   "until": null
+  },
+  {
+   "t": 6.406,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 1,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31001,
+   "hi": 31068,
+   "close_epoch": 1,
+   "close_reading": 10069986,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 6.457,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 1,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31014,
+   "hi": 31057,
+   "close_epoch": 1,
+   "close_reading": 10086458,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 6.987,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 7.054,
+   "kind": "renewal",
+   "site": 2,
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "epoch": 1,
+   "cq": 10081766,
+   "issued": 1795021383,
+   "t_send": 1.64,
+   "latency": 5.414,
+   "gas_g": 198813,
+   "gas_site": 135373,
+   "g_block": 31055
+  },
+  {
+   "t": 7.09,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.017,
+   "gas": 53124,
+   "block": 31072,
+   "until": null
+  },
+  {
+   "t": 7.168,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "d9617feb0c871d05db46ed05f81f746779867e3f95df88c264cf9f9743d67059",
+   "height": 1
+  },
+  {
+   "t": 7.748,
+   "kind": "renew_refused",
+   "site": 1,
+   "objs": [
+    "P11",
+    "P12",
+    "C11",
+    "L11"
+   ],
+   "why": "AnchorDebt"
+  },
+  {
+   "t": 8.105,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 9.106,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 9.349,
+   "kind": "anchor",
+   "site": 2,
+   "height": 1,
+   "covers": 1,
+   "status": 1,
+   "gas": 159980,
+   "close_epoch": 1,
+   "close_reading": 10086458,
+   "latency": 2.196,
+   "block": 31061
+  },
+  {
+   "t": 9.349,
+   "kind": "uplink_seen",
+   "site": 2,
+   "up": true
+  },
+  {
+   "t": 9.963,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 1.967,
+   "gas": 95414,
+   "block": 31064,
+   "until": 10113441
+  },
+  {
+   "t": 10.112,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 11.115,
+   "kind": "op",
+   "site": 1,
+   "op": "lock",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 11.881,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "e261f20c501ff049e513ece3f4c39bedcb9f552aaf63844b16d39340323c2011",
+   "height": 1
+  },
+  {
+   "t": 12.744,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 2,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31068,
+   "hi": 31074,
+   "close_epoch": 1,
+   "close_reading": 10075453,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 12.82,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 2,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31057,
+   "hi": 31063,
+   "close_epoch": 1,
+   "close_reading": 10093290,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 12.912,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.936,
+   "gas": 70196,
+   "block": 31067,
+   "until": null
+  },
+  {
+   "t": 12.979,
+   "kind": "anchor",
+   "site": 1,
+   "height": 1,
+   "covers": 1,
+   "status": 1,
+   "gas": 160000,
+   "close_epoch": 1,
+   "close_reading": 10069986,
+   "latency": 1.129,
+   "block": 31065
+  },
+  {
+   "t": 13.461,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "1edc30dc58374cca8bb4709ddd55a3f23c356105bd459b16051a1a2c2d7b9d6d",
+   "height": 2
+  },
+  {
+   "t": 13.92,
+   "kind": "op",
+   "site": 2,
+   "op": "lock",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 14.059,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.939,
+   "gas": 53124,
+   "block": 31079,
+   "until": null
+  },
+  {
+   "t": 14.52,
+   "kind": "renew_sent",
+   "site": 1,
+   "tx": "a24996961f745e73ba9947e1ba3843492604fdb45551028e0ff11222f018c9d4",
+   "objs": [
+    "P11",
+    "P12",
+    "C11",
+    "L11"
+   ],
+   "cq": 10077058
+  },
+  {
+   "t": 15.059,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 15.137,
+   "kind": "anchor",
+   "site": 2,
+   "height": 2,
+   "covers": 1,
+   "status": 1,
+   "gas": 159585,
+   "close_epoch": 1,
+   "close_reading": 10093290,
+   "latency": 1.693,
+   "block": 31067
+  },
+  {
+   "t": 16.066,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 16.82,
+   "kind": "renew_sent",
+   "site": 2,
+   "tx": "28683f34adc9859bfad9c86dd95a613cfa5c4fab1f3f2895954ad70fbf1c7a4a",
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "cq": 10097601
+  },
+  {
+   "t": 16.933,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 1.998,
+   "gas": 58514,
+   "block": 31071,
+   "until": 10120726
+  },
+  {
+   "t": 17.935,
+   "kind": "op",
+   "site": 2,
+   "op": "lock",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 19.093,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.022,
+   "gas": 53124,
+   "block": 31084,
+   "until": null
+  },
+  {
+   "t": 19.117,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 3,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31074,
+   "hi": 31080,
+   "close_epoch": 1,
+   "close_reading": 10080853,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 19.202,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 3,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31063,
+   "hi": 31070,
+   "close_epoch": 1,
+   "close_reading": 10099945,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 19.202,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P21",
+   "grant_t": 7.996,
+   "reading": 10100207,
+   "until": 10113441,
+   "a": 10081766,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 3
+  },
+  {
+   "t": 20.082,
+   "kind": "renewal",
+   "site": 1,
+   "objs": [
+    "P11",
+    "P12",
+    "C11",
+    "L11"
+   ],
+   "epoch": 1,
+   "cq": 10077058,
+   "issued": 1795021396,
+   "t_send": 14.41,
+   "latency": 5.672,
+   "gas_g": 251737,
+   "gas_site": 163814,
+   "g_block": 31068
+  },
+  {
+   "t": 20.227,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "7500acab305d478aaba88aa2f1cc0640dba152671877dc0dda98bb27a2fdc5d5",
+   "height": 3
+  },
+  {
+   "t": 20.964,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 2.012,
+   "gas": 95524,
+   "block": 31075,
+   "until": 10124944
+  },
+  {
+   "t": 22.089,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": "C11",
+   "ok": true,
+   "latency": 1.989,
+   "gas": 95564,
+   "block": 31087,
+   "until": 10106894
+  },
+  {
+   "t": 22.158,
+   "kind": "renewal",
+   "site": 2,
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "epoch": 1,
+   "cq": 10097601,
+   "issued": 1795021398,
+   "t_send": 16.72,
+   "latency": 5.438,
+   "gas_g": 147831,
+   "gas_site": 84419,
+   "g_block": 31070
+  },
+  {
+   "t": 22.258,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "b4fa6776acbe0e69e12412af9f94a245251588fa8408260871b7a3a0c87e0c89",
+   "height": 3
+  },
+  {
+   "t": 22.365,
+   "kind": "anchor",
+   "site": 1,
+   "height": 3,
+   "covers": 2,
+   "status": 1,
+   "gas": 159513,
+   "close_epoch": 1,
+   "close_reading": 10080853,
+   "latency": 2.151,
+   "block": 31074
+  },
+  {
+   "t": 23.958,
+   "kind": "anchor",
+   "site": 2,
+   "height": 3,
+   "covers": 1,
+   "status": 1,
+   "gas": 159553,
+   "close_epoch": 1,
+   "close_reading": 10099945,
+   "latency": 1.712,
+   "block": 31076
+  },
+  {
+   "t": 24.175,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 2.209,
+   "gas": 32895,
+   "block": 31078,
+   "until": null
+  },
+  {
+   "t": 25.084,
+   "kind": "op",
+   "site": 1,
+   "op": "lock",
+   "obj": "L11",
+   "ok": true,
+   "latency": 1.991,
+   "gas": 117883,
+   "block": 31090,
+   "until": 18446744073709551615
+  },
+  {
+   "t": 25.179,
+   "kind": "op",
+   "site": 2,
+   "op": "lock",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 25.535,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 4,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31080,
+   "hi": 31087,
+   "close_epoch": 1,
+   "close_reading": 10086297,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 25.616,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 4,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31070,
+   "hi": 31076,
+   "close_epoch": 1,
+   "close_reading": 10106673,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 25.616,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P21",
+   "grant_t": 14.935,
+   "reading": 10106941,
+   "until": 10120726,
+   "a": 10081766,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 4
+  },
+  {
+   "t": 25.616,
+   "kind": "exec",
+   "site": 2,
+   "obj": "C21",
+   "grant_t": 18.952,
+   "reading": 10106941,
+   "until": 10124944,
+   "a": 10081766,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 4
+  },
+  {
+   "t": 26.464,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "01f39995f490af5f52821bd46281deeee2b31318a1dfcbc9686fe1a643d5aa89",
+   "height": 4
+  },
+  {
+   "t": 28.074,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.986,
+   "gas": 53124,
+   "block": 31093,
+   "until": null
+  },
+  {
+   "t": 28.092,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "de2917cda293e2259655f5cff2fed6c6c7e2ce2b5cd359739a303e4ddcf44bc9",
+   "height": 4
+  },
+  {
+   "t": 28.142,
+   "kind": "anchor",
+   "site": 1,
+   "height": 4,
+   "covers": 1,
+   "status": 1,
+   "gas": 159952,
+   "close_epoch": 1,
+   "close_reading": 10086297,
+   "latency": 1.692,
+   "block": 31080
+  },
+  {
+   "t": 28.145,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.963,
+   "gas": 53096,
+   "block": 31082,
+   "until": null
+  },
+  {
+   "t": 29.675,
+   "kind": "renew_sent",
+   "site": 1,
+   "tx": "52f2bf4a18d095d9e11416ed040dc94e5f6f8ce0c01d5bf54b1af92033daa03d",
+   "objs": [
+    "P11",
+    "P12",
+    "C11",
+    "L11"
+   ],
+   "cq": 10089911
+  },
+  {
+   "t": 30.236,
+   "kind": "anchor",
+   "site": 2,
+   "height": 4,
+   "covers": 1,
+   "status": 1,
+   "gas": 159940,
+   "close_epoch": 1,
+   "close_reading": 10106673,
+   "latency": 2.158,
+   "block": 31082
+  },
+  {
+   "t": 31.048,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 1.971,
+   "gas": 95524,
+   "block": 31096,
+   "until": 10114524
+  },
+  {
+   "t": 31.115,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.961,
+   "gas": 53124,
+   "block": 31085,
+   "until": null
+  },
+  {
+   "t": 31.816,
+   "kind": "renew_sent",
+   "site": 2,
+   "tx": "5ae9c14eff8024741081f1e889b6de376fb4c42d138faf88066eb7ee6e181c35",
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "cq": 10113341
+  },
+  {
+   "t": 31.817,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P21",
+   "epoch": 1,
+   "until": 10113441,
+   "reading": 10113452,
+   "why": "hold_end"
+  },
+  {
+   "t": 31.865,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 5,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31087,
+   "hi": 31093,
+   "close_epoch": 1,
+   "close_reading": 10091703,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 31.865,
+   "kind": "exec",
+   "site": 1,
+   "obj": "C11",
+   "grant_t": 20.099,
+   "reading": 10091895,
+   "until": 10106894,
+   "a": 10077058,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 5
+  },
+  {
+   "t": 31.865,
+   "kind": "exec",
+   "site": 1,
+   "obj": "L11",
+   "grant_t": 23.093,
+   "reading": 10091895,
+   "until": 18446744073709551615,
+   "a": 10077058,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 5
+  },
+  {
+   "t": 31.991,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 5,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31076,
+   "hi": 31082,
+   "close_epoch": 1,
+   "close_reading": 10113407,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 34.001,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.944,
+   "gas": 32895,
+   "block": 31099,
+   "until": null
+  },
+  {
+   "t": 34.094,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 1.977,
+   "gas": 58526,
+   "block": 31088,
+   "until": 10138767
+  },
+  {
+   "t": 35.01,
+   "kind": "renewal",
+   "site": 1,
+   "objs": [
+    "P11",
+    "P12",
+    "C11",
+    "L11"
+   ],
+   "epoch": 1,
+   "cq": 10089911,
+   "issued": 1795021411,
+   "t_send": 29.532,
+   "latency": 5.478,
+   "gas_g": 183817,
+   "gas_site": 95870,
+   "g_block": 31083
+  },
+  {
+   "t": 35.142,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "c54fa6944a5dc2f409bf2d2fa6e2cfe845fa4098420efcd89b9fba1e20db0d14",
+   "height": 5
+  },
+  {
+   "t": 36.936,
+   "kind": "renewal",
+   "site": 2,
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "epoch": 1,
+   "cq": 10113341,
+   "issued": 1795021413,
+   "t_send": 31.711,
+   "latency": 5.225,
+   "gas_g": 147843,
+   "gas_site": 84403,
+   "g_block": 31085
+  },
+  {
+   "t": 36.987,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "c88c55957d7c9fe2d174351df6ca08b2efe2c5a321c3328bfdeaa9236881b1f1",
+   "height": 5
+  },
+  {
+   "t": 36.989,
+   "kind": "share_lowered",
+   "site": 2,
+   "amount": 30,
+   "gas": 80037
+  },
+  {
+   "t": 37.033,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 2.02,
+   "gas": 58486,
+   "block": 31102,
+   "until": 10119570
+  },
+  {
+   "t": 37.145,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": false,
+   "latency": 2.04,
+   "gas": 27439,
+   "block": 31091,
+   "until": 10141905
+  },
+  {
+   "t": 37.269,
+   "kind": "anchor",
+   "site": 1,
+   "height": 5,
+   "covers": 1,
+   "status": 1,
+   "gas": 159597,
+   "close_epoch": 1,
+   "close_reading": 10091703,
+   "latency": 2.14,
+   "block": 31089
+  },
+  {
+   "t": 38.186,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 6,
+   "ops": 3,
+   "agree": 4,
+   "lo": 31093,
+   "hi": 31100,
+   "close_epoch": 1,
+   "close_reading": 10097104,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 38.186,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P11",
+   "grant_t": 29.076,
+   "reading": 10097268,
+   "until": 10114524,
+   "a": 10077058,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 6
+  },
+  {
+   "t": 38.327,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 6,
+   "ops": 3,
+   "agree": 4,
+   "lo": 31082,
+   "hi": 31089,
+   "close_epoch": 1,
+   "close_reading": 10120059,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 38.327,
+   "kind": "exec",
+   "site": 2,
+   "obj": "C21",
+   "grant_t": 32.117,
+   "reading": 10120288,
+   "until": 10138767,
+   "a": 10097601,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 6
+  },
+  {
+   "t": 38.793,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P21",
+   "epoch": 1,
+   "until": 10120726,
+   "reading": 10120777,
+   "why": "hold_end"
+  },
+  {
+   "t": 39.203,
+   "kind": "anchor",
+   "site": 2,
+   "height": 5,
+   "covers": 1,
+   "status": 1,
+   "gas": 159497,
+   "close_epoch": 1,
+   "close_reading": 10113407,
+   "latency": 2.228,
+   "block": 31091
+  },
+  {
+   "t": 40.093,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 1.943,
+   "gas": 58498,
+   "block": 31094,
+   "until": 10145102
+  },
+  {
+   "t": 40.991,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.933,
+   "gas": 95524,
+   "block": 31106,
+   "until": 10123008
+  },
+  {
+   "t": 41.391,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "023b7962c7fd91b21b280a33f794244a8fca00946f05208c1ff6113f22d76e42",
+   "height": 6
+  },
+  {
+   "t": 42.792,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "until": 10124944,
+   "reading": 10124976,
+   "why": "hold_end"
+  },
+  {
+   "t": 43.017,
+   "kind": "anchor",
+   "site": 1,
+   "height": 6,
+   "covers": 1,
+   "status": 1,
+   "gas": 159972,
+   "close_epoch": 1,
+   "close_reading": 10097104,
+   "latency": 1.637,
+   "block": 31095
+  },
+  {
+   "t": 43.039,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.945,
+   "gas": 53084,
+   "block": 31097,
+   "until": null
+  },
+  {
+   "t": 43.347,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "dd7c0d0103b23ba950eacdb5a74f593ee2e1f21712233fccb7170e713c052349",
+   "height": 6
+  },
+  {
+   "t": 44.604,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 7,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31100,
+   "hi": 31106,
+   "close_epoch": 1,
+   "close_reading": 10102467,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 44.604,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P11",
+   "grant_t": 35.013,
+   "reading": 10102722,
+   "until": 10119570,
+   "a": 10089911,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 7
+  },
+  {
+   "t": 44.668,
+   "kind": "renew_sent",
+   "site": 1,
+   "tx": "e707df7068ca494ed6bc2b81bac8823ceea2883ec99be4f4da3491fc84c7d009",
+   "objs": [
+    "P11",
+    "P12",
+    "C11",
+    "L11"
+   ],
+   "cq": 10102647
+  },
+  {
+   "t": 44.807,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 7,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31089,
+   "hi": 31095,
+   "close_epoch": 1,
+   "close_reading": 10126823,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 44.807,
+   "kind": "exec",
+   "site": 2,
+   "obj": "C21",
+   "grant_t": 38.15,
+   "reading": 10127092,
+   "until": 10145102,
+   "a": 10113341,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 7
+  },
+  {
+   "t": 44.941,
+   "kind": "anchor",
+   "site": 2,
+   "height": 6,
+   "covers": 1,
+   "status": 1,
+   "gas": 160020,
+   "close_epoch": 1,
+   "close_reading": 10120059,
+   "latency": 1.606,
+   "block": 31097
+  },
+  {
+   "t": 45.048,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 2.027,
+   "gas": 32895,
+   "block": 31110,
+   "until": null
+  },
+  {
+   "t": 45.514,
+   "kind": "uplink_cut",
+   "site": 1
+  },
+  {
+   "t": 45.982,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 1.937,
+   "gas": 95564,
+   "block": 31100,
+   "until": 10151292
+  },
+  {
+   "t": 47.997,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.937,
+   "gas": 53096,
+   "block": 31113,
+   "until": null
+  },
+  {
+   "t": 48.178,
+   "kind": "share_applied",
+   "site": 2,
+   "version": 2,
+   "amount": 30,
+   "gas": 73518
+  },
+  {
+   "t": 48.44,
+   "kind": "renew_sent",
+   "site": 2,
+   "tx": "e995e9daacb71c7db3ec8636c4781745b2ebfb1a26e88b307668eb6ce805d254",
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "cq": 10130844
+  },
+  {
+   "t": 48.908,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.925,
+   "gas": 32895,
+   "block": 31103,
+   "until": null
+  },
+  {
+   "t": 49.583,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "C11",
+   "epoch": 1,
+   "until": 10106894,
+   "reading": 10106955,
+   "why": "hold_end"
+  },
+  {
+   "t": 50.993,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": "C11",
+   "ok": true,
+   "latency": 1.982,
+   "gas": 58526,
+   "block": 31116,
+   "until": 10131469
+  },
+  {
+   "t": 51.0,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 8,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31106,
+   "hi": 31112,
+   "close_epoch": 1,
+   "close_reading": 10107941,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 51.0,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 39.058,
+   "reading": 10108159,
+   "until": 10123008,
+   "a": 10089911,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 8
+  },
+  {
+   "t": 51.21,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 8,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31095,
+   "hi": 31101,
+   "close_epoch": 1,
+   "close_reading": 10133560,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 51.21,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P22",
+   "grant_t": 44.045,
+   "reading": 10133815,
+   "until": 10151292,
+   "a": 10113341,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 8
+  },
+  {
+   "t": 52.154,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 2.235,
+   "gas": 58514,
+   "block": 31106,
+   "until": 10157460
+  },
+  {
+   "t": 53.938,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.94,
+   "gas": 32895,
+   "block": 31119,
+   "until": null
+  },
+  {
+   "t": 53.964,
+   "kind": "renewal",
+   "site": 2,
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "epoch": 1,
+   "cq": 10130844,
+   "issued": 1795021430,
+   "t_send": 48.381,
+   "latency": 5.583,
+   "gas_g": 147843,
+   "gas_site": 84419,
+   "g_block": 31102
+  },
+  {
+   "t": 54.022,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "f828cc5bd8e8519b88440b0f3f173a122147c74b725a9e31529c322afcccd1d8",
+   "height": 8
+  },
+  {
+   "t": 55.112,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": false,
+   "latency": 1.952,
+   "gas": 27463,
+   "block": 31109,
+   "until": 10160863
+  },
+  {
+   "t": 55.931,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "until": 10138767,
+   "reading": 10138771,
+   "why": "hold_end"
+  },
+  {
+   "t": 56.124,
+   "kind": "anchor",
+   "site": 2,
+   "height": 8,
+   "covers": 2,
+   "status": 1,
+   "gas": 159952,
+   "close_epoch": 1,
+   "close_reading": 10133560,
+   "latency": 2.112,
+   "block": 31108
+  },
+  {
+   "t": 57.176,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": "C11",
+   "ok": true,
+   "latency": 2.23,
+   "gas": 58498,
+   "block": 31122,
+   "until": 10136513
+  },
+  {
+   "t": 58.075,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 9,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31112,
+   "hi": 31119,
+   "close_epoch": 1,
+   "close_reading": 10113414,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 58.075,
+   "kind": "exec",
+   "site": 1,
+   "obj": "C11",
+   "grant_t": 49.011,
+   "reading": 10114173,
+   "until": 10131469,
+   "a": 10089911,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 9
+  },
+  {
+   "t": 58.142,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 2.027,
+   "gas": 58474,
+   "block": 31112,
+   "until": 10163965
+  },
+  {
+   "t": 58.247,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 9,
+   "ops": 3,
+   "agree": 4,
+   "lo": 31101,
+   "hi": 31108,
+   "close_epoch": 1,
+   "close_reading": 10140842,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 58.247,
+   "kind": "exec",
+   "site": 2,
+   "obj": "C21",
+   "grant_t": 49.919,
+   "reading": 10141204,
+   "until": 10157460,
+   "a": 10113341,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 9
+  },
+  {
+   "t": 58.595,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P11",
+   "epoch": 1,
+   "until": 10114524,
+   "reading": 10114615,
+   "why": "hold_end"
+  },
+  {
+   "t": 59.93,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 1.747,
+   "gas": 58514,
+   "block": 31125,
+   "until": 10139265
+  },
+  {
+   "t": 60.282,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "f109928393b0769578b836666b70c826722154527aca3806056dc66ded496d04",
+   "height": 9
+  },
+  {
+   "t": 61.089,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 1.939,
+   "gas": 58514,
+   "block": 31115,
+   "until": 10167152
+  },
+  {
+   "t": 61.974,
+   "kind": "anchor",
+   "site": 2,
+   "height": 9,
+   "covers": 1,
+   "status": 1,
+   "gas": 159593,
+   "close_epoch": 1,
+   "close_reading": 10140842,
+   "latency": 1.704,
+   "block": 31114
+  },
+  {
+   "t": 62.011,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "until": 10145102,
+   "reading": 10145156,
+   "why": "hold_end"
+  },
+  {
+   "t": 62.219,
+   "kind": "stop",
+   "obj": "P11",
+   "next": 2,
+   "release_at": 1795021512,
+   "gas": 55681,
+   "g_time": 1795021442
+  },
+  {
+   "t": 63.169,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.238,
+   "gas": 53124,
+   "block": 31128,
+   "until": null
+  },
+  {
+   "t": 63.72,
+   "kind": "confirm_share_sent",
+   "site": 2,
+   "tx": "2cfb259f036cd22af0abb0f7586f5822ac4067580d7a6738f2b20102b1f16701"
+  },
+  {
+   "t": 64.047,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 1.958,
+   "gas": 58498,
+   "block": 31118,
+   "until": 10170238
+  },
+  {
+   "t": 64.192,
+   "kind": "stop",
+   "obj": "L11",
+   "next": 2,
+   "release_at": 1795021512,
+   "gas": 55693,
+   "g_time": 1795021444
+  },
+  {
+   "t": 64.489,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P11",
+   "epoch": 1,
+   "until": 10119570,
+   "reading": 10119625,
+   "why": "hold_end"
+  },
+  {
+   "t": 64.513,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 10,
+   "ops": 3,
+   "agree": 4,
+   "lo": 31119,
+   "hi": 31126,
+   "close_epoch": 1,
+   "close_reading": 10119405,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 64.513,
+   "kind": "exec",
+   "site": 1,
+   "obj": "C11",
+   "grant_t": 54.945,
+   "reading": 10119645,
+   "until": 10136513,
+   "a": 10089911,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 10
+  },
+  {
+   "t": 64.513,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P11",
+   "grant_t": 58.183,
+   "reading": 10119645,
+   "until": 10139265,
+   "a": 10089911,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 10
+  },
+  {
+   "t": 64.685,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 10,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31108,
+   "hi": 31115,
+   "close_epoch": 1,
+   "close_reading": 10147678,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 64.685,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P21",
+   "grant_t": 56.115,
+   "reading": 10147963,
+   "until": 10163965,
+   "a": 10130844,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 10
+  },
+  {
+   "t": 65.388,
+   "kind": "share_confirmed",
+   "site": 2,
+   "version": 2,
+   "amount": 30,
+   "height": 9,
+   "status": 1,
+   "gas": 110849
+  },
+  {
+   "t": 65.491,
+   "kind": "renew_sent",
+   "site": 2,
+   "tx": "e80ad2c763da012bae61bc30f7985af85d20531ab3fc06438c9e1033e7b5927a",
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "cq": 10148702
+  },
+  {
+   "t": 66.02,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.84,
+   "gas": 32895,
+   "block": 31131,
+   "until": null
+  },
+  {
+   "t": 67.057,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 2.008,
+   "gas": 32895,
+   "block": 31121,
+   "until": null
+  },
+  {
+   "t": 67.856,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P22",
+   "epoch": 1,
+   "until": 10151292,
+   "reading": 10151294,
+   "why": "hold_end"
+  },
+  {
+   "t": 68.072,
+   "kind": "op",
+   "site": 2,
+   "op": "lock",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 68.565,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10123008,
+   "reading": 10123089,
+   "why": "hold_end"
+  },
+  {
+   "t": 68.963,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.929,
+   "gas": 32895,
+   "block": 31134,
+   "until": null
+  },
+  {
+   "t": 70.858,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 11,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31126,
+   "hi": 31132,
+   "close_epoch": 1,
+   "close_reading": 10124859,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 71.022,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": false,
+   "latency": 1.944,
+   "gas": 27451,
+   "block": 31125,
+   "until": 10177577
+  },
+  {
+   "t": 71.03,
+   "kind": "renewal",
+   "site": 2,
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "epoch": 1,
+   "cq": 10148702,
+   "issued": 1795021447,
+   "t_send": 65.388,
+   "latency": 5.642,
+   "gas_g": 147859,
+   "gas_site": 84419,
+   "g_block": 31119
+  },
+  {
+   "t": 71.055,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 11,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31115,
+   "hi": 31121,
+   "close_epoch": 1,
+   "close_reading": 10154439,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 71.055,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P21",
+   "grant_t": 59.15,
+   "reading": 10154652,
+   "until": 10167152,
+   "a": 10130844,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 11
+  },
+  {
+   "t": 71.055,
+   "kind": "exec",
+   "site": 2,
+   "obj": "C21",
+   "grant_t": 62.089,
+   "reading": 10154652,
+   "until": 10170238,
+   "a": 10130844,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 11
+  },
+  {
+   "t": 71.166,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "0119400fef3ea878453274e546535ec950ce145e85c49347b825c22d4a897c43",
+   "height": 11
+  },
+  {
+   "t": 71.914,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": "C11",
+   "ok": true,
+   "latency": 1.939,
+   "gas": 58474,
+   "block": 31137,
+   "until": 10149288
+  },
+  {
+   "t": 71.976,
+   "kind": "revoke",
+   "obj": "C11",
+   "gas": 33466,
+   "release_at": 1795021512,
+   "g_time": 1795021452
+  },
+  {
+   "t": 73.376,
+   "kind": "anchor",
+   "site": 2,
+   "height": 11,
+   "covers": 2,
+   "status": 1,
+   "gas": 159896,
+   "close_epoch": 1,
+   "close_reading": 10154439,
+   "latency": 2.222,
+   "block": 31125
+  },
+  {
+   "t": 73.781,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "until": 10157460,
+   "reading": 10157515,
+   "why": "hold_end"
+  },
+  {
+   "t": 73.986,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.957,
+   "gas": 53112,
+   "block": 31128,
+   "until": null
+  },
+  {
+   "t": 75.164,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 2.246,
+   "gas": 58526,
+   "block": 31140,
+   "until": 10151790
+  },
+  {
+   "t": 76.969,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.975,
+   "gas": 53096,
+   "block": 31131,
+   "until": null
+  },
+  {
+   "t": 77.152,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 12,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31132,
+   "hi": 31139,
+   "close_epoch": 1,
+   "close_reading": 10130233,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 77.152,
+   "kind": "exec",
+   "site": 1,
+   "obj": "C11",
+   "grant_t": 69.975,
+   "reading": 10130389,
+   "until": 10149288,
+   "a": 10089911,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 12
+  },
+  {
+   "t": 77.378,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 12,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31121,
+   "hi": 31128,
+   "close_epoch": 1,
+   "close_reading": 10161091,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 77.492,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "482acbfbd3e203b75bff71fcd831edcf2ded758747cb4521a43d60881c5d2394",
+   "height": 12
+  },
+  {
+   "t": 78.112,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.943,
+   "gas": 58498,
+   "block": 31143,
+   "until": 10154553
+  },
+  {
+   "t": 78.508,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "C11",
+   "epoch": 1,
+   "until": 10131469,
+   "reading": 10131541,
+   "why": "hold_end"
+  },
+  {
+   "t": 79.153,
+   "kind": "anchor",
+   "site": 2,
+   "height": 12,
+   "covers": 1,
+   "status": 1,
+   "gas": 159919,
+   "close_epoch": 1,
+   "close_reading": 10161091,
+   "latency": 1.672,
+   "block": 31131
+  },
+  {
+   "t": 79.941,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P21",
+   "epoch": 1,
+   "until": 10163965,
+   "reading": 10163982,
+   "why": "hold_end"
+  },
+  {
+   "t": 80.169,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 2.186,
+   "gas": 32895,
+   "block": 31134,
+   "until": null
+  },
+  {
+   "t": 80.635,
+   "kind": "renew_sent",
+   "site": 2,
+   "tx": "0f6ef86e034f1ac5a3e6ee65f1bc027d81b8bc1c79ff5e74eebdab676c6c47ae",
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "cq": 10164610
+  },
+  {
+   "t": 81.054,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.931,
+   "gas": 53124,
+   "block": 31146,
+   "until": null
+  },
+  {
+   "t": 82.967,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P21",
+   "epoch": 1,
+   "until": 10167152,
+   "reading": 10167160,
+   "why": "hold_end"
+  },
+  {
+   "t": 83.18,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.004,
+   "gas": 53124,
+   "block": 31137,
+   "until": null
+  },
+  {
+   "t": 83.528,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 13,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31139,
+   "hi": 31145,
+   "close_epoch": 1,
+   "close_reading": 10135632,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 83.528,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 72.918,
+   "reading": 10135808,
+   "until": 10151790,
+   "a": 10089911,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 13
+  },
+  {
+   "t": 83.528,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 76.169,
+   "reading": 10135808,
+   "until": 10154553,
+   "a": 10089911,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 13
+  },
+  {
+   "t": 83.723,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 13,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31128,
+   "hi": 31134,
+   "close_epoch": 1,
+   "close_reading": 10167753,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 84.049,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.994,
+   "gas": 32895,
+   "block": 31149,
+   "until": null
+  },
+  {
+   "t": 84.372,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "C11",
+   "epoch": 1,
+   "until": 10136513,
+   "reading": 10136525,
+   "why": "hold_end"
+  },
+  {
+   "t": 85.763,
+   "kind": "uplink_heal",
+   "site": 1
+  },
+  {
+   "t": 85.918,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.731,
+   "gas": 53124,
+   "block": 31140,
+   "until": null
+  },
+  {
+   "t": 85.988,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "until": 10170238,
+   "reading": 10170332,
+   "why": "hold_end"
+  },
+  {
+   "t": 86.177,
+   "kind": "renewal",
+   "site": 2,
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "epoch": 1,
+   "cq": 10164610,
+   "issued": 1795021462,
+   "t_send": 80.539,
+   "latency": 5.638,
+   "gas_g": 147843,
+   "gas_site": 84391,
+   "g_block": 31134
+  },
+  {
+   "t": 86.311,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "dc65879103018c9d1c1abbb62caa23947687aeb3fec25436b100ed3f4eb4a897",
+   "height": 13
+  },
+  {
+   "t": 86.994,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": "C11",
+   "ok": true,
+   "latency": 1.942,
+   "gas": 58526,
+   "block": 31152,
+   "until": 10158910
+  },
+  {
+   "t": 87.613,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P11",
+   "epoch": 1,
+   "until": 10139265,
+   "reading": 10139280,
+   "why": "hold_end"
+  },
+  {
+   "t": 88.432,
+   "kind": "anchor",
+   "site": 2,
+   "height": 13,
+   "covers": 1,
+   "status": 1,
+   "gas": 159540,
+   "close_epoch": 1,
+   "close_reading": 10167753,
+   "latency": 2.133,
+   "block": 31140
+  },
+  {
+   "t": 89.134,
+   "kind": "renewal",
+   "site": 1,
+   "objs": [
+    "P11",
+    "P12",
+    "C11",
+    "L11"
+   ],
+   "epoch": 1,
+   "cq": 10102647,
+   "issued": 1795021426,
+   "t_send": 44.513,
+   "latency": 44.62,
+   "gas_g": 183789,
+   "gas_site": 95814,
+   "g_block": 31098
+  },
+  {
+   "t": 89.156,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 2.231,
+   "gas": 58526,
+   "block": 31143,
+   "until": 10196315
+  },
+  {
+   "t": 89.243,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "20c8657ba39f7d4cca3662e325413d6b3846edf5c3f0bb1c7ff92cca81c14416",
+   "height": 13
+  },
+  {
+   "t": 89.86,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 14,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31145,
+   "hi": 31151,
+   "close_epoch": 1,
+   "close_reading": 10141011,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 89.967,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": "C11",
+   "ok": false,
+   "latency": 1.968,
+   "gas": 27463,
+   "block": 31155,
+   "until": 10158910
+  },
+  {
+   "t": 90.072,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 14,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31134,
+   "hi": 31140,
+   "close_epoch": 1,
+   "close_reading": 10174403,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 91.454,
+   "kind": "anchor",
+   "site": 1,
+   "height": 13,
+   "covers": 7,
+   "status": 1,
+   "gas": 159924,
+   "close_epoch": 1,
+   "close_reading": 10135632,
+   "latency": 2.224,
+   "block": 31143
+  },
+  {
+   "t": 92.174,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 2.003,
+   "gas": 58498,
+   "block": 31146,
+   "until": 10199724
+  },
+  {
+   "t": 92.521,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "12e8ac9f4e9102e3e143f7296e217a264b0ba502b0ee64ed739bee4ad57b0def",
+   "height": 14
+  },
+  {
+   "t": 93.0,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 2.027,
+   "gas": 58514,
+   "block": 31158,
+   "until": 10167136
+  },
+  {
+   "t": 94.129,
+   "kind": "anchor",
+   "site": 2,
+   "height": 14,
+   "covers": 1,
+   "status": 1,
+   "gas": 159995,
+   "close_epoch": 1,
+   "close_reading": 10174403,
+   "latency": 1.62,
+   "block": 31146
+  },
+  {
+   "t": 95.135,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.954,
+   "gas": 53124,
+   "block": 31149,
+   "until": null
+  },
+  {
+   "t": 95.4,
+   "kind": "renew_sent",
+   "site": 2,
+   "tx": "d5d2ecf774a2d5bf9a8d971530f1772a4a5f0b05b90f7068bb19e6b691229344",
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "cq": 10180105
+  },
+  {
+   "t": 95.614,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "4b54dd9d3e1a64c7577a87590613b188c13ddc491fff470a30b7e04abf668668",
+   "height": 14
+  },
+  {
+   "t": 95.944,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.937,
+   "gas": 53096,
+   "block": 31161,
+   "until": null
+  },
+  {
+   "t": 96.166,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 15,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31151,
+   "hi": 31158,
+   "close_epoch": 1,
+   "close_reading": 10146398,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 96.166,
+   "kind": "exec",
+   "site": 1,
+   "obj": "C11",
+   "grant_t": 85.051,
+   "reading": 10146551,
+   "until": 10158910,
+   "a": 10089911,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 15
+  },
+  {
+   "t": 96.424,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 15,
+   "ops": 3,
+   "agree": 4,
+   "lo": 31140,
+   "hi": 31147,
+   "close_epoch": 1,
+   "close_reading": 10181068,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 96.424,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P22",
+   "grant_t": 86.924,
+   "reading": 10181289,
+   "until": 10196315,
+   "a": 10164610,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 15
+  },
+  {
+   "t": 96.424,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P22",
+   "grant_t": 90.171,
+   "reading": 10181289,
+   "until": 10199724,
+   "a": 10164610,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 15
+  },
+  {
+   "t": 97.189,
+   "kind": "anchor",
+   "site": 1,
+   "height": 14,
+   "covers": 1,
+   "status": 1,
+   "gas": 159995,
+   "close_epoch": 1,
+   "close_reading": 10141011,
+   "latency": 1.586,
+   "block": 31149
+  },
+  {
+   "t": 98.158,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 2.011,
+   "gas": 58526,
+   "block": 31152,
+   "until": 10205999
+  },
+  {
+   "t": 98.952,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": "C11",
+   "ok": true,
+   "latency": 1.998,
+   "gas": 58514,
+   "block": 31164,
+   "until": 10171646
+  },
+  {
+   "t": 99.129,
+   "kind": "stop_applied",
+   "site": 1,
+   "obj": "P11",
+   "gas": 75379
+  },
+  {
+   "t": 99.453,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "C11",
+   "epoch": 1,
+   "until": 10149288,
+   "reading": 10149344,
+   "why": "hold_end"
+  },
+  {
+   "t": 100.919,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": false,
+   "latency": 1.746,
+   "gas": 27463,
+   "block": 31155,
+   "until": 10209176
+  },
+  {
+   "t": 100.991,
+   "kind": "stop_applied",
+   "site": 1,
+   "obj": "C11",
+   "gas": 75443
+  },
+  {
+   "t": 101.101,
+   "kind": "renewal",
+   "site": 2,
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "epoch": 1,
+   "cq": 10180105,
+   "issued": 1795021477,
+   "t_send": 95.296,
+   "latency": 5.805,
+   "gas_g": 147871,
+   "gas_site": 84423,
+   "g_block": 31149
+  },
+  {
+   "t": 101.198,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "8af529dc20ae6b338db4b7ffc39c46d47c35c4b59a7f43e0074b123872fdcf6b",
+   "height": 15
+  },
+  {
+   "t": 101.935,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": "C11",
+   "ok": false,
+   "latency": 1.975,
+   "gas": 27417,
+   "block": 31167,
+   "until": 10171646
+  },
+  {
+   "t": 102.367,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10151790,
+   "reading": 10151821,
+   "why": "hold_end"
+  },
+  {
+   "t": 102.474,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 16,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31158,
+   "hi": 31164,
+   "close_epoch": 1,
+   "close_reading": 10151749,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 102.474,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 90.973,
+   "reading": 10151913,
+   "until": 10167136,
+   "a": 10102647,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 16
+  },
+  {
+   "t": 102.748,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 16,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31147,
+   "hi": 31153,
+   "close_epoch": 1,
+   "close_reading": 10187721,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 102.748,
+   "kind": "exec",
+   "site": 2,
+   "obj": "C21",
+   "grant_t": 96.147,
+   "reading": 10187930,
+   "until": 10205999,
+   "a": 10164610,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 16
+  },
+  {
+   "t": 102.948,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 103.204,
+   "kind": "stop_applied",
+   "site": 1,
+   "obj": "L11",
+   "gas": 75415
+  },
+  {
+   "t": 103.375,
+   "kind": "anchor",
+   "site": 2,
+   "height": 15,
+   "covers": 1,
+   "status": 1,
+   "gas": 159583,
+   "close_epoch": 1,
+   "close_reading": 10181068,
+   "latency": 2.187,
+   "block": 31155
+  },
+  {
+   "t": 103.997,
+   "kind": "renew_sent",
+   "site": 1,
+   "tx": "b8086413a4f0d1b6fb9c7d0ae7b1beae730c131f91ec8446ba8210a6fdb03029",
+   "objs": [
+    "P12"
+   ],
+   "cq": 10153089
+  },
+  {
+   "t": 104.132,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 2.211,
+   "gas": 58498,
+   "block": 31158,
+   "until": 10212061
+  },
+  {
+   "t": 105.137,
+   "kind": "op",
+   "site": 2,
+   "op": "lock",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 105.6,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10154553,
+   "reading": 10154569,
+   "why": "hold_end"
+  },
+  {
+   "t": 105.908,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.958,
+   "gas": 58498,
+   "block": 31171,
+   "until": 10171646
+  },
+  {
+   "t": 107.546,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "705899795d6d41921306e46b8db99a2dd418b667a0cafb909de2154af9c2be93",
+   "height": 16
+  },
+  {
+   "t": 108.105,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 1.959,
+   "gas": 58526,
+   "block": 31162,
+   "until": 10216498
+  },
+  {
+   "t": 108.814,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 17,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31164,
+   "hi": 31170,
+   "close_epoch": 1,
+   "close_reading": 10157128,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 108.814,
+   "kind": "exec",
+   "site": 1,
+   "obj": "C11",
+   "grant_t": 96.954,
+   "reading": 10157301,
+   "until": 10171646,
+   "a": 10102647,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 17
+  },
+  {
+   "t": 109.138,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 17,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31153,
+   "hi": 31159,
+   "close_epoch": 1,
+   "close_reading": 10194388,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 109.138,
+   "kind": "exec",
+   "site": 2,
+   "obj": "C21",
+   "grant_t": 101.92,
+   "reading": 10194639,
+   "until": 10212061,
+   "a": 10180105,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 17
+  },
+  {
+   "t": 109.147,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 2.225,
+   "gas": 55301,
+   "block": 31174,
+   "until": 10171646
+  },
+  {
+   "t": 109.168,
+   "kind": "anchor",
+   "site": 2,
+   "height": 16,
+   "covers": 1,
+   "status": 1,
+   "gas": 160038,
+   "close_epoch": 1,
+   "close_reading": 10187721,
+   "latency": 1.636,
+   "block": 31161
+  },
+  {
+   "t": 110.203,
+   "kind": "renewal",
+   "site": 1,
+   "objs": [
+    "P12"
+   ],
+   "epoch": 1,
+   "cq": 10153089,
+   "issued": 1795021486,
+   "t_send": 103.858,
+   "latency": 6.345,
+   "gas_g": 73696,
+   "gas_site": 61544,
+   "g_block": 31158
+  },
+  {
+   "t": 110.328,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "c87cdf8eb8bb8a0e58ad910bf02c46ef74719b19c7a40f845465d10ad666e362",
+   "height": 17
+  },
+  {
+   "t": 110.732,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "C11",
+   "epoch": 1,
+   "until": 10158910,
+   "reading": 10158931,
+   "why": "hold_end"
+  },
+  {
+   "t": 110.748,
+   "kind": "renew_sent",
+   "site": 2,
+   "tx": "0a752bee570631f70df325ca1817b6a100a323652b674110c8b397abe82b2b8e",
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "cq": 10196259
+  },
+  {
+   "t": 110.824,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P22",
+   "epoch": 1,
+   "until": 10196315,
+   "reading": 10196409,
+   "why": "hold_end"
+  },
+  {
+   "t": 111.112,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 1.997,
+   "gas": 58526,
+   "block": 31165,
+   "until": 10219615
+  },
+  {
+   "t": 112.151,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.988,
+   "gas": 53096,
+   "block": 31177,
+   "until": null
+  },
+  {
+   "t": 112.498,
+   "kind": "anchor",
+   "site": 1,
+   "height": 17,
+   "covers": 3,
+   "status": 1,
+   "gas": 159995,
+   "close_epoch": 1,
+   "close_reading": 10157128,
+   "latency": 2.187,
+   "block": 31164
+  },
+  {
+   "t": 113.156,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 114.069,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P22",
+   "epoch": 1,
+   "until": 10199724,
+   "reading": 10199817,
+   "why": "hold_end"
+  },
+  {
+   "t": 114.085,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 1.965,
+   "gas": 58498,
+   "block": 31168,
+   "until": 10222770
+  },
+  {
+   "t": 115.166,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 18,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31170,
+   "hi": 31176,
+   "close_epoch": 1,
+   "close_reading": 10162529,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 115.166,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 103.95,
+   "reading": 10162700,
+   "until": 10171646,
+   "a": 10102647,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 18
+  },
+  {
+   "t": 115.166,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 106.922,
+   "reading": 10162700,
+   "until": 10171646,
+   "a": 10102647,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 18
+  },
+  {
+   "t": 115.456,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 18,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31159,
+   "hi": 31166,
+   "close_epoch": 1,
+   "close_reading": 10201071,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 115.456,
+   "kind": "exec",
+   "site": 2,
+   "obj": "C21",
+   "grant_t": 106.146,
+   "reading": 10201273,
+   "until": 10216498,
+   "a": 10180105,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 18
+  },
+  {
+   "t": 115.456,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P22",
+   "grant_t": 109.115,
+   "reading": 10201273,
+   "until": 10219615,
+   "a": 10180105,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 18
+  },
+  {
+   "t": 116.122,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.96,
+   "gas": 58514,
+   "block": 31181,
+   "until": 10186848
+  },
+  {
+   "t": 116.176,
+   "kind": "renewal",
+   "site": 2,
+   "objs": [
+    "P21",
+    "P22",
+    "C21"
+   ],
+   "epoch": 1,
+   "cq": 10196259,
+   "issued": 1795021492,
+   "t_send": 110.68,
+   "latency": 5.496,
+   "gas_g": 147871,
+   "gas_site": 84355,
+   "g_block": 31164
+  },
+  {
+   "t": 116.308,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "27bf14c384d1b461735cc5666c80750c40627fd53d88ab81d0752c6962e1ca91",
+   "height": 18
+  },
+  {
+   "t": 116.588,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "67bda2138b8430561dcdc2282b9c01ade315bf125b4a2e25affc31b443c3a0f3",
+   "height": 18
+  },
+  {
+   "t": 116.939,
+   "kind": "stop",
+   "obj": "P21",
+   "next": 1,
+   "g_time": 1795021497,
+   "gas": 55681
+  },
+  {
+   "t": 117.024,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.938,
+   "gas": 32895,
+   "block": 31171,
+   "until": null
+  },
+  {
+   "t": 117.977,
+   "kind": "anchor",
+   "site": 2,
+   "height": 18,
+   "covers": 2,
+   "status": 1,
+   "gas": 159897,
+   "close_epoch": 1,
+   "close_reading": 10201071,
+   "latency": 1.68,
+   "block": 31170
+  },
+  {
+   "t": 118.203,
+   "kind": "anchor",
+   "site": 1,
+   "height": 18,
+   "covers": 1,
+   "status": 1,
+   "gas": 159964,
+   "close_epoch": 1,
+   "close_reading": 10162529,
+   "latency": 1.626,
+   "block": 31170
+  },
+  {
+   "t": 119.089,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.965,
+   "gas": 53124,
+   "block": 31184,
+   "until": null
+  },
+  {
+   "t": 119.977,
+   "kind": "ack_op",
+   "site": 1,
+   "obj": "P11",
+   "status": 1,
+   "gas": 60288,
+   "reading": 10165560,
+   "opens": 0
+  },
+  {
+   "t": 119.993,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.967,
+   "gas": 53112,
+   "block": 31174,
+   "until": null
+  },
+  {
+   "t": 120.012,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "until": 10205999,
+   "reading": 10206057,
+   "why": "hold_end"
+  },
+  {
+   "t": 120.104,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 120.458,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10167136,
+   "reading": 10167199,
+   "why": "hold_end"
+  },
+  {
+   "t": 120.614,
+   "kind": "ack_wait",
+   "site": 1,
+   "obj": "L11",
+   "why": "lock on"
+  },
+  {
+   "t": 121.482,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 19,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31176,
+   "hi": 31183,
+   "close_epoch": 1,
+   "close_reading": 10167898,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 121.482,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 114.163,
+   "reading": 10168069,
+   "until": 10186848,
+   "a": 10153089,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 19
+  },
+  {
+   "t": 121.509,
+   "kind": "renew_sent",
+   "site": 1,
+   "tx": "f97157d908fb95b74f6feee3273471157bf65a68ff4f09d6168b579b40a59e19",
+   "objs": [
+    "P12"
+   ],
+   "cq": 10167964
+  },
+  {
+   "t": 121.792,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 19,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31166,
+   "hi": 31172,
+   "close_epoch": 1,
+   "close_reading": 10207725,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 121.792,
+   "kind": "exec",
+   "site": 2,
+   "obj": "C21",
+   "grant_t": 112.119,
+   "reading": 10207927,
+   "until": 10222770,
+   "a": 10180105,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 19
+  },
+  {
+   "t": 122.081,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "3b446547d4ad09781cabbb65353961e8ea5e0b7c4511fcae0da958df91895801",
+   "height": 19
+  },
+  {
+   "t": 122.965,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.966,
+   "gas": 53124,
+   "block": 31177,
+   "until": null
+  },
+  {
+   "t": 123.043,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.936,
+   "gas": 58486,
+   "block": 31188,
+   "until": 10192751
+  },
+  {
+   "t": 124.058,
+   "kind": "op",
+   "site": 1,
+   "op": "release_other_crew",
+   "obj": "L11",
+   "ok": false,
+   "why": "wrong crew"
+  },
+  {
+   "t": 124.296,
+   "kind": "anchor",
+   "site": 2,
+   "height": 19,
+   "covers": 1,
+   "status": 1,
+   "gas": 159572,
+   "close_epoch": 1,
+   "close_reading": 10207725,
+   "latency": 2.227,
+   "block": 31176
+  },
+  {
+   "t": 125.733,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "until": 10212061,
+   "reading": 10212065,
+   "why": "hold_end"
+  },
+  {
+   "t": 125.749,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "C11",
+   "epoch": 1,
+   "until": 10171646,
+   "reading": 10171696,
+   "why": "hold_end"
+  },
+  {
+   "t": 125.75,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10171646,
+   "reading": 10171696,
+   "why": "hold_end"
+  },
+  {
+   "t": 125.75,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10171646,
+   "reading": 10171696,
+   "why": "hold_end"
+  },
+  {
+   "t": 125.997,
+   "kind": "op",
+   "site": 1,
+   "op": "release",
+   "obj": "L11",
+   "ok": true,
+   "latency": 1.939,
+   "gas": 68489,
+   "block": 31191,
+   "until": null
+  },
+  {
+   "t": 125.997,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "L11",
+   "epoch": 1,
+   "until": 18446744073709551615,
+   "reading": 10170258,
+   "why": "released"
+  },
+  {
+   "t": 126.168,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.202,
+   "gas": 53096,
+   "block": 31180,
+   "until": null
+  },
+  {
+   "t": 126.992,
+   "kind": "stop_applied",
+   "site": 2,
+   "obj": "P21",
+   "gas": 75355
+  },
+  {
+   "t": 127.058,
+   "kind": "renewal",
+   "site": 1,
+   "objs": [
+    "P12"
+   ],
+   "epoch": 1,
+   "cq": 10167964,
+   "issued": 1795021503,
+   "t_send": 121.359,
+   "latency": 5.699,
+   "gas_g": 73724,
+   "gas_site": 61584,
+   "g_block": 31175
+  },
+  {
+   "t": 127.099,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": false,
+   "why": "NoRenewal"
+  },
+  {
+   "t": 127.171,
+   "kind": "op",
+   "site": 2,
+   "op": "lock",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 127.241,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "1712f350357cbd3538711e3f9aaad63a533e95888d23ea338a4e632ebb333f41",
+   "height": 19
+  },
+  {
+   "t": 127.889,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 20,
+   "ops": 3,
+   "agree": 4,
+   "lo": 31183,
+   "hi": 31189,
+   "close_epoch": 1,
+   "close_reading": 10173318,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 127.889,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 121.107,
+   "reading": 10173515,
+   "until": 10192751,
+   "a": 10153089,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 20
+  },
+  {
+   "t": 128.003,
+   "kind": "renew_sent",
+   "site": 2,
+   "tx": "efee2dcb44ba55fdaf95f39b272778204b51e7b3d9d8ac65bed75f37ba431a84",
+   "objs": [
+    "P22",
+    "C21"
+   ],
+   "cq": 10214279
+  },
+  {
+   "t": 128.214,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 20,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31172,
+   "hi": 31178,
+   "close_epoch": 1,
+   "close_reading": 10214401,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 129.387,
+   "kind": "anchor",
+   "site": 1,
+   "height": 19,
+   "covers": 1,
+   "status": 1,
+   "gas": 159568,
+   "close_epoch": 1,
+   "close_reading": 10167898,
+   "latency": 2.16,
+   "block": 31181
+  },
+  {
+   "t": 130.058,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "until": 10216498,
+   "reading": 10216605,
+   "why": "hold_end"
+  },
+  {
+   "t": 130.079,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.969,
+   "gas": 32895,
+   "block": 31195,
+   "until": null
+  },
+  {
+   "t": 130.158,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.97,
+   "gas": 53096,
+   "block": 31184,
+   "until": null
+  },
+  {
+   "t": 132.53,
+   "kind": "reassign_refused",
+   "obj": "L11",
+   "why": "HoldMayBeOpen",
+   "release_at": 1795021512,
+   "g_time": 1795021512
+  },
+  {
+   "t": 132.981,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P22",
+   "epoch": 1,
+   "until": 10219615,
+   "reading": 10219674,
+   "why": "hold_end"
+  },
+  {
+   "t": 133.026,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.945,
+   "gas": 53124,
+   "block": 31198,
+   "until": null
+  },
+  {
+   "t": 133.103,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 1.945,
+   "gas": 58526,
+   "block": 31187,
+   "until": 10242760
+  },
+  {
+   "t": 133.474,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "d8480ca656f87ff853913d7258680afdd723deb55c4921a470fa78d30c032fb2",
+   "height": 20
+  },
+  {
+   "t": 134.029,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 134.072,
+   "kind": "reassigned_slow",
+   "obj": "P11",
+   "release_at": 1795021512,
+   "g_time": 1795021512,
+   "status": 1,
+   "gas": 31248,
+   "g_block": 31186
+  },
+  {
+   "t": 134.222,
+   "kind": "renewal",
+   "site": 2,
+   "objs": [
+    "P22",
+    "C21"
+   ],
+   "epoch": 1,
+   "cq": 10214279,
+   "issued": 1795021510,
+   "t_send": 127.842,
+   "latency": 6.379,
+   "gas_g": 111926,
+   "gas_site": 72955,
+   "g_block": 31182
+  },
+  {
+   "t": 134.263,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 21,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31189,
+   "hi": 31196,
+   "close_epoch": 1,
+   "close_reading": 10178717,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 134.343,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "72fafe2000e836ef8d9e4a5e0052fe332f308bc1012d6b6356b2df034cf62be0",
+   "height": 20
+  },
+  {
+   "t": 134.615,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 21,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31178,
+   "hi": 31185,
+   "close_epoch": 1,
+   "close_reading": 10221156,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 135.134,
+   "kind": "anchor",
+   "site": 1,
+   "height": 20,
+   "covers": 1,
+   "status": 1,
+   "gas": 159967,
+   "close_epoch": 1,
+   "close_reading": 10173318,
+   "latency": 1.672,
+   "block": 31187
+  },
+  {
+   "t": 135.934,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.828,
+   "gas": 32895,
+   "block": 31190,
+   "until": null
+  },
+  {
+   "t": 136.005,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "until": 10222770,
+   "reading": 10222849,
+   "why": "hold_end"
+  },
+  {
+   "t": 136.016,
+   "kind": "anchor",
+   "site": 2,
+   "height": 20,
+   "covers": 1,
+   "status": 1,
+   "gas": 159887,
+   "close_epoch": 1,
+   "close_reading": 10214401,
+   "latency": 1.686,
+   "block": 31188
+  },
+  {
+   "t": 136.993,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.961,
+   "gas": 53084,
+   "block": 31202,
+   "until": null
+  },
+  {
+   "t": 138.168,
+   "kind": "ack_op",
+   "site": 1,
+   "obj": "L11",
+   "status": 1,
+   "gas": 58003,
+   "reading": 10180366,
+   "opens": 1
+  },
+  {
+   "t": 138.936,
+   "kind": "renew_sent",
+   "site": 1,
+   "tx": "9eb9aebd2fb8f987ffcbc8bfb8472b62f66e379f23ff976b4c7053aa08ae1e4b",
+   "objs": [
+    "P12"
+   ],
+   "cq": 10182819
+  },
+  {
+   "t": 139.153,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.208,
+   "gas": 53084,
+   "block": 31193,
+   "until": null
+  },
+  {
+   "t": 139.949,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.949,
+   "gas": 58526,
+   "block": 31205,
+   "until": 10207110
+  },
+  {
+   "t": 140.227,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "600017fc09ff183f21aee1d8f53d4d128fc8b7cfbc42f4cc8153f81c9a675220",
+   "height": 21
+  },
+  {
+   "t": 140.546,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 22,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31196,
+   "hi": 31202,
+   "close_epoch": 1,
+   "close_reading": 10184125,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 140.924,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 22,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31185,
+   "hi": 31191,
+   "close_epoch": 1,
+   "close_reading": 10227813,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 140.924,
+   "kind": "exec",
+   "site": 2,
+   "obj": "C21",
+   "grant_t": 131.158,
+   "reading": 10228015,
+   "until": 10242760,
+   "a": 10196259,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 22
+  },
+  {
+   "t": 142.115,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 1.951,
+   "gas": 58498,
+   "block": 31196,
+   "until": 10252216
+  },
+  {
+   "t": 142.392,
+   "kind": "anchor",
+   "site": 2,
+   "height": 21,
+   "covers": 1,
+   "status": 1,
+   "gas": 159516,
+   "close_epoch": 1,
+   "close_reading": 10221156,
+   "latency": 2.184,
+   "block": 31194
+  },
+  {
+   "t": 143.167,
+   "kind": "op",
+   "site": 1,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 2.215,
+   "gas": 32895,
+   "block": 31208,
+   "until": null
+  },
+  {
+   "t": 143.604,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10186848,
+   "reading": 10186872,
+   "why": "hold_end"
+  },
+  {
+   "t": 144.177,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 145.001,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "C21",
+   "epoch": 1,
+   "until": 10242760,
+   "why": "power_loss",
+   "carry_ms": 14159
+  },
+  {
+   "t": 145.001,
+   "kind": "clock_reset",
+   "site": 2,
+   "epoch": 2
+  },
+  {
+   "t": 145.115,
+   "kind": "ack_op",
+   "site": 2,
+   "obj": "P21",
+   "status": 1,
+   "gas": 60248,
+   "reading": 10230644,
+   "opens": 0
+  },
+  {
+   "t": 145.132,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": true,
+   "latency": 2.002,
+   "gas": 58498,
+   "block": 31199,
+   "until": 10255331
+  },
+  {
+   "t": 145.167,
+   "kind": "renewal",
+   "site": 1,
+   "objs": [
+    "P12"
+   ],
+   "epoch": 1,
+   "cq": 10182819,
+   "issued": 1795021521,
+   "t_send": 138.835,
+   "latency": 6.331,
+   "gas_g": 73696,
+   "gas_site": 61556,
+   "g_block": 31193
+  },
+  {
+   "t": 145.186,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 145.27,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "5e73a7e57add6fd46e657ad11369d832f7808d361fa5384ba02cbbf82911ac43",
+   "height": 22
+  },
+  {
+   "t": 145.836,
+   "kind": "renew_refused",
+   "site": 2,
+   "objs": [
+    "P11",
+    "P22",
+    "C21"
+   ],
+   "why": "AnchorDebt"
+  },
+  {
+   "t": 146.141,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": false,
+   "why": "gateway: renewal of an earlier epoch"
+  },
+  {
+   "t": 146.847,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 23,
+   "ops": 3,
+   "agree": 4,
+   "lo": 31202,
+   "hi": 31208,
+   "close_epoch": 1,
+   "close_reading": 10189465,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 146.847,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 138.0,
+   "reading": 10189629,
+   "until": 10207110,
+   "a": 10167964,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 23
+  },
+  {
+   "t": 147.239,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 23,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31191,
+   "hi": 31198,
+   "close_epoch": 2,
+   "close_reading": 10234447,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 147.239,
+   "kind": "lapse",
+   "site": 2,
+   "obj": "C21",
+   "grant_t": 140.164,
+   "reading": 10234644,
+   "until": 10252216,
+   "a": 10214279,
+   "epoch": 1,
+   "now_epoch": 2,
+   "height": 23
+  },
+  {
+   "t": 147.372,
+   "kind": "anchor",
+   "site": 1,
+   "height": 22,
+   "covers": 2,
+   "status": 1,
+   "gas": 159872,
+   "close_epoch": 1,
+   "close_reading": 10184125,
+   "latency": 2.114,
+   "block": 31199
+  },
+  {
+   "t": 148.146,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.958,
+   "gas": 58514,
+   "block": 31213,
+   "until": 10214070
+  },
+  {
+   "t": 148.932,
+   "kind": "stop",
+   "obj": "P22",
+   "next": 1,
+   "g_time": 1795021529,
+   "gas": 55693,
+   "after_reset": true
+  },
+  {
+   "t": 149.092,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.941,
+   "gas": 32895,
+   "block": 31203,
+   "until": null
+  },
+  {
+   "t": 150.006,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "36a99b053a5eedb55035be131e7aef0614dd45b00320b1c90f4594cfe1ca03c9",
+   "height": 23
+  },
+  {
+   "t": 150.106,
+   "kind": "op",
+   "site": 2,
+   "op": "lock",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 150.541,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10192751,
+   "reading": 10192769,
+   "why": "hold_end"
+  },
+  {
+   "t": 151.098,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.95,
+   "gas": 58498,
+   "block": 31216,
+   "until": 10216585
+  },
+  {
+   "t": 151.119,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P22",
+   "ok": false,
+   "why": "gateway: renewal of an earlier epoch"
+  },
+  {
+   "t": 151.559,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "287394601b1ace8bb9caa041fd922e19202a170791bdf5a8a1290a53403f3004",
+   "height": 23
+  },
+  {
+   "t": 152.105,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 152.192,
+   "kind": "anchor",
+   "site": 2,
+   "height": 23,
+   "covers": 2,
+   "status": 1,
+   "gas": 159904,
+   "close_epoch": 2,
+   "close_reading": 10234447,
+   "latency": 2.197,
+   "block": 31204
+  },
+  {
+   "t": 153.118,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 153.139,
+   "kind": "anchor",
+   "site": 1,
+   "height": 23,
+   "covers": 1,
+   "status": 1,
+   "gas": 159539,
+   "close_epoch": 1,
+   "close_reading": 10189465,
+   "latency": 1.594,
+   "block": 31205
+  },
+  {
+   "t": 153.169,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 24,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31208,
+   "hi": 31215,
+   "close_epoch": 1,
+   "close_reading": 10194838,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 153.169,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 146.188,
+   "reading": 10195003,
+   "until": 10214070,
+   "a": 10182819,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 24
+  },
+  {
+   "t": 153.577,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 24,
+   "ops": 3,
+   "agree": 4,
+   "lo": 31198,
+   "hi": 31204,
+   "close_epoch": 2,
+   "close_reading": 10241084,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 153.578,
+   "kind": "lapse",
+   "site": 2,
+   "obj": "P22",
+   "grant_t": 143.13,
+   "reading": 10241300,
+   "until": 10255331,
+   "a": 10214279,
+   "epoch": 1,
+   "now_epoch": 2,
+   "height": 24
+  },
+  {
+   "t": 154.09,
+   "kind": "reassign_acked_sent",
+   "site": 1,
+   "tx": "00df14fa372a0f79bec0d65f28b96a28eed62734f4d20b671a7df16686a378c9",
+   "obj": "L11"
+  },
+  {
+   "t": 154.099,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.978,
+   "gas": 52986,
+   "block": 31208,
+   "until": null
+  },
+  {
+   "t": 154.142,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 155.215,
+   "kind": "stop_applied",
+   "site": 2,
+   "obj": "P22",
+   "gas": 75471
+  },
+  {
+   "t": 155.786,
+   "kind": "renew_sent",
+   "site": 2,
+   "tx": "ab91101cbdd629234f7567e4e76b1b25e1015d59bbb7196664ed38dfac6d0ef5",
+   "objs": [
+    "P11",
+    "C21"
+   ],
+   "cq": 10243470
+  },
+  {
+   "t": 156.307,
+   "kind": "reassign_acked",
+   "site": 1,
+   "obj": "L11",
+   "status": 1,
+   "gas": 173154,
+   "latency_from_stop_seen": 53.103,
+   "ack_reading": 10180366,
+   "ack_epoch": 1,
+   "g_block": 31208
+  },
+  {
+   "t": 156.991,
+   "kind": "renew_sent",
+   "site": 1,
+   "tx": "2eb205c5830986904cdac988fe59c96fc6927e73ec81844114883a1c84770e32",
+   "objs": [
+    "P12"
+   ],
+   "cq": 10198165
+  },
+  {
+   "t": 157.07,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.966,
+   "gas": 32895,
+   "block": 31211,
+   "until": null
+  },
+  {
+   "t": 157.128,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.978,
+   "gas": 58498,
+   "block": 31222,
+   "until": 10221687
+  },
+  {
+   "t": 158.084,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 158.131,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 159.486,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 25,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31215,
+   "hi": 31221,
+   "close_epoch": 1,
+   "close_reading": 10200210,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 159.486,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 149.148,
+   "reading": 10200373,
+   "until": 10216585,
+   "a": 10182819,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 25
+  },
+  {
+   "t": 159.944,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 25,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31204,
+   "hi": 31210,
+   "close_epoch": 2,
+   "close_reading": 10247735,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 161.077,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.988,
+   "gas": 53124,
+   "block": 31215,
+   "until": null
+  },
+  {
+   "t": 161.132,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.998,
+   "gas": 58498,
+   "block": 31226,
+   "until": 10225073
+  },
+  {
+   "t": 161.152,
+   "kind": "renewal",
+   "site": 2,
+   "objs": [
+    "P11",
+    "C21"
+   ],
+   "epoch": 2,
+   "cq": 10243470,
+   "issued": 1795021537,
+   "t_send": 155.644,
+   "latency": 5.508,
+   "gas_g": 128766,
+   "gas_site": 89847,
+   "g_block": 31209
+  },
+  {
+   "t": 161.258,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "9fec69634037bd5d3a3135d4ed75960f0e0a657652d87078168903ee3837e86b",
+   "height": 25
+  },
+  {
+   "t": 162.145,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 162.923,
+   "kind": "anchor",
+   "site": 2,
+   "height": 25,
+   "covers": 2,
+   "status": 1,
+   "gas": 159906,
+   "close_epoch": 2,
+   "close_reading": 10247735,
+   "latency": 1.676,
+   "block": 31215
+  },
+  {
+   "t": 163.066,
+   "kind": "renewal",
+   "site": 1,
+   "objs": [
+    "P12"
+   ],
+   "epoch": 1,
+   "cq": 10198165,
+   "issued": 1795021539,
+   "t_send": 156.889,
+   "latency": 6.177,
+   "gas_g": 73712,
+   "gas_site": 61556,
+   "g_block": 31211
+  },
+  {
+   "t": 163.243,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "bfc40c0c8cb13dafd610585a795c3d5664e08f8bb4e7291eb5c0734fece86b23",
+   "height": 25
+  },
+  {
+   "t": 164.048,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 1.968,
+   "gas": 95524,
+   "block": 31218,
+   "until": 10275228
+  },
+  {
+   "t": 165.094,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.947,
+   "gas": 58526,
+   "block": 31230,
+   "until": 10228484
+  },
+  {
+   "t": 165.414,
+   "kind": "anchor",
+   "site": 1,
+   "height": 25,
+   "covers": 2,
+   "status": 1,
+   "gas": 159982,
+   "close_epoch": 1,
+   "close_reading": 10200210,
+   "latency": 2.186,
+   "block": 31217
+  },
+  {
+   "t": 165.788,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 26,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31221,
+   "hi": 31227,
+   "close_epoch": 1,
+   "close_reading": 10205580,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 165.788,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 155.15,
+   "reading": 10205729,
+   "until": 10221687,
+   "a": 10182819,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 26
+  },
+  {
+   "t": 165.789,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 159.134,
+   "reading": 10205729,
+   "until": 10225073,
+   "a": 10182819,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 26
+  },
+  {
+   "t": 166.311,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 26,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31210,
+   "hi": 31217,
+   "close_epoch": 2,
+   "close_reading": 10254477,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 167.01,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 1.959,
+   "gas": 58474,
+   "block": 31221,
+   "until": 10278347
+  },
+  {
+   "t": 167.072,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "99b66f9e7720c0d3e5760957a9788c5d7dd4b0d5f4758fb72fbd1d6f5373b966",
+   "height": 26
+  },
+  {
+   "t": 167.508,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10207110,
+   "reading": 10207191,
+   "why": "hold_end"
+  },
+  {
+   "t": 168.017,
+   "kind": "op",
+   "site": 2,
+   "op": "lock",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 168.062,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.961,
+   "gas": 58498,
+   "block": 31233,
+   "until": 10230996
+  },
+  {
+   "t": 169.07,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 169.262,
+   "kind": "anchor",
+   "site": 2,
+   "height": 26,
+   "covers": 1,
+   "status": 1,
+   "gas": 159927,
+   "close_epoch": 2,
+   "close_reading": 10254477,
+   "latency": 2.203,
+   "block": 31221
+  },
+  {
+   "t": 169.567,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "62bdd0eb81dd48820694b45f0503410a6457942c97baefb8bd826fc37143e0d7",
+   "height": 26
+  },
+  {
+   "t": 170.123,
+   "kind": "reassign_acked_sent",
+   "site": 2,
+   "tx": "e2f70da38bae9226eb5e64e33ed931f827dbabcd2809369128087ef7a9e48b32",
+   "obj": "P21"
+  },
+  {
+   "t": 170.965,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.94,
+   "gas": 32895,
+   "block": 31225,
+   "until": null
+  },
+  {
+   "t": 171.233,
+   "kind": "anchor",
+   "site": 1,
+   "height": 26,
+   "covers": 1,
+   "status": 1,
+   "gas": 159955,
+   "close_epoch": 1,
+   "close_reading": 10205580,
+   "latency": 1.683,
+   "block": 31223
+  },
+  {
+   "t": 172.031,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.959,
+   "gas": 58498,
+   "block": 31237,
+   "until": 10234370
+  },
+  {
+   "t": 172.138,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 27,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31227,
+   "hi": 31233,
+   "close_epoch": 1,
+   "close_reading": 10210940,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 172.138,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 163.147,
+   "reading": 10211127,
+   "until": 10228484,
+   "a": 10198165,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 27
+  },
+  {
+   "t": 172.297,
+   "kind": "reassign_acked",
+   "site": 2,
+   "obj": "P21",
+   "status": 1,
+   "gas": 173050,
+   "latency_from_stop_seen": 45.305,
+   "ack_reading": 10230644,
+   "ack_epoch": 1,
+   "g_block": 31224
+  },
+  {
+   "t": 172.627,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 27,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31217,
+   "hi": 31223,
+   "close_epoch": 2,
+   "close_reading": 10261087,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 172.627,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P11",
+   "grant_t": 162.08,
+   "reading": 10261302,
+   "until": 10275228,
+   "a": 10243470,
+   "epoch": 2,
+   "now_epoch": 2,
+   "height": 27
+  },
+  {
+   "t": 172.627,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P11",
+   "grant_t": 165.05,
+   "reading": 10261302,
+   "until": 10278347,
+   "a": 10243470,
+   "epoch": 2,
+   "now_epoch": 2,
+   "height": 27
+  },
+  {
+   "t": 172.764,
+   "kind": "renew_sent",
+   "site": 1,
+   "tx": "ccfddf71e8a7ec12c47457e66dfe8f6e210d08aab2f04c7f7dd9f2940d5181ed",
+   "objs": [
+    "P12",
+    "P21"
+   ],
+   "cq": 10211604
+  },
+  {
+   "t": 173.043,
+   "kind": "op",
+   "site": 1,
+   "op": "lock",
+   "obj": "L11",
+   "ok": false,
+   "why": "gateway: acknowledged"
+  },
+  {
+   "t": 173.941,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.977,
+   "gas": 53124,
+   "block": 31228,
+   "until": null
+  },
+  {
+   "t": 173.96,
+   "kind": "ack_op",
+   "site": 2,
+   "obj": "P22",
+   "status": 1,
+   "gas": 58015,
+   "reading": 10261196,
+   "opens": 0
+  },
+  {
+   "t": 174.044,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 174.541,
+   "kind": "renew_sent",
+   "site": 2,
+   "tx": "50cc1b29476fb210f69ac9c54d94b2a5a7f15d3b83e0fab66f6a5f90b0d270d5",
+   "objs": [
+    "P11",
+    "L11",
+    "C21"
+   ],
+   "cq": 10263156
+  },
+  {
+   "t": 175.616,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10214070,
+   "reading": 10214083,
+   "why": "hold_end"
+  },
+  {
+   "t": 176.932,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 1.977,
+   "gas": 58514,
+   "block": 31231,
+   "until": 10288747
+  },
+  {
+   "t": 177.049,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.0,
+   "gas": 53084,
+   "block": 31242,
+   "until": null
+  },
+  {
+   "t": 177.989,
+   "kind": "renewal",
+   "site": 1,
+   "objs": [
+    "P12",
+    "P21"
+   ],
+   "epoch": 1,
+   "cq": 10211604,
+   "issued": 1795021554,
+   "t_send": 172.7,
+   "latency": 5.289,
+   "gas_g": 126647,
+   "gas_site": 89985,
+   "g_block": 31226
+  },
+  {
+   "t": 178.142,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "19ac9d664853f5f9e4ef2811c9bf00da5720a5f88d1bff92c8200c2e1938e6df",
+   "height": 27
+  },
+  {
+   "t": 178.445,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 28,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31233,
+   "hi": 31240,
+   "close_epoch": 1,
+   "close_reading": 10216332,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 178.445,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 166.102,
+   "reading": 10216487,
+   "until": 10230996,
+   "a": 10198165,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 28
+  },
+  {
+   "t": 178.445,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 170.072,
+   "reading": 10216487,
+   "until": 10234370,
+   "a": 10198165,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 28
+  },
+  {
+   "t": 178.666,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10216585,
+   "reading": 10216675,
+   "why": "hold_end"
+  },
+  {
+   "t": 178.977,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 28,
+   "ops": 3,
+   "agree": 4,
+   "lo": 31223,
+   "hi": 31229,
+   "close_epoch": 2,
+   "close_reading": 10267722,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 179.953,
+   "kind": "renewal",
+   "site": 2,
+   "objs": [
+    "P11",
+    "L11",
+    "C21"
+   ],
+   "epoch": 2,
+   "cq": 10263156,
+   "issued": 1795021556,
+   "t_send": 174.393,
+   "latency": 5.561,
+   "gas_g": 164861,
+   "gas_site": 101425,
+   "g_block": 31228
+  },
+  {
+   "t": 180.014,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "48558b0f14f76f026c0e2b124c1da0e3b8785235ccca25f2ce862439f80e3a6b",
+   "height": 28
+  },
+  {
+   "t": 180.03,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.968,
+   "gas": 53112,
+   "block": 31245,
+   "until": null
+  },
+  {
+   "t": 180.189,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 2.251,
+   "gas": 58514,
+   "block": 31234,
+   "until": 10291878
+  },
+  {
+   "t": 180.279,
+   "kind": "anchor",
+   "site": 1,
+   "height": 27,
+   "covers": 1,
+   "status": 1,
+   "gas": 159615,
+   "close_epoch": 1,
+   "close_reading": 10210940,
+   "latency": 2.149,
+   "block": 31232
+  },
+  {
+   "t": 182.175,
+   "kind": "anchor",
+   "site": 2,
+   "height": 28,
+   "covers": 2,
+   "status": 1,
+   "gas": 159987,
+   "close_epoch": 2,
+   "close_reading": 10267722,
+   "latency": 2.174,
+   "block": 31234
+  },
+  {
+   "t": 182.938,
+   "kind": "op",
+   "site": 2,
+   "op": "log",
+   "obj": "log",
+   "ok": true,
+   "latency": 1.748,
+   "gas": 32895,
+   "block": 31237,
+   "until": null
+  },
+  {
+   "t": 183.078,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 2.041,
+   "gas": 53124,
+   "block": 31248,
+   "until": null
+  },
+  {
+   "t": 184.401,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "5a53eba6da039c15848aab6d18e36e45fc8e47a9651338667aab236b2dbeb78d",
+   "height": 28
+  },
+  {
+   "t": 184.668,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10221687,
+   "reading": 10221777,
+   "why": "hold_end"
+  },
+  {
+   "t": 184.755,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 29,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31240,
+   "hi": 31246,
+   "close_epoch": 1,
+   "close_reading": 10221685,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 185.293,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 29,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31229,
+   "hi": 31236,
+   "close_epoch": 2,
+   "close_reading": 10274414,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 185.293,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P11",
+   "grant_t": 174.955,
+   "reading": 10274602,
+   "until": 10288747,
+   "a": 10243470,
+   "epoch": 2,
+   "now_epoch": 2,
+   "height": 29
+  },
+  {
+   "t": 185.293,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P11",
+   "grant_t": 177.938,
+   "reading": 10274602,
+   "until": 10291878,
+   "a": 10243470,
+   "epoch": 2,
+   "now_epoch": 2,
+   "height": 29
+  },
+  {
+   "t": 185.899,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 2,
+   "until": 10275228,
+   "reading": 10275238,
+   "why": "hold_end"
+  },
+  {
+   "t": 186.014,
+   "kind": "anchor",
+   "site": 1,
+   "height": 28,
+   "covers": 1,
+   "status": 1,
+   "gas": 159998,
+   "close_epoch": 1,
+   "close_reading": 10216332,
+   "latency": 1.626,
+   "block": 31238
+  },
+  {
+   "t": 186.035,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.955,
+   "gas": 53072,
+   "block": 31251,
+   "until": null
+  },
+  {
+   "t": 186.18,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 2.238,
+   "gas": 58514,
+   "block": 31240,
+   "until": 10298182
+  },
+  {
+   "t": 186.272,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "3191bd1e0300030d5fbaab4373ce4cbd6226caa8a0d1db0d2e78c28734016484",
+   "height": 29
+  },
+  {
+   "t": 187.684,
+   "kind": "renew_sent",
+   "site": 1,
+   "tx": "badb5a23acdc02500e9b635a949e7235539ed2bfa2c9f9e85399d3114f88db7d",
+   "objs": [
+    "P12",
+    "P21"
+   ],
+   "cq": 10224288
+  },
+  {
+   "t": 188.364,
+   "kind": "anchor",
+   "site": 2,
+   "height": 29,
+   "covers": 1,
+   "status": 1,
+   "gas": 159531,
+   "close_epoch": 2,
+   "close_reading": 10274414,
+   "latency": 2.107,
+   "block": 31240
+  },
+  {
+   "t": 188.568,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10225073,
+   "reading": 10225092,
+   "why": "hold_end"
+  },
+  {
+   "t": 188.926,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 2,
+   "until": 10278347,
+   "reading": 10278416,
+   "why": "hold_end"
+  },
+  {
+   "t": 188.997,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.956,
+   "gas": 58486,
+   "block": 31254,
+   "until": 10248794
+  },
+  {
+   "t": 189.175,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 1.995,
+   "gas": 58514,
+   "block": 31243,
+   "until": 10301583
+  },
+  {
+   "t": 189.446,
+   "kind": "reassign_acked_sent",
+   "site": 2,
+   "tx": "09f27ba75682e51a1a1cbaf7cfccf91a6be3f4a9003c19c0042f511b4aab9284",
+   "obj": "P22"
+  },
+  {
+   "t": 191.104,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 30,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31246,
+   "hi": 31252,
+   "close_epoch": 1,
+   "close_reading": 10227066,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 191.111,
+   "kind": "reassign_acked",
+   "site": 2,
+   "obj": "P22",
+   "status": 1,
+   "gas": 173004,
+   "latency_from_stop_seen": 35.896,
+   "ack_reading": 10261196,
+   "ack_epoch": 2,
+   "g_block": 31243
+  },
+  {
+   "t": 191.6,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 30,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31236,
+   "hi": 31242,
+   "close_epoch": 2,
+   "close_reading": 10281019,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 191.6,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P11",
+   "grant_t": 183.941,
+   "reading": 10281223,
+   "until": 10298182,
+   "a": 10263156,
+   "epoch": 2,
+   "now_epoch": 2,
+   "height": 30
+  },
+  {
+   "t": 191.753,
+   "kind": "renew_sent",
+   "site": 2,
+   "tx": "15654546195210398c86b1710ede7297e37b83626d6e836a5a75c9e49d216cf4",
+   "objs": [
+    "P11",
+    "L11",
+    "C21"
+   ],
+   "cq": 10281194
+  },
+  {
+   "t": 191.968,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.957,
+   "gas": 58486,
+   "block": 31257,
+   "until": 10251319
+  },
+  {
+   "t": 192.134,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 1.952,
+   "gas": 58514,
+   "block": 31246,
+   "until": 10304735
+  },
+  {
+   "t": 192.591,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10228484,
+   "reading": 10228512,
+   "why": "hold_end"
+  },
+  {
+   "t": 192.976,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 193.162,
+   "kind": "renewal",
+   "site": 1,
+   "objs": [
+    "P12",
+    "P21"
+   ],
+   "epoch": 1,
+   "cq": 10224288,
+   "issued": 1795021569,
+   "t_send": 187.622,
+   "latency": 5.54,
+   "gas_g": 109657,
+   "gas_site": 72967,
+   "g_block": 31241
+  },
+  {
+   "t": 193.297,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "c3bb1bed08cdc6b9a322a5f9f14d51835ade214d6e8fc9e2bdc46ad54d0206d1",
+   "height": 30
+  },
+  {
+   "t": 195.125,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 1.972,
+   "gas": 58514,
+   "block": 31249,
+   "until": 10307855
+  },
+  {
+   "t": 195.387,
+   "kind": "anchor",
+   "site": 1,
+   "height": 30,
+   "covers": 2,
+   "status": 1,
+   "gas": 159899,
+   "close_epoch": 1,
+   "close_reading": 10227066,
+   "latency": 2.102,
+   "block": 31247
+  },
+  {
+   "t": 195.621,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10230996,
+   "reading": 10231087,
+   "why": "hold_end"
+  },
+  {
+   "t": 195.939,
+   "kind": "op",
+   "site": 1,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.959,
+   "gas": 53096,
+   "block": 31261,
+   "until": null
+  },
+  {
+   "t": 197.145,
+   "kind": "renewal",
+   "site": 2,
+   "objs": [
+    "P11",
+    "L11",
+    "C21"
+   ],
+   "epoch": 2,
+   "cq": 10281194,
+   "issued": 1795021573,
+   "t_send": 191.572,
+   "latency": 5.573,
+   "gas_g": 147859,
+   "gas_site": 84403,
+   "g_block": 31245
+  },
+  {
+   "t": 197.337,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "d35309d63454841c0ad25849438d01b7b91c38435597b70440a31b4463cc69d7",
+   "height": 30
+  },
+  {
+   "t": 197.567,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 31,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31252,
+   "hi": 31259,
+   "close_epoch": 1,
+   "close_reading": 10232482,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 197.568,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 187.041,
+   "reading": 10232742,
+   "until": 10248794,
+   "a": 10211604,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 31
+  },
+  {
+   "t": 197.568,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 190.012,
+   "reading": 10232742,
+   "until": 10251319,
+   "a": 10211604,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 31
+  },
+  {
+   "t": 197.931,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 31,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31242,
+   "hi": 31248,
+   "close_epoch": 2,
+   "close_reading": 10287655,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 197.931,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P11",
+   "grant_t": 187.18,
+   "reading": 10287871,
+   "until": 10301583,
+   "a": 10263156,
+   "epoch": 2,
+   "now_epoch": 2,
+   "height": 31
+  },
+  {
+   "t": 197.931,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P11",
+   "grant_t": 190.182,
+   "reading": 10287871,
+   "until": 10304735,
+   "a": 10263156,
+   "epoch": 2,
+   "now_epoch": 2,
+   "height": 31
+  },
+  {
+   "t": 198.091,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": false,
+   "latency": 1.956,
+   "gas": 27451,
+   "block": 31252,
+   "until": 10310986
+  },
+  {
+   "t": 198.784,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 2,
+   "until": 10288747,
+   "reading": 10288767,
+   "why": "hold_end"
+  },
+  {
+   "t": 199.005,
+   "kind": "anchor",
+   "site": 2,
+   "height": 30,
+   "covers": 1,
+   "status": 1,
+   "gas": 159946,
+   "close_epoch": 2,
+   "close_reading": 10281019,
+   "latency": 1.69,
+   "block": 31251
+  },
+  {
+   "t": 199.165,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 2.223,
+   "gas": 95524,
+   "block": 31264,
+   "until": 10257210
+  },
+  {
+   "t": 199.51,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "a50e45c5431a8ac6721d9cdb3b2dd7ff708597711b70c41ff4de5cf93b8c2805",
+   "height": 31
+  },
+  {
+   "t": 199.55,
+   "kind": "effect_end",
+   "site": 1,
+   "obj": "P12",
+   "epoch": 1,
+   "until": 10234370,
+   "reading": 10234427,
+   "why": "hold_end"
+  },
+  {
+   "t": 201.033,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 1.938,
+   "gas": 58486,
+   "block": 31255,
+   "until": 10314093
+  },
+  {
+   "t": 201.092,
+   "kind": "anchor",
+   "site": 1,
+   "height": 31,
+   "covers": 1,
+   "status": 1,
+   "gas": 159574,
+   "close_epoch": 1,
+   "close_reading": 10232482,
+   "latency": 1.594,
+   "block": 31253
+  },
+  {
+   "t": 201.817,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 2,
+   "until": 10291878,
+   "reading": 10291951,
+   "why": "hold_end"
+  },
+  {
+   "t": 202.133,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.956,
+   "gas": 58526,
+   "block": 31267,
+   "until": 10259960
+  },
+  {
+   "t": 202.252,
+   "kind": "renew_sent",
+   "site": 1,
+   "tx": "fec3557b60b739f2ac0559f217da81fc9eb531342b559ddc8b6f2a0d8887dea2",
+   "objs": [
+    "P12",
+    "P21",
+    "P22"
+   ],
+   "cq": 10236664
+  },
+  {
+   "t": 203.204,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "8e3d12eaf9ef9c1a09380d4c1192060bab02f0db59f3c3e2cdf19210c31e1c1b",
+   "height": 31
+  },
+  {
+   "t": 203.896,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 32,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31259,
+   "hi": 31265,
+   "close_epoch": 1,
+   "close_reading": 10237955,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 203.896,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P21",
+   "grant_t": 196.942,
+   "reading": 10238121,
+   "until": 10257210,
+   "a": 10224288,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 32
+  },
+  {
+   "t": 204.041,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.999,
+   "gas": 53124,
+   "block": 31258,
+   "until": null
+  },
+  {
+   "t": 204.298,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 32,
+   "ops": 1,
+   "agree": 4,
+   "lo": 31248,
+   "hi": 31255,
+   "close_epoch": 2,
+   "close_reading": 10294306,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 204.298,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P11",
+   "grant_t": 193.153,
+   "reading": 10294557,
+   "until": 10307855,
+   "a": 10263156,
+   "epoch": 2,
+   "now_epoch": 2,
+   "height": 32
+  },
+  {
+   "t": 205.126,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P12",
+   "ok": true,
+   "latency": 1.987,
+   "gas": 58526,
+   "block": 31270,
+   "until": 10262477
+  },
+  {
+   "t": 205.392,
+   "kind": "anchor",
+   "site": 2,
+   "height": 31,
+   "covers": 1,
+   "status": 1,
+   "gas": 159574,
+   "close_epoch": 2,
+   "close_reading": 10287655,
+   "latency": 2.203,
+   "block": 31257
+  },
+  {
+   "t": 206.998,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 1.944,
+   "gas": 58514,
+   "block": 31261,
+   "until": 10320351
+  },
+  {
+   "t": 207.246,
+   "kind": "renew_sent",
+   "site": 2,
+   "tx": "7bd7cfe646419db9c4232efc1a93e2126f83bd039ab9e61b76a4cd2519ece0c1",
+   "objs": [
+    "P11",
+    "L11",
+    "C21"
+   ],
+   "cq": 10297586
+  },
+  {
+   "t": 207.764,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 2,
+   "until": 10298182,
+   "reading": 10298196,
+   "why": "hold_end"
+  },
+  {
+   "t": 207.968,
+   "kind": "renewal",
+   "site": 1,
+   "objs": [
+    "P12",
+    "P21",
+    "P22"
+   ],
+   "epoch": 1,
+   "cq": 10236664,
+   "issued": 1795021584,
+   "t_send": 202.182,
+   "latency": 5.786,
+   "gas_g": 162592,
+   "gas_site": 101393,
+   "g_block": 31256
+  },
+  {
+   "t": 208.085,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P21",
+   "ok": false,
+   "latency": 1.944,
+   "gas": 27451,
+   "block": 31273,
+   "until": 10265029
+  },
+  {
+   "t": 208.144,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "1ccff53fb40899cdde20844b993665f1a75ca7d023c890dc4a23f2479581977d",
+   "height": 32
+  },
+  {
+   "t": 209.097,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 209.956,
+   "kind": "op",
+   "site": 2,
+   "op": "cred",
+   "obj": "C21",
+   "ok": true,
+   "latency": 1.957,
+   "gas": 61336,
+   "block": 31264,
+   "until": 10323443
+  },
+  {
+   "t": 210.281,
+   "kind": "anchor",
+   "site": 1,
+   "height": 32,
+   "covers": 1,
+   "status": 1,
+   "gas": 160001,
+   "close_epoch": 1,
+   "close_reading": 10237955,
+   "latency": 2.149,
+   "block": 31262
+  },
+  {
+   "t": 210.296,
+   "kind": "checkpoint",
+   "site": 1,
+   "height": 33,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31265,
+   "hi": 31272,
+   "close_epoch": 1,
+   "close_reading": 10243337,
+   "state_len": 2,
+   "tries": 1
+  },
+  {
+   "t": 210.297,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 200.177,
+   "reading": 10243561,
+   "until": 10259960,
+   "a": 10224288,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 33
+  },
+  {
+   "t": 210.297,
+   "kind": "exec",
+   "site": 1,
+   "obj": "P12",
+   "grant_t": 203.138,
+   "reading": 10243561,
+   "until": 10262477,
+   "a": 10224288,
+   "epoch": 1,
+   "now_epoch": 1,
+   "height": 33
+  },
+  {
+   "t": 210.669,
+   "kind": "checkpoint",
+   "site": 2,
+   "height": 33,
+   "ops": 2,
+   "agree": 4,
+   "lo": 31255,
+   "hi": 31261,
+   "close_epoch": 2,
+   "close_reading": 10301005,
+   "state_len": 1,
+   "tries": 1
+  },
+  {
+   "t": 210.669,
+   "kind": "exec",
+   "site": 2,
+   "obj": "P11",
+   "grant_t": 199.094,
+   "reading": 10301246,
+   "until": 10314093,
+   "a": 10281194,
+   "epoch": 2,
+   "now_epoch": 2,
+   "height": 33
+  },
+  {
+   "t": 211.011,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 2,
+   "until": 10301583,
+   "reading": 10301605,
+   "why": "hold_end"
+  },
+  {
+   "t": 212.109,
+   "kind": "op",
+   "site": 1,
+   "op": "use",
+   "obj": "P21",
+   "ok": true,
+   "latency": 2.006,
+   "gas": 58514,
+   "block": 31277,
+   "until": 10268397
+  },
+  {
+   "t": 212.967,
+   "kind": "op",
+   "site": 2,
+   "op": "use",
+   "obj": "P11",
+   "ok": true,
+   "latency": 2.003,
+   "gas": 58486,
+   "block": 31267,
+   "until": 10326556
+  },
+  {
+   "t": 213.06,
+   "kind": "renewal",
+   "site": 2,
+   "objs": [
+    "P11",
+    "L11",
+    "C21"
+   ],
+   "epoch": 2,
+   "cq": 10297586,
+   "issued": 1795021589,
+   "t_send": 207.183,
+   "latency": 5.877,
+   "gas_g": 147871,
+   "gas_site": 84395,
+   "g_block": 31261
+  },
+  {
+   "t": 213.111,
+   "kind": "op",
+   "site": 1,
+   "op": "lock",
+   "obj": "L11",
+   "ok": false,
+   "why": "gateway: acknowledged"
+  },
+  {
+   "t": 213.156,
+   "kind": "anchor_sent",
+   "site": 2,
+   "tx": "a32a28f2958821dcd22c12710c2b97d9b264e0c00f1951c653e9d1ba96e84313",
+   "height": 33
+  },
+  {
+   "t": 214.037,
+   "kind": "effect_end",
+   "site": 2,
+   "obj": "P11",
+   "epoch": 2,
+   "until": 10304735,
+   "reading": 10304783,
+   "why": "hold_end"
+  },
+  {
+   "t": 214.114,
+   "kind": "op",
+   "site": 1,
+   "op": "cred",
+   "obj": null,
+   "ok": false,
+   "why": "none held"
+  },
+  {
+   "t": 214.402,
+   "kind": "anchor_sent",
+   "site": 1,
+   "tx": "42328d3143ab0025b18d53422cb85bc1507ad1a3bf09565c9c85ea68ce87e137",
+   "height": 33
+  },
+  {
+   "t": 215.327,
+   "kind": "anchor",
+   "site": 2,
+   "height": 33,
+   "covers": 2,
+   "status": 1,
+   "gas": 159945,
+   "close_epoch": 2,
+   "close_reading": 10301005,
+   "latency": 2.182,
+   "block": 31267
+  },
+  {
+   "t": 215.909,
+   "kind": "op",
+   "site": 2,
+   "op": "consume",
+   "obj": "parts",
+   "ok": true,
+   "latency": 1.934,
+   "gas": 53096,
+   "block": 31270,
+   "until": null
+  },
+  {
+   "t": 215.973,
+   "kind": "anchor",
+   "site": 1,
+   "height": 33,
+   "covers": 1,
+   "status": 1,
+   "gas": 159565,
+   "close_epoch": 1,
+   "close_reading": 10243337,
+   "latency": 1.583,
+   "block": 31268
+  },
+  {
+   "t": 217.252,
+   "kind": "renew_sent",
+   "site": 1,
+   "tx": "5e7ffae2680790e9fdc2ee05532c3c8a63665ef7e25ca8d5b33fd8c2ea992cd1",
+   "objs": [
+    "P12",
+    "P21",
+    "P22"
+   ],
+   "cq": 10249345
+  },
+  {
+   "t": 223.082,
+   "kind": "renewal",
+   "site": 1,
+   "objs": [
+    "P12",
+    "P21",
+    "P22"
+   ],
+   "epoch": 1,
+   "cq": 10249345,
+   "issued": 1795021599,
+   "t_send": 217.101,
+   "latency": 5.981,
+   "gas_g": 145614,
+   "gas_site": 84419,
+   "g_block": 31271
+  },
+  {
+   "t": 225.754,
+   "kind": "renew_sent",
+   "site": 1,
+   "tx": "7adbe43b332940fa362efd1b9115bea6381953b1838ffbd1d421a62ab74539c6",
+   "objs": [
+    "P12",
+    "P21",
+    "P22"
+   ],
+   "cq": 10256581
+  },
+  {
+   "t": 231.038,
+   "kind": "renewal",
+   "site": 1,
+   "objs": [
+    "P12",
+    "P21",
+    "P22"
+   ],
+   "epoch": 1,
+   "cq": 10256581,
+   "issued": 1795021607,
+   "t_send": 225.614,
+   "latency": 5.424,
+   "gas_g": 145586,
+   "gas_site": 84419,
+   "g_block": 31279
+  },
+  {
+   "t": 232.898,
+   "kind": "renew_sent",
+   "site": 2,
+   "tx": "89dfda3c08dbbb013ef7605d39f4583d156079ba229f8604c3faed94d13f5e74",
+   "objs": [
+    "P11",
+    "L11",
+    "C21"
+   ],
+   "cq": 10324436
+  },
+  {
+   "t": 239.139,
+   "kind": "renewal",
+   "site": 2,
+   "objs": [
+    "P11",
+    "L11",
+    "C21"
+   ],
+   "epoch": 2,
+   "cq": 10324436,
+   "issued": 1795021615,
+   "t_send": 232.754,
+   "latency": 6.385,
+   "gas_g": 147831,
+   "gas_site": 84403,
+   "g_block": 31287
+  }
+ ],
+ "anchors_onchain": [
+  {
+   "site": 2,
+   "height": 1,
+   "block": 31061,
+   "tx": "d9617feb0c871d05db46ed05f81f746779867e3f95df88c264cf9f9743d67059"
+  },
+  {
+   "site": 1,
+   "height": 1,
+   "block": 31065,
+   "tx": "e261f20c501ff049e513ece3f4c39bedcb9f552aaf63844b16d39340323c2011"
+  },
+  {
+   "site": 2,
+   "height": 2,
+   "block": 31067,
+   "tx": "1edc30dc58374cca8bb4709ddd55a3f23c356105bd459b16051a1a2c2d7b9d6d"
+  },
+  {
+   "site": 1,
+   "height": 3,
+   "block": 31074,
+   "tx": "7500acab305d478aaba88aa2f1cc0640dba152671877dc0dda98bb27a2fdc5d5"
+  },
+  {
+   "site": 2,
+   "height": 3,
+   "block": 31076,
+   "tx": "b4fa6776acbe0e69e12412af9f94a245251588fa8408260871b7a3a0c87e0c89"
+  },
+  {
+   "site": 1,
+   "height": 4,
+   "block": 31080,
+   "tx": "01f39995f490af5f52821bd46281deeee2b31318a1dfcbc9686fe1a643d5aa89"
+  },
+  {
+   "site": 2,
+   "height": 4,
+   "block": 31082,
+   "tx": "de2917cda293e2259655f5cff2fed6c6c7e2ce2b5cd359739a303e4ddcf44bc9"
+  },
+  {
+   "site": 1,
+   "height": 5,
+   "block": 31089,
+   "tx": "c54fa6944a5dc2f409bf2d2fa6e2cfe845fa4098420efcd89b9fba1e20db0d14"
+  },
+  {
+   "site": 2,
+   "height": 5,
+   "block": 31091,
+   "tx": "c88c55957d7c9fe2d174351df6ca08b2efe2c5a321c3328bfdeaa9236881b1f1"
+  },
+  {
+   "site": 1,
+   "height": 6,
+   "block": 31095,
+   "tx": "023b7962c7fd91b21b280a33f794244a8fca00946f05208c1ff6113f22d76e42"
+  },
+  {
+   "site": 2,
+   "height": 6,
+   "block": 31097,
+   "tx": "dd7c0d0103b23ba950eacdb5a74f593ee2e1f21712233fccb7170e713c052349"
+  },
+  {
+   "site": 2,
+   "height": 8,
+   "block": 31108,
+   "tx": "f828cc5bd8e8519b88440b0f3f173a122147c74b725a9e31529c322afcccd1d8"
+  },
+  {
+   "site": 2,
+   "height": 9,
+   "block": 31114,
+   "tx": "f109928393b0769578b836666b70c826722154527aca3806056dc66ded496d04"
+  },
+  {
+   "site": 2,
+   "height": 11,
+   "block": 31125,
+   "tx": "0119400fef3ea878453274e546535ec950ce145e85c49347b825c22d4a897c43"
+  },
+  {
+   "site": 2,
+   "height": 12,
+   "block": 31131,
+   "tx": "482acbfbd3e203b75bff71fcd831edcf2ded758747cb4521a43d60881c5d2394"
+  },
+  {
+   "site": 2,
+   "height": 13,
+   "block": 31140,
+   "tx": "dc65879103018c9d1c1abbb62caa23947687aeb3fec25436b100ed3f4eb4a897"
+  },
+  {
+   "site": 1,
+   "height": 13,
+   "block": 31143,
+   "tx": "20c8657ba39f7d4cca3662e325413d6b3846edf5c3f0bb1c7ff92cca81c14416"
+  },
+  {
+   "site": 2,
+   "height": 14,
+   "block": 31146,
+   "tx": "12e8ac9f4e9102e3e143f7296e217a264b0ba502b0ee64ed739bee4ad57b0def"
+  },
+  {
+   "site": 1,
+   "height": 14,
+   "block": 31149,
+   "tx": "4b54dd9d3e1a64c7577a87590613b188c13ddc491fff470a30b7e04abf668668"
+  },
+  {
+   "site": 2,
+   "height": 15,
+   "block": 31155,
+   "tx": "8af529dc20ae6b338db4b7ffc39c46d47c35c4b59a7f43e0074b123872fdcf6b"
+  },
+  {
+   "site": 2,
+   "height": 16,
+   "block": 31161,
+   "tx": "705899795d6d41921306e46b8db99a2dd418b667a0cafb909de2154af9c2be93"
+  },
+  {
+   "site": 1,
+   "height": 17,
+   "block": 31164,
+   "tx": "c87cdf8eb8bb8a0e58ad910bf02c46ef74719b19c7a40f845465d10ad666e362"
+  },
+  {
+   "site": 2,
+   "height": 18,
+   "block": 31170,
+   "tx": "27bf14c384d1b461735cc5666c80750c40627fd53d88ab81d0752c6962e1ca91"
+  },
+  {
+   "site": 1,
+   "height": 18,
+   "block": 31170,
+   "tx": "67bda2138b8430561dcdc2282b9c01ade315bf125b4a2e25affc31b443c3a0f3"
+  },
+  {
+   "site": 2,
+   "height": 19,
+   "block": 31176,
+   "tx": "3b446547d4ad09781cabbb65353961e8ea5e0b7c4511fcae0da958df91895801"
+  },
+  {
+   "site": 1,
+   "height": 19,
+   "block": 31181,
+   "tx": "1712f350357cbd3538711e3f9aaad63a533e95888d23ea338a4e632ebb333f41"
+  },
+  {
+   "site": 1,
+   "height": 20,
+   "block": 31187,
+   "tx": "d8480ca656f87ff853913d7258680afdd723deb55c4921a470fa78d30c032fb2"
+  },
+  {
+   "site": 2,
+   "height": 20,
+   "block": 31188,
+   "tx": "72fafe2000e836ef8d9e4a5e0052fe332f308bc1012d6b6356b2df034cf62be0"
+  },
+  {
+   "site": 2,
+   "height": 21,
+   "block": 31194,
+   "tx": "600017fc09ff183f21aee1d8f53d4d128fc8b7cfbc42f4cc8153f81c9a675220"
+  },
+  {
+   "site": 1,
+   "height": 22,
+   "block": 31199,
+   "tx": "5e73a7e57add6fd46e657ad11369d832f7808d361fa5384ba02cbbf82911ac43"
+  },
+  {
+   "site": 2,
+   "height": 23,
+   "block": 31204,
+   "tx": "36a99b053a5eedb55035be131e7aef0614dd45b00320b1c90f4594cfe1ca03c9"
+  },
+  {
+   "site": 1,
+   "height": 23,
+   "block": 31205,
+   "tx": "287394601b1ace8bb9caa041fd922e19202a170791bdf5a8a1290a53403f3004"
+  },
+  {
+   "site": 2,
+   "height": 25,
+   "block": 31215,
+   "tx": "9fec69634037bd5d3a3135d4ed75960f0e0a657652d87078168903ee3837e86b"
+  },
+  {
+   "site": 1,
+   "height": 25,
+   "block": 31217,
+   "tx": "bfc40c0c8cb13dafd610585a795c3d5664e08f8bb4e7291eb5c0734fece86b23"
+  },
+  {
+   "site": 2,
+   "height": 26,
+   "block": 31221,
+   "tx": "99b66f9e7720c0d3e5760957a9788c5d7dd4b0d5f4758fb72fbd1d6f5373b966"
+  },
+  {
+   "site": 1,
+   "height": 26,
+   "block": 31223,
+   "tx": "62bdd0eb81dd48820694b45f0503410a6457942c97baefb8bd826fc37143e0d7"
+  },
+  {
+   "site": 1,
+   "height": 27,
+   "block": 31232,
+   "tx": "19ac9d664853f5f9e4ef2811c9bf00da5720a5f88d1bff92c8200c2e1938e6df"
+  },
+  {
+   "site": 2,
+   "height": 28,
+   "block": 31234,
+   "tx": "48558b0f14f76f026c0e2b124c1da0e3b8785235ccca25f2ce862439f80e3a6b"
+  },
+  {
+   "site": 1,
+   "height": 28,
+   "block": 31238,
+   "tx": "5a53eba6da039c15848aab6d18e36e45fc8e47a9651338667aab236b2dbeb78d"
+  },
+  {
+   "site": 2,
+   "height": 29,
+   "block": 31240,
+   "tx": "3191bd1e0300030d5fbaab4373ce4cbd6226caa8a0d1db0d2e78c28734016484"
+  },
+  {
+   "site": 1,
+   "height": 30,
+   "block": 31247,
+   "tx": "c3bb1bed08cdc6b9a322a5f9f14d51835ade214d6e8fc9e2bdc46ad54d0206d1"
+  },
+  {
+   "site": 2,
+   "height": 30,
+   "block": 31251,
+   "tx": "d35309d63454841c0ad25849438d01b7b91c38435597b70440a31b4463cc69d7"
+  },
+  {
+   "site": 1,
+   "height": 31,
+   "block": 31253,
+   "tx": "a50e45c5431a8ac6721d9cdb3b2dd7ff708597711b70c41ff4de5cf93b8c2805"
+  },
+  {
+   "site": 2,
+   "height": 31,
+   "block": 31257,
+   "tx": "8e3d12eaf9ef9c1a09380d4c1192060bab02f0db59f3c3e2cdf19210c31e1c1b"
+  },
+  {
+   "site": 1,
+   "height": 32,
+   "block": 31262,
+   "tx": "1ccff53fb40899cdde20844b993665f1a75ca7d023c890dc4a23f2479581977d"
+  },
+  {
+   "site": 2,
+   "height": 33,
+   "block": 31267,
+   "tx": "a32a28f2958821dcd22c12710c2b97d9b264e0c00f1951c653e9d1ba96e84313"
+  },
+  {
+   "site": 1,
+   "height": 33,
+   "block": 31268,
+   "tx": "42328d3143ab0025b18d53422cb85bc1507ad1a3bf09565c9c85ea68ce87e137"
+  }
+ ],
+ "attacks": {
+  "overspend": {
+   "status": 1,
+   "gas": 152173,
+   "slashed": 3
+  },
+  "understate": {
+   "status": 1,
+   "gas": 160960,
+   "slashed": 3
+  },
+  "state_regress": {
+   "status": 1,
+   "gas": 211538,
+   "slashed": 3
+  },
+  "restart_below_anchor": {
+   "status": 1,
+   "gas": 209806,
+   "slashed": 3
+  },
+  "stale_share_version": {
+   "status": 1,
+   "gas": 209138,
+   "slashed": 3
+  },
+  "state_mismatch": {
+   "status": 1,
+   "gas": 174227,
+   "slashed": 3
+  },
+  "state_above_share": {
+   "status": 1,
+   "gas": 163861,
+   "slashed": 3
+  },
+  "oversized_state": {
+   "status": 1,
+   "gas": 146002,
+   "slashed": 3
+  },
+  "overuse": {
+   "status": 1,
+   "gas": 155141,
+   "slashed": 3
+  },
+  "hold_past_allowance": {
+   "status": 1,
+   "gas": 155988,
+   "slashed": 3
+  },
+  "use_after_reset": {
+   "status": 1,
+   "gas": 154420,
+   "slashed": 3
+  },
+  "replayed_attestation": {
+   "status": 1,
+   "gas": 159601,
+   "slashed": 3
+  },
+  "forged_release": {
+   "status": 1,
+   "gas": 156977,
+   "slashed": 3
+  },
+  "ack_with_lock_on": {
+   "status": 1,
+   "gas": 158488,
+   "slashed": 3
+  },
+  "ack_hides_lock": {
+   "status": 1,
+   "gas": 164622,
+   "slashed": 3
+  },
+  "ack_hides_earlier_lock": {
+   "status": 1,
+   "gas": 211351,
+   "slashed": 3
+  },
+  "lock_counter_regress": {
+   "status": 1,
+   "gas": 211449,
+   "slashed": 3
+  },
+  "use_after_ack": {
+   "status": 1,
+   "gas": 138312,
+   "slashed": 2
+  },
+  "release_after_ack": {
+   "status": 1,
+   "gas": 138425,
+   "slashed": 2
+  },
+  "release_after_ack_new_epoch": {
+   "status": 1,
+   "gas": 138303,
+   "slashed": 2
+  },
+  "fork": {
+   "status": 1,
+   "gas": 154548,
+   "slashed": 2
+  },
+  "fork_across_heights": {
+   "status": 1,
+   "gas": 186636,
+   "slashed": 2
+  },
+  "forged_close": {
+   "rejected": true,
+   "reason": "BadClockSig"
+  },
+  "grant_attestation_as_ack": {
+   "rejected": true,
+   "reason": "BadClockSig"
+  },
+  "force_reassign_before_W": {
+   "rejected": true,
+   "reason": "TooEarly"
+  },
+  "honest_op_after_retire_not_slashable": {
+   "rejected": true,
+   "reason": "NotAViolation"
+  },
+  "renew_after_retire": {
+   "rejected": true,
+   "reason": "SiteRevokedErr"
+  },
+  "no_framing": {
+   "proof_attempts_on_honest_data": 913,
+   "verdicts": {
+    "NotAViolation": 913
+   }
+  }
+ }
+}

@@ -1,0 +1,372 @@
+{
+ "tag": "v6_r2",
+ "params": {
+  "rho_ppm": 150000,
+  "D_s": 60,
+  "A_ms": 69000,
+  "renew_period_s": 4.0,
+  "ckpt_every_s": 6.0,
+  "window_ms": 25000,
+  "g_slack_s": 2,
+  "W_s": 86,
+  "cut_s": 150,
+  "drift": {
+   "1": -0.15,
+   "2": 0.05
+  },
+  "flap": false,
+  "seed": 7,
+  "g_timeout_s": 8,
+  "tx_deadline_s": 90,
+  "confirm_site": 3,
+  "confirm_g": 2
+ },
+ "effect_safety": {
+  "P11": {
+   "path": "slow",
+   "moved_at": 133.133,
+   "old_holder": 1,
+   "old_effects": 3,
+   "last_effect_end_observed": 86.596,
+   "margin_s": 46.54,
+   "effects_ending_after_move": 0,
+   "effects_starting_after_move": 0
+  },
+  "L11": {
+   "path": "acked",
+   "moved_at": 239.293,
+   "old_holder": 1,
+   "old_effects": 1,
+   "last_effect_end_observed": 124.163,
+   "margin_s": 115.13,
+   "effects_ending_after_move": 0,
+   "effects_starting_after_move": 0
+  },
+  "P21": {
+   "path": "acked",
+   "moved_at": 271.314,
+   "old_holder": 2,
+   "old_effects": 6,
+   "last_effect_end_observed": 215.824,
+   "margin_s": 55.49,
+   "effects_ending_after_move": 0,
+   "effects_starting_after_move": 0
+  },
+  "P22": {
+   "path": "acked",
+   "moved_at": 307.229,
+   "old_holder": 2,
+   "old_effects": 13,
+   "last_effect_end_observed": 255.001,
+   "margin_s": 52.23,
+   "effects_ending_after_move": 0,
+   "effects_starting_after_move": 0
+  }
+ },
+ "safe": true,
+ "lapses": {
+  "n": 3,
+  "by_obj": {
+   "C11": 2,
+   "P12": 1
+  }
+ },
+ "exec_n": 81,
+ "grant_to_effect_s": {
+  "median": 9.3,
+  "max": 12.8
+ },
+ "slow_path_P11": {
+  "W_s": 86,
+  "stop_to_reassign_s": 71.1,
+  "allowance_real_s": 81.2,
+  "allowance_end_from_send_t": 107.3,
+  "allowance_end_from_receipt_t": 113.3,
+  "last_renewal_latency_s": 5.96,
+  "reassigned_t": 133.133,
+  "last_effect_end_observed_t": 86.596,
+  "lapsed_after_cut": 0,
+  "receipt_count_would_overlap_move": false
+ },
+ "open_hold_L11": {
+  "slow_path": "HoldMayBeOpen",
+  "acked_t": 239.293,
+  "ack_after_heal_s": 43.3,
+  "ack_waits": [],
+  "releases": [
+   124.163
+  ]
+ },
+ "locks": {
+  "attempts": 11,
+  "recorded": 1,
+  "refused": {
+   "gateway: allowance expired": 5,
+   "gateway: renewal of an earlier epoch": 3,
+   "gateway: acknowledged": 2
+  },
+  "other_crew_release": [
+   "wrong crew"
+  ],
+  "wrong_crew_accepted": 0
+ },
+ "gateway_refusals": {
+  "gateway: allowance expired": 61,
+  "gateway: renewal of an earlier epoch": 12,
+  "gateway: acknowledged": 2
+ },
+ "revocation_C11": {
+  "effects_after_revoke": 4,
+  "max_window_s": 31.8,
+  "bound_W_s": 86
+ },
+ "fast_path_P21": {
+  "stop_to_reassign_s": 44.3,
+  "stop_to_site_s": 8.0,
+  "stop_seen_to_reassign_s": 36.336,
+  "gas_reassignAcked": 173114,
+  "ack_waits": []
+ },
+ "fast_path_P22_after_reset": {
+  "stop_to_reassign_s": 48.2,
+  "stop_to_site_s": 14.1,
+  "stop_seen_to_reassign_s": 34.18,
+  "gas_reassignAcked": 173060,
+  "ack_waits": [],
+  "holds_carried": 2,
+  "carry_ms_max": 22458
+ },
+ "ack_ops": {
+  "n": 3,
+  "gas_median": 58015,
+  "refused_by_contract": 0
+ },
+ "share_lowering": {
+  "lowered_t": 37.22,
+  "applied_t": 52.186,
+  "confirmed_t": 70.173,
+  "confirm_gas": 110853
+ },
+ "renewal_interval_per_object_s": {
+  "median": 16.0,
+  "p90": 19.0
+ },
+ "site1_during_outage": {
+  "renewals": 0,
+  "renew_sent": 0,
+  "renew_fail": 0,
+  "anchors_ok": 0,
+  "renewal_latency_s": null
+ },
+ "clock_reset": {
+  "lapsed_old_epoch": 0,
+  "first_effect_after_reset_s": 37.5,
+  "renew_refused_after_reset": 0
+ },
+ "catch_up": {
+  "anchor_after_heal_s": 2.3,
+  "checkpoints_covered": 25,
+  "gas": 159940
+ },
+ "anchors": {
+  "logged_ok": 60,
+  "onchain": 60,
+  "unlogged": [],
+  "logged_not_onchain": [],
+  "sent": 60,
+  "fail": 0,
+  "gas_median": 159938
+ },
+ "checkpoints": {
+  "n": 100,
+  "all_agree": true,
+  "retries": 0,
+  "second_checkpoint_refused": 0,
+  "halted": [],
+  "state_len_max": 2
+ },
+ "site1_during_outage_recorded": {
+  "use": "5/20",
+  "cred": "8/30",
+  "lock": "0/3",
+  "consume": "13/13",
+  "log": "10/10"
+ },
+ "site1_during_outage_effects": {
+  "executed": 10,
+  "lapsed": 3
+ },
+ "op_latency_s": {
+  "median": 2.03,
+  "max": 2.28
+ },
+ "renewal_latency_s": {
+  "median": 5.94,
+  "max": 6.37,
+  "n": 32
+ },
+ "gas_median": {
+  "log": 32895,
+  "consume": 53096,
+  "use": 58514,
+  "cred": 58526,
+  "lock": 117871,
+  "release": 68489,
+  "renew_G_by_batch_size": {
+   "1": 73696,
+   "2": 118124,
+   "3": 147847,
+   "4": 183811
+  },
+  "applyRenewal": 84419
+ },
+ "stop_gas": {
+  "P11": 55681,
+  "L11": 55693,
+  "C11": 33466,
+  "P21": 55681,
+  "P22": 55693
+ },
+ "errors": [],
+ "attacks": {
+  "overspend": {
+   "status": 1,
+   "gas": 152173,
+   "slashed": 3
+  },
+  "understate": {
+   "status": 1,
+   "gas": 160948,
+   "slashed": 3
+  },
+  "state_regress": {
+   "status": 1,
+   "gas": 211490,
+   "slashed": 3
+  },
+  "restart_below_anchor": {
+   "status": 1,
+   "gas": 209794,
+   "slashed": 3
+  },
+  "stale_share_version": {
+   "status": 1,
+   "gas": 209150,
+   "slashed": 3
+  },
+  "state_mismatch": {
+   "status": 1,
+   "gas": 174199,
+   "slashed": 3
+  },
+  "state_above_share": {
+   "status": 1,
+   "gas": 163849,
+   "slashed": 3
+  },
+  "oversized_state": {
+   "status": 1,
+   "gas": 146038,
+   "slashed": 3
+  },
+  "overuse": {
+   "status": 1,
+   "gas": 155169,
+   "slashed": 3
+  },
+  "hold_past_allowance": {
+   "status": 1,
+   "gas": 155988,
+   "slashed": 3
+  },
+  "use_after_reset": {
+   "status": 1,
+   "gas": 154460,
+   "slashed": 3
+  },
+  "replayed_attestation": {
+   "status": 1,
+   "gas": 159585,
+   "slashed": 3
+  },
+  "forged_release": {
+   "status": 1,
+   "gas": 157057,
+   "slashed": 3
+  },
+  "ack_with_lock_on": {
+   "status": 1,
+   "gas": 158556,
+   "slashed": 3
+  },
+  "ack_hides_lock": {
+   "status": 1,
+   "gas": 164622,
+   "slashed": 3
+  },
+  "ack_hides_earlier_lock": {
+   "status": 1,
+   "gas": 211471,
+   "slashed": 3
+  },
+  "lock_counter_regress": {
+   "status": 1,
+   "gas": 211421,
+   "slashed": 3
+  },
+  "use_after_ack": {
+   "status": 1,
+   "gas": 138312,
+   "slashed": 2
+  },
+  "release_after_ack": {
+   "status": 1,
+   "gas": 138333,
+   "slashed": 2
+  },
+  "release_after_ack_new_epoch": {
+   "status": 1,
+   "gas": 138263,
+   "slashed": 2
+  },
+  "fork": {
+   "status": 1,
+   "gas": 154588,
+   "slashed": 2
+  },
+  "fork_across_heights": {
+   "status": 1,
+   "gas": 186568,
+   "slashed": 2
+  },
+  "forged_close": {
+   "rejected": true,
+   "reason": "BadClockSig"
+  },
+  "grant_attestation_as_ack": {
+   "rejected": true,
+   "reason": "BadClockSig"
+  },
+  "force_reassign_before_W": {
+   "rejected": true,
+   "reason": "TooEarly"
+  },
+  "honest_op_after_retire_not_slashable": {
+   "rejected": true,
+   "reason": "NotAViolation"
+  },
+  "renew_after_retire": {
+   "rejected": true,
+   "reason": "SiteRevokedErr"
+  },
+  "no_framing": {
+   "proof_attempts_on_honest_data": 1339,
+   "verdicts": {
+    "NotAViolation": 1339
+   }
+  }
+ },
+ "attacks_ok": true,
+ "rejections_ok": true,
+ "no_framing_ok": true
+}

@@ -1,15 +1,24 @@
 # Simulator
 
-`prototype/offsim.py` (version 5) simulates 30 days of industrial sites whose uplinks fail. It compares OffGrant
+`prototype/offsim.py` (version 6) simulates 30 days of industrial sites whose uplinks fail. It compares OffGrant
 with baselines and ablations on **identical traces**: within one run, every protocol sees the same outages, power
 losses, requests, clock drifts, message delays, finality delays, G timestamp errors and decisions by
 headquarters. Every run draws its own trace, so runs are independent of one another.
+
+> **What the simulation is evidence of.** The simulator *enforces* each protocol's rules as stated. For OffGrant
+> these are the rules of Proposition 1(b), with every clock inside its drift bound and every `G` timestamp inside
+> `ε_G`. OffGrant's zero conflicts therefore hold **by construction**: `run()` asserts them, so a completed grid
+> can only contain zeros. They are a consistency check of the implementation against the proposition, not
+> independent evidence of safety. What the simulation **measures** is the price of the rules (availability while
+> cut off and while connected, hand-over delays, idle time, refused locks, the hold-end rule's cost) and the
+> violations that the baselines and the ablations actually produce.
 
 - [What is simulated](#what-is-simulated)
 - [Protocols compared](#protocols-compared)
 - [What the simulation can and cannot show](#what-the-simulation-can-and-cannot-show)
 - [Metrics](#metrics)
 - [Parameters and grid](#parameters-and-grid)
+- [Changes in v6](#changes-in-v6)
 - [Changes in v5](#changes-in-v5)
 - [Running it](#running-it)
 - [Output format](#output-format)
@@ -77,6 +86,13 @@ exists for exactly these cases.
   60 s long. This is the workload of the end-to-end PureChain run (`until = reading + min(WINDOW, rem − 1)`). It
   places hold ends at the allowance edge, where the hold-end, send-time, `2ε_G` and fresh-check rules matter.
   Without such requests, the uniformly drawn holds almost never end within seconds of that edge.
+- **Locks on open-class objects (O, v6).** Each site also has 3 isolation points (open class, for example
+  lockout points). For every such object and site there is a Poisson stream of 2 lock requests per day, filtered
+  like permit requests (only the believing holder asks). A lock, once executed, stays on until its crew releases
+  it, after a duration drawn from a lognormal distribution with median 2 h and σ = 1 (mean about 3.3 h), capped at
+  24 h. The duration is real time: a physical lock survives power losses. Several crews may hold locks on one
+  object at once. The open-class trace comes from its own random stream, so the rest of a run's trace is exactly
+  the v5 trace for the same seed and grid point.
 - **Credentials (V).** Each of 50 operators per site checks in about 4 times a day. A revoked operator (an
   insider) keeps trying for 3 days, four times as often.
 - **Consumption (B).** About 50 parts a day are consumed per site, against a global cap of 95% of expected
@@ -88,6 +104,8 @@ decisions fall inside it.
 
 - **Moves.** About 3 reassignment decisions per day of that window (about 81 per run). Each picks an object
   uniformly among those not moved in the last 7 days, and a new holder uniformly among the other two sites.
+- **Moves of open-class objects (v6).** About 1 decision per day of the window, by the same rule (at least
+  7 days between moves of one object), so about 24 per run once ineligible draws are skipped.
 - **Revocations.** About 1 credential revocation per day of the window (about 27 per run).
 
 These decisions are the same for every protocol. The measured rates are printed in the summary header.
@@ -137,13 +155,37 @@ identically while running. They differ only in what they roll back, so the simul
 - *Lease protocols.* The new holder may act at the earlier of the slow path (`W`) and the fast path.
 - *Ordering.* A move never completes before the previous move of the same object did.
 
+**Open-class objects (v6).**
+
+| Protocol | Applying a lock | Hand-over |
+|---|---|---|
+| `ours` and every ablation | a lock is a grant: only inside a valid allowance, executed after `F` if a fresh clock reading is still inside the allowance (`nofresh`: no fresh check); no hold end | **never by expiry.** `G` moves the object only on the old holder's acknowledgement, which it gives once the stop has reached it, no lock is on and its link is up. A cut-off holder's move waits until it reconnects and acknowledges |
+| `waitrel` | always (no expiry) | the same acknowledgement rule |
+| `global` | only while connected (a cut-off site finalizes nothing) | once every lock granted before the decision is released and the release is recorded, which needs the old holder's link |
+| `crdt`, `timestamp`, `discard` | always | **at once** at the decision: a merging design has no notion of a lock that must be released first, so a lock still on (or applied before the stop arrives) conflicts |
+
+Locks are physical, so they end only when their crew releases them, not with the gateway's power. Releases are
+local and always allowed. For lease protocols the run also records a counterfactual: the moves for which `G`'s
+wait `W` would have ended while a lock of the old holder was still on (`O_expiry_moves`). This is what the rule
+"never move an open-class object by expiry" prevents. No ablation drops this rule, and none drops the
+acknowledgement, so no ablation can conflict on open-class objects; the ablations differ there only in
+availability.
+
 ## What the simulation can and cannot show
 
-- **OffGrant's zero violations are a consistency check, not independent evidence.** The simulator implements the
-  rules of Proposition 1(b). With `|drift| ≤ ρ` and `G` errors within `ε_G`, a violation is impossible in this
-  model. `run()` asserts zero authority overlaps, zero double use, zero rights beyond the move, zero credential
+- **OffGrant's zero violations hold by construction: they are a consistency check, not independent evidence.**
+  The simulator enforces each protocol's rules; for OffGrant these are the rules of Proposition 1(b). With
+  `|drift| ≤ ρ` and `G` errors within `ε_G`, a violation is impossible in this model. `run()` asserts zero
+  authority overlaps, zero double use (bounded and open class), zero rights beyond the move, zero credential
   effects beyond `G`'s bound and zero over-consumption for `ours`. It asserts zero authority overlaps and zero
-  double use for `global`.
+  double use for `global`. A violating run would stop the grid, so a completed grid can only contain zeros for
+  these. The simulation's evidence lies in what it measures: availability, hand-over delays, idle time, refused
+  locks, the hold-end rule's cost, and the failures of the baselines and ablations. `analyze.py` gives 95%
+  one-sided upper bounds for the zero counts, which hold only within the model.
+- **For open-class objects OffGrant's hand-over is not bounded.** It equals wait-for-release, except that OffGrant
+  grants fewer locks while cut off (only inside the allowance), so its acknowledgements can come earlier. The
+  bounded hand-over delay (`W`) applies to bounded-class objects only. For open-class objects OffGrant adds the
+  recorded, attributable acknowledgement, not a bound.
 - **Each ablation can produce violations in this model.** A local check on the grid with 4 runs per point (144
   runs) found violations for every ablation; the full-grid counts are in the summary file.
   - `nodrift`, `noepoch` and `nohold` violate often.
@@ -163,6 +205,12 @@ identically while running. They differ only in what they roll back, so the simul
   - Anchoring before renewal, and `λ`.
   - Adversarial request timing beyond max-fit requests.
   - More than 3 sites.
+  - Lockout/tagout as shared locks against an exclusive energize right, locks of several sites on one isolation
+    point, the binding of a release to the crew that applied the lock, emergency overrides (`forceReassign`) and
+    gateway reboots that lose in-memory hold tables. Open-class objects are exclusive per site, as in the
+    contracts.
+  - Sealing of acknowledgements and quorum delay on the fast path: the acknowledgement reaches `G` `rtt/2` after
+    the old holder's link is up.
 
   Holds by one site on one object may overlap (they are not double use). Safety against faulty validators is
   covered by the proofs, the TLA+ models and the attacks in the PureChain runs.
@@ -173,6 +221,10 @@ identically while running. They differ only in what they roll back, so the simul
 |---|---|
 | `X_avail_out` | share of permit requests accepted (and executed) while the site is cut off. Denominator: requests by the site that believes it holds the object. Max-fit grants count as accepted |
 | `X_avail_out_fixed` | the same, over fixed-length (non-max-fit) requests only |
+| `X_avail_conn` | (v6) the same while the site is connected |
+| `X_holdend_refused_conn`, `X_holdend_refused_out` | (v6) lease protocols: requests refused by the hold-end rule (the hold would end after the allowance), while connected and while cut off |
+| `X_truncated_conn`, `X_truncated_out` | (v6) accepted max-fit requests whose hold was shortened to fit the allowance |
+| `X_refused_allow_conn`, `X_refused_allow_out` | (v6) requests refused for want of a valid allowance |
 | `X_conflicts` | **authority overlaps**: holds in effect while another site held the object |
 | `X_overlap_max` | longest such overlap (s) |
 | `X_double` | **double use**: pairs of executed holds of two different sites on one object that overlap in time |
@@ -194,9 +246,26 @@ identically while running. They differ only in what they roll back, so the simul
 | `offline_frac` | fraction of time a site's link is down |
 | `W_bound` | OffGrant's wait `W` for that run (s) |
 
+Open-class fields (v6):
+
+| Field | Meaning |
+|---|---|
+| `O_req`, `O_req_out`, `O_acc`, `O_acc_out` | lock requests and accepted (executed) locks, overall and while cut off |
+| `O_avail_out`, `O_avail_conn` | share of lock requests accepted while cut off and while connected |
+| `O_refused_allow`, `O_refused_allow_out` | locks refused because the allowance lapsed (no valid allowance at the request, or it ended before execution), overall and while cut off |
+| `O_lapsed` | locks not executed because the gateway was down at execution |
+| `O_conflicts`, `O_overlap_max` | authority overlaps: locks on while another site held the object; longest overlap (s) |
+| `O_double`, `O_double_max` | locks of two sites on one object at once |
+| `O_decisions`, `O_handover`, `O_handover_mean`, `O_handover_max` | moves of open-class objects and their hand-over delays (decision to the moment the new holder may act, s) |
+| `O_idle_mean` | time during which neither site may use a moved open-class object (s) |
+| `O_locked_at_decision` | moves for which a lock of the old holder was on at the decision |
+| `O_expiry_moves`, `O_expiry_locks` | lease protocols, counterfactual: moves for which `W` would have ended while a lock of the old holder was still on, and those locks |
+| `O_rights_beyond` | as `X_rights_beyond`, for open-class objects |
+
 Each run also has a protocol-independent `trace` object with the measured rates:
 
 - `permit_req_per_obj_day`;
+- (v6) `lock_req_per_obj_day`, `lock_mean_h`, `lock_frac_capped`, `open_decisions` and `open_decisions_per_day`;
 - `decisions` and `decisions_per_day` (per day of the decision window);
 - `revocations` and `revocations_per_day`;
 - `longest_offline_h`, the longest continuous offline period of any site;
@@ -215,6 +284,27 @@ All parameters are fields of the `Cfg` dataclass at the top of `offsim.py`. The 
 | longest single outage drawn, `L` | 2.5 h, 24 h, 72 h |
 | offline tolerance `D` | 1 h, 6 h, 24 h, 72 h |
 | runs per point | 20 |
+
+## Changes in v6
+
+These changes follow review round 4 (R06 M3, M4, M6, M7; R05 M1, M4; R09 M2).
+
+1. **Open-class objects (R06 M4a, R05 M1d, R09 M2.6).** Three isolation points per site, with locks that stay on
+   until released, as described above. OffGrant never moves them by expiry; wait-for-release behaves the same;
+   merging baselines move them at once. New `O_*` metrics, including refused locks and the counterfactual
+   "move by expiry".
+2. **By construction, stated (R06 M3, R09 M2).** The module docstring, this file and the `analyze.py` header and
+   output state that the simulator enforces each protocol's rules, so OffGrant's zero conflicts hold by
+   construction and are checked by assertions (kept, and extended to the open class).
+3. **Statistics (R06 M6).** `analyze.py` reports, for the headline tables, the mean with a 95% percentile
+   bootstrap confidence interval (10,000 resamples of the runs, fixed seed) and the median, instead of a Student-t
+   interval. Every maximum names its scope: "max over the n runs of this grid point" or "max over all N runs".
+   Zero counts get a 95% one-sided upper bound, and counts get the number of runs with a non-zero value.
+4. **Hold-end cost while connected (R06 M4b, R05 M4).** Connected availability, and the requests refused or
+   shortened by the hold-end rule while connected and while cut off.
+5. **Unchanged.** Everything else, including the trace: the bounded-class, credential and consumption results of
+   a run are those of v5 for the same seed and grid point (checked on the quick run). Only the rollback counts
+   of `discard` and `timestamp` change, because locks are now among the operations they roll back.
 
 ## Changes in v5
 
@@ -255,23 +345,27 @@ These changes follow review round 3 (R06 M1–M3, R09 M4, R05 M2–M3).
 
 ```sh
 pip install -r requirements.txt
-# full grid (720 runs) in parallel; about 10 minutes on 10 idle cores
-python prototype/offsim.py --out experiments/results/offsim_v5.jsonl --workers 10
+# full grid (720 runs) in parallel; about 10-15 minutes on 10 cores
+python prototype/offsim.py --out experiments/results/offsim_v6.jsonl --workers 10
 # one 5-day run to try it out (a few seconds)
 python prototype/offsim.py --quick --workers 1 --out /tmp/quick.jsonl
-# summaries
-python prototype/analyze.py experiments/results/offsim_v5.jsonl > experiments/results/offsim_v5_summary.txt
+# summaries (UTF-8)
+python prototype/analyze.py experiments/results/offsim_v6.jsonl > experiments/results/offsim_v6_summary.txt
 ```
 
 `analyze.py` prints the following, in order:
 
-1. the measured workload;
-2. the offline fraction and the longest offline period per `L`;
-3. per protocol, over all runs and per clock regime, the number of runs with each kind of violation;
-4. the no-drift ablation at 100 ppm;
-5. offline credential availability;
-6. for every grid point, each protocol's mean ± 95% confidence half-width (Student t over the independent runs)
-   and the maximum.
+1. the by-construction note and the statistics used;
+2. the measured workload, including the open class;
+3. the offline fraction and the longest offline period per `L`;
+4. per protocol, over all runs, the number of runs with each kind of violation (bounded and open class), with
+   maxima "over all N runs"; upper bounds for zero counts; the counterfactual move by expiry; the same counts per
+   clock regime;
+5. the merging baselines per `L` and the no-drift ablation at 100 ppm;
+6. offline credential availability;
+7. the hold-end rule's cost while connected, and the open class per grid point;
+8. for every grid point, each protocol's bounded (X), credential and consumption (V, B) and open-class (O)
+   results: mean [95% bootstrap CI] md median mx max over the runs of the grid point.
 
 ## Output format
 
@@ -288,5 +382,5 @@ One JSON object per line (values shortened and illustrative):
 - `trace` holds the protocol-independent measurements.
 - Each protocol's object holds the metrics above.
 
-Earlier simulator versions' results (`offsim_v1` to `offsim_v4`) are kept in `experiments/results/` for
+Earlier simulator versions' results (`offsim_v1` to `offsim_v5`) are kept in `experiments/results/` for
 comparison.

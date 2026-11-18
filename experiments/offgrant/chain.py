@@ -1,11 +1,11 @@
-"""Shared helpers for the OffGrant end-to-end harness (contracts v5): Web3 access to PureChain (Clique),
+"""Shared helpers for the OffGrant end-to-end harness (contracts v6): Web3 access to PureChain (Clique),
 transaction sending with local nonces, contract deployment from Foundry artifacts, and the digests, operation
 encodings, states, checkpoint Merkle trees and history accumulators that mirror contracts/src/OffLib.sol exactly.
 
 Tuples follow the Solidity structs field by field:
   Op     = (kind, key, epoch, reading, base, until, amount, total, version, clockSig)
-  State  = (epoch, reading, resources, totals, versions)
-  Header = (site, height, histRoot, opsRoot, opCount, stateHash, tip, closeEpoch, closeReading, closeSig)
+  State  = (epoch, reading, resources, totals, versions, objects, opens, releases)
+  Header = (site, height, histRoot, opsRoot, opCount, stateHash, stateLen, tip, closeEpoch, closeReading, closeSig)
 """
 import json
 import threading
@@ -24,7 +24,8 @@ ART = ROOT / "contracts" / "out"
 CONSUME, USE, LOG, RELEASE, ACK, SHARE = 1, 2, 3, 4, 5, 6
 ATTESTED = (CONSUME, USE, RELEASE, ACK)
 OPEN = 2**64 - 1   # hold that lasts until released
-HIST_DEPTH = 20
+HIST_DEPTH = 32
+MAX_STATE = 64
 ZERO = b"\x00" * 32
 
 
@@ -73,6 +74,38 @@ class Sender:
             return h
         return self.w3.eth.wait_for_transaction_receipt(h, timeout=timeout, poll_latency=0.25)
 
+    def send_robust(self, fn, *, gas=3_000_000, deadline=120.0, rebroadcast=4.0, on_sent=None):
+        """Signs once and keeps rebroadcasting the same raw transaction (same nonce, same hash) until it is mined or
+        the deadline passes, so a lossy or flapping link delays a transaction but cannot lose or duplicate it."""
+        with self.lock:
+            if self.nonce is None:
+                self._sync()
+            tx = fn.build_transaction({"gas": gas, "gasPrice": 0, "nonce": self.nonce, "chainId": self.chain_id,
+                                       "value": 0, "from": self.acct.address})
+            raw = self.acct.sign_transaction(tx).raw_transaction
+            self.nonce += 1
+        h = keccak(raw)
+        if on_sent:
+            on_sent(h)
+        t_end, last = time.time() + deadline, 0.0
+        while time.time() < t_end:
+            if time.time() - last >= rebroadcast:
+                try:
+                    self.w3.eth.send_raw_transaction(raw)
+                except Exception:  # noqa: BLE001  already known / mined / link down: keep polling
+                    pass
+                last = time.time()
+            try:
+                r = self.w3.eth.get_transaction_receipt(h)
+                if r is not None:
+                    return r
+            except Exception:  # noqa: BLE001  not yet mined, or the link is down
+                pass
+            time.sleep(0.5)
+        with self.lock:
+            self.nonce = None  # the transaction may still land; resync before the next one
+        raise TimeoutError(f"transaction {h.hex()} not mined within {deadline} s")
+
     def deploy(self, name, *args):
         abi, bytecode = artifact(name)
         c = self.w3.eth.contract(abi=abi, bytecode=bytecode)
@@ -91,7 +124,7 @@ def _h(types, values):
 
 
 def domain(registry, chain_id):
-    return _h(["string", "uint256", "address"], ["OFFGRANT-v5", chain_id, registry])
+    return _h(["string", "uint256", "address"], ["OFFGRANT-v6", chain_id, registry])
 
 
 def checkpoint_digest(dom, header_hash_):
@@ -139,6 +172,19 @@ def sign(key, digest):
     return s.r.to_bytes(32, "big") + s.s.to_bytes(32, "big") + bytes([s.v])
 
 
+def signer(digest, sig):
+    """Address that signed `digest` (as OffLib.recover); None on a malformed signature."""
+    try:
+        return Account._recover_hash(digest, signature=sig)
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def certified_by(digest, sigs, authorities, threshold):
+    """Whether at least `threshold` distinct authorities signed `digest` (as SiteRights._certified)."""
+    return len({a for a in (signer(digest, s) for s in sigs) if a in authorities}) >= threshold
+
+
 # ------------------------------------------------------------------------- operations and states
 def op_tag(op):
     kind, key, _e, _r, base, until, amount, _t, version, _s = op
@@ -163,17 +209,25 @@ def attest_op(clock, dom, site, op):
 
 
 def state_hash(st):
-    epoch, reading, resources, totals, versions = st
-    return _h(["string", "uint64", "uint64", "bytes32[]", "uint64[]", "uint64[]"],
-              ["OFFGRANT-STATE", epoch, reading, list(resources), list(totals), list(versions)])
+    epoch, reading, resources, totals, versions, objects, opens, releases = st
+    return _h(["string", "uint64", "uint64", "bytes32[]", "uint64[]", "uint64[]", "bytes32[]", "uint64[]", "uint64[]"],
+              ["OFFGRANT-STATE", epoch, reading, list(resources), list(totals), list(versions), list(objects),
+               list(opens), list(releases)])
+
+
+def state_len(st):
+    return len(st[2]) + len(st[5])
 
 
 class SiteState:
-    """The state a correct validator tracks from the site ledger's operations (mirrors what checkpoints commit)."""
+    """The state a correct validator tracks from the site ledger's operations (mirrors what checkpoints commit):
+    the newest attested reading, per resource its running total and share version, and per object with open holds
+    the number of open holds ever applied and of releases."""
 
     def __init__(self):
         self.epoch, self.reading = 0, 0
         self.total, self.version = {}, {}
+        self.opens, self.releases = {}, {}
 
     def apply(self, op):
         kind, key, e, r = op[0], op[1], op[2], op[3]
@@ -185,15 +239,24 @@ class SiteState:
         elif kind == SHARE:
             self.version[key] = op[8]
             self.total.setdefault(key, op[7])
+        elif kind == USE and op[5] == OPEN:
+            self.opens[key] = op[7]
+            self.releases.setdefault(key, 0)
+        elif kind == RELEASE:
+            self.releases[key] = op[7]
 
     def tuple(self):
         keys = sorted(set(self.total) | set(self.version))
+        objs = sorted(self.opens)
         return (self.epoch, self.reading, keys, [self.total.get(k, 0) for k in keys],
-                [self.version.get(k, 0) for k in keys])
+                [self.version.get(k, 0) for k in keys], objs, [self.opens[o] for o in objs],
+                [self.releases.get(o, 0) for o in objs])
 
     def copy(self):
         s = SiteState()
-        s.epoch, s.reading, s.total, s.version = self.epoch, self.reading, dict(self.total), dict(self.version)
+        s.epoch, s.reading = self.epoch, self.reading
+        s.total, s.version = dict(self.total), dict(self.version)
+        s.opens, s.releases = dict(self.opens), dict(self.releases)
         return s
 
 
@@ -201,6 +264,13 @@ def lookup(st, key):
     for k, t, v in zip(st[2], st[3], st[4]):
         if k == key:
             return t, v
+    return 0, 0
+
+
+def lookup_obj(st, obj):
+    for k, o, r in zip(st[5], st[6], st[7]):
+        if k == obj:
+            return o, r
     return 0, 0
 
 
@@ -260,22 +330,24 @@ def hist_path(hist, idx):
 
 # ------------------------------------------------------------------------- checkpoints
 def content_tag(h):
-    return _h(["string", "uint64", "uint64", "bytes32", "bytes32", "uint64", "bytes32", "bytes32"],
-              ["OFFGRANT-CLOSE", *h[:7]])
+    return _h(["string", "uint64", "uint64", "bytes32", "bytes32", "uint64", "bytes32", "uint64", "bytes32"],
+              ["OFFGRANT-CLOSE", *h[:8]])
 
 
 def header_hash(h):
-    return _h(["bytes32", "uint64", "uint64"], [content_tag(h), h[7], h[8]])
+    return _h(["bytes32", "uint64", "uint64"], [content_tag(h), h[8], h[9]])
 
 
 def make_header(clock, dom, site, hist, ops, state, tip):
     """Builds the checkpoint at height len(hist) over `ops`, with the state after them; the trusted clock attests
     its close over the content (OffLib.contentTag)."""
+    assert state_len(state) <= MAX_STATE, "state above MAX_STATE"
     root, proofs = merkle([op_leaf(op) for op in ops])
     epoch, reading = clock.epoch, clock.read()
-    h = (site, len(hist), hist_root(hist), root, len(ops), state_hash(state), tip, epoch, reading, b"")
+    h = (site, len(hist), hist_root(hist), root, len(ops), state_hash(state), state_len(state), tip, epoch, reading,
+         b"")
     sig = sign(clock.key, clock_digest(dom, site, epoch, reading, content_tag(h)))
-    return h[:9] + (sig,), proofs
+    return h[:10] + (sig,), proofs
 
 
 class Clock:

@@ -3,17 +3,19 @@ pragma solidity 0.8.30;
 
 import {OffLib} from "./OffLib.sol";
 
-/// Global-ledger side of rights-scoped offline operation (version 5).
+/// Global-ledger side of rights-scoped offline operation (version 6).
 ///
 /// Issues rights before a partition (versioned resource shares, leases on exclusive objects, credential
 /// leases), records every lease renewal, delays slow-path reassignment and revocation by the lease bound of
-/// Proposition 1, and adjudicates fraud proofs against sealed site checkpoints (Theorem 1). Every proof costs
-/// the same whatever the length of the site's history: it needs one checkpoint, at most one ancestor named
-/// through the checkpoint's history accumulator, and Merkle paths. Slashed validators no longer count towards
-/// anchor, acknowledgement or share quorums, and a site with more than f slashed validators gets no renewals.
+/// Proposition 1, and adjudicates fraud proofs against sealed site checkpoints (Theorem 1). Every proof needs one
+/// checkpoint, at most one ancestor named through the checkpoint's history accumulator, states of at most
+/// OffLib.MAX_STATE entries and Merkle paths, so its cost does not depend on the length of the site's history.
+/// Slashed validators no longer count towards anchor, acknowledgement or share quorums, and a site with more than
+/// f slashed validators gets no renewals. A site's clock key and validator set never change: recovery from a lost
+/// TPM or validators registers a new site incarnation and retires the old one, whose history stays provable.
 contract RightsRegistry {
     // ---------------------------------------------------------------- configuration
-    address public immutable admin;
+    address public immutable admin; // in deployment: a multisig of G's authorities
     bytes32 public immutable dom; // signature domain: (chain id, this registry)
     uint32 public immutable rhoPpm; // bound on site-clock drift, parts per million
     uint32 public immutable gSlack; // seconds: bound on G block-timestamp error (epsilon_G)
@@ -26,11 +28,12 @@ contract RightsRegistry {
         uint8 f;
         uint8 n; // number of site validators
         uint8 slashedCount;
-        address clockKey; // trusted clock (e.g. TPM 2.0) of the site's gateway
+        address clockKey; // trusted clock (e.g. TPM 2.0) of the site's gateway; never changes
         uint64 anchoredHeight;
         bytes32 anchoredHash;
         uint64 coveredEpoch; // trusted-clock time up to which every operation is in an anchored checkpoint
         uint64 coveredReading;
+        bool retired; // replaced by a new incarnation (lost TPM or validators): no further renewals
     }
 
     mapping(uint64 => Site) public sites;
@@ -85,14 +88,13 @@ contract RightsRegistry {
 
     struct Ancestor {
         OffLib.Header p; // a checkpoint at a lower height that `h.histRoot` commits to
-        OffLib.State state; // its state (must hash to p.stateHash)
+        OffLib.State state; // its state (must hash to p.stateHash, with p.stateLen entries)
         bytes32[] histPath; // inclusion of hash(p) at index p.height in h.histRoot
     }
 
     // ---------------------------------------------------------------- events
     event SiteRegistered(uint64 indexed site, uint8 f, address clockKey, address[] validators);
-    event ClockRotated(uint64 indexed site, address clockKey, uint64 epoch, uint64 reading);
-    event ValidatorReplaced(uint64 indexed site, address oldValidator, address newValidator);
+    event SiteRetired(uint64 indexed site);
     event ShareSet(bytes32 indexed resource, uint64 indexed site, uint64 amount, uint64 version);
     event ShareConfirmed(bytes32 indexed resource, uint64 indexed site, uint64 amount, uint64 version, uint64 height);
     event LeaseCreated(bytes32 indexed object, bool exclusive, bool openHold, uint64 allowanceMs);
@@ -176,28 +178,14 @@ contract RightsRegistry {
         emit SiteRegistered(site, f, clockKey, validators);
     }
 
-    /// Recovery: a replaced or cleared TPM gets a new key, and coverage restarts at its first reading.
-    function rotateClock(uint64 site, address clockKey, uint64 epoch, uint64 reading) external onlyAdmin {
+    /// Recovery from a lost or cleared TPM, or from lost validators: the site incarnation stops receiving renewals,
+    /// keeps its clock key and validators (so its history stays provable and no correct validator can be framed),
+    /// and a new incarnation is registered under a new site id. Its rights are moved by the usual paths.
+    function retireSite(uint64 site) external onlyAdmin {
         Site storage st = sites[site];
-        if (!st.exists || clockKey == address(0)) revert BadSite();
-        st.clockKey = clockKey;
-        st.coveredEpoch = epoch;
-        st.coveredReading = reading;
-        emit ClockRotated(site, clockKey, epoch, reading);
-    }
-
-    /// Recovery: replaces a site validator (e.g. a slashed or failed one); the site's quorum size is unchanged.
-    function replaceValidator(uint64 site, address oldV, address newV) external onlyAdmin {
-        Site storage st = sites[site];
-        if (!st.exists || !isValidator[site][oldV] || newV == address(0) || isValidator[site][newV]) revert BadSite();
-        isValidator[site][oldV] = false;
-        if (slashed[site][oldV]) {
-            slashed[site][oldV] = false;
-            st.slashedCount--;
-        }
-        isValidator[site][newV] = true;
-        bond[site][newV] = BOND;
-        emit ValidatorReplaced(site, oldV, newV);
+        if (!st.exists) revert BadSite();
+        st.retired = true;
+        emit SiteRetired(site);
     }
 
     function setCap(bytes32 resource, uint64 amount) external onlyAdmin {
@@ -226,7 +214,7 @@ contract RightsRegistry {
 
     /// Frees the capacity of a lower share: a checkpoint sealed by the site's (unslashed) quorum shows the
     /// version applied and the running total within it. Later consumption under an older version, or a total
-    /// above it, is provable against this checkpoint (proveOpRegress, proveRegress, proveOverspend).
+    /// above it, is provable against this checkpoint.
     function confirmShare(
         bytes32 resource,
         uint64 site,
@@ -238,7 +226,7 @@ contract RightsRegistry {
         if (v == 0) revert NoPendingShare();
         if (h.site != site) revert BadProof();
         _quorum(site, OffLib.checkpointDigest(dom, OffLib.headerHash(h)), seals, false);
-        if (OffLib.stateHash(s) != h.stateHash) revert BadProof();
+        _state(h, s);
         (uint64 t, uint64 ver) = OffLib.lookup(s, resource);
         uint64 amount = certified[resource][site][v];
         if (ver < v || t > amount) revert ShareNotApplied();
@@ -300,7 +288,7 @@ contract RightsRegistry {
     {
         Site storage st = sites[site];
         if (!st.exists) revert BadSite();
-        if (st.revoked) revert SiteRevokedErr();
+        if (st.revoked || st.retired) revert SiteRevokedErr();
         bytes32 objs = OffLib.objectsHash(objects);
         if (OffLib.recover(OffLib.clockDigest(dom, site, epoch, cq, OffLib.requestTag(objs)), clockSig) != st.clockKey) {
             revert BadClockSig();
@@ -347,45 +335,47 @@ contract RightsRegistry {
         _handOver(object, l);
     }
 
-    /// Fast path while the old holder is connected. The site's ledger recorded an ACK operation at
-    /// trusted-clock time (epoch, reading), attested by its clock, and a quorum of its unslashed validators
-    /// signs that the operation is final. The object moves at once. Acknowledgements are kept for proofs.
+    /// Fast path while the old holder is connected. The site's ledger recorded an ACK operation at trusted-clock
+    /// time (epoch, reading) with `opens` open holds ever applied (and as many releases), attested by its clock, and
+    /// a quorum of its unslashed validators signs that the operation is sealed. The object moves at once.
     function reassignAcked(
         bytes32 object,
         uint64 epoch,
         uint64 reading,
+        uint64 opens,
         bytes calldata clockSig,
         bytes[] calldata acks
     ) external {
         Lease storage l = leases[object];
         if (!l.exists || !l.exclusive || !l.stopped) revert BadLease();
         uint64 site = l.holder;
-        _checkAck(object, site, epoch, reading, clockSig);
+        _checkAck(object, site, epoch, reading, opens, clockSig);
         ackSigners[OffLib.ackKey(object, site, epoch, reading)] =
             _quorum(site, OffLib.ackDigest(dom, site, object, epoch, reading), acks, false);
-        // Later renewals for this site must be newer than the acknowledgement (no replay of older requests).
-        lastRenewal[object][site] = Base(epoch, reading);
+        lastRenewal[object][site] = Base(epoch, reading); // later renewals must be newer than the acknowledgement
         emit Acknowledged(object, site, epoch, reading);
         _handOver(object, l);
     }
 
-    /// The ACK operation's attestation (its base is the stopped renewal) and that it is newer than that renewal.
-    function _checkAck(bytes32 object, uint64 site, uint64 epoch, uint64 reading, bytes calldata clockSig)
+    function _checkAck(bytes32 object, uint64 site, uint64 epoch, uint64 reading, uint64 opens, bytes calldata clockSig)
         internal
         view
     {
         Base memory b = lastRenewal[object][site];
-        OffLib.Op memory ackOp = OffLib.Op(OffLib.ACK, object, epoch, reading, b.cq, 0, 0, 0, 0, "");
+        OffLib.Op memory ackOp = OffLib.Op(OffLib.ACK, object, epoch, reading, b.cq, 0, opens, 0, 0, "");
         bytes32 d = OffLib.clockDigest(dom, site, epoch, reading, OffLib.opTag(ackOp));
         if (OffLib.recover(d, clockSig) != sites[site].clockKey) revert BadClockSig();
         if (!OffLib.after_(epoch, reading, b.epoch, b.cq)) revert StaleAck();
     }
 
     /// Emergency override by G's authorities, for a site's safety procedure (e.g. a lockout whose holder site is
-    /// lost). Outside the guarantees of Theorem 1(i): the site must first clear the hold physically. Logged.
+    /// lost). Only after the holder's allowance has run out (W after its last renewal); outside the guarantees of
+    /// Theorem 1(i) for open holds, which the site must clear physically first. Logged.
     function forceReassign(bytes32 object) external onlyAdmin {
         Lease storage l = leases[object];
         if (!l.exists || !l.exclusive || !l.stopped) revert BadLease();
+        uint64 at = releaseAt(object);
+        if (block.timestamp < at) revert TooEarly(at);
         emit ForcedReassign(object, l.holder, l.nextSite);
         _handOver(object, l);
     }
@@ -450,10 +440,8 @@ contract RightsRegistry {
         if (st.anchoredHeight != 0 && !OffLib.inHistory(h.histRoot, st.anchoredHash, st.anchoredHeight, histPath)) {
             revert BadProof();
         }
-        if (
-            OffLib.recover(OffLib.clockDigest(dom, h.site, h.closeEpoch, h.closeReading, OffLib.contentTag(h)), h.closeSig)
-                != st.clockKey
-        ) revert BadClockSig();
+        bytes32 d = OffLib.clockDigest(dom, h.site, h.closeEpoch, h.closeReading, OffLib.contentTag(h));
+        if (OffLib.recover(d, h.closeSig) != st.clockKey) revert BadClockSig();
         if (OffLib.after_(st.coveredEpoch, st.coveredReading, h.closeEpoch, h.closeReading)) revert BadProof();
         st.anchoredHeight = h.height;
         st.anchoredHash = hh;
@@ -485,6 +473,13 @@ contract RightsRegistry {
         if (o.idx >= h.opCount || !OffLib.verifyLeaf(h.opsRoot, OffLib.leaf(o.op), o.idx, o.path)) revert BadProof();
     }
 
+    /// A state given for header h: it must hash to h's state and have h's (bounded) number of entries.
+    function _state(OffLib.Header calldata h, OffLib.State calldata s) internal pure {
+        if (h.stateLen > OffLib.MAX_STATE || OffLib.stateLen(s) != h.stateLen || OffLib.stateHash(s) != h.stateHash) {
+            revert BadProof();
+        }
+    }
+
     function _intersect(address[] memory a, address[] memory b) internal pure returns (address[] memory both) {
         both = new address[](a.length);
         uint256 n;
@@ -505,7 +500,27 @@ contract RightsRegistry {
     function _ancestor(OffLib.Header calldata h, Ancestor calldata a) internal pure {
         if (a.p.site != h.site || a.p.height >= h.height) revert BadProof();
         if (!OffLib.inHistory(h.histRoot, OffLib.headerHash(a.p), a.p.height, a.histPath)) revert BadProof();
-        if (OffLib.stateHash(a.state) != a.p.stateHash) revert BadProof();
+        _state(a.p, a.state);
+    }
+
+    /// Open holds ever applied that operation `op` states (USE of an open hold: its running count; ACK: count).
+    function _opensOf(OffLib.Op calldata op) internal pure returns (bool has, uint64 v) {
+        if (op.kind == OffLib.USE && op.until == OffLib.OPEN) return (true, op.total);
+        if (op.kind == OffLib.ACK) return (true, op.amount);
+    }
+
+    /// Releases that operation `op` states (RELEASE: its running count; ACK: count).
+    function _releasesOf(OffLib.Op calldata op) internal pure returns (bool has, uint64 v) {
+        if (op.kind == OffLib.RELEASE || op.kind == OffLib.ACK) return (true, op.total);
+    }
+
+    /// Whether lock counters stated by `y` regress below `opens`/`releases` known before it. A new open hold or
+    /// release must exceed them; an acknowledgement must not be below them.
+    function _counterRegress(OffLib.Op calldata y, uint64 opensBefore, uint64 relBefore) internal pure returns (bool) {
+        if (y.kind == OffLib.USE && y.until == OffLib.OPEN) return y.total <= opensBefore;
+        if (y.kind == OffLib.RELEASE) return y.total <= relBefore;
+        if (y.kind == OffLib.ACK) return y.amount < opensBefore || y.total < relBefore;
+        return false;
     }
 
     /// A consumption whose running total exceeds the share version it names, or is below its own amount.
@@ -521,8 +536,9 @@ contract RightsRegistry {
         return _slash(h.site, s, R_OVERSPEND);
     }
 
-    /// An operation that no correct ledger records: an attested kind whose attestation is invalid, a share whose
-    /// (version, amount) G never certified, or an unknown kind.
+    /// An operation that no correct ledger records: an attested kind whose attestation is invalid, a share that
+    /// G never certified, an acknowledgement given while an open hold is on (its counters differ), a lock without
+    /// a crew, or an unknown kind.
     function proveBadOp(OffLib.Header calldata h, bytes[] calldata seals, OpProof calldata o)
         external
         returns (uint256)
@@ -532,9 +548,11 @@ contract RightsRegistry {
         OffLib.Op calldata op = o.op;
         bool bad = false;
         if (OffLib.attested(op.kind)) {
-            bad = OffLib.recover(
-                OffLib.clockDigest(dom, h.site, op.epoch, op.reading, OffLib.opTag(op)), op.clockSig
-            ) != sites[h.site].clockKey;
+            bytes32 d = OffLib.clockDigest(dom, h.site, op.epoch, op.reading, OffLib.opTag(op));
+            bad = OffLib.recover(d, op.clockSig) != sites[h.site].clockKey;
+            if (!bad && op.kind == OffLib.ACK) bad = op.amount != op.total;
+            if (!bad && op.kind == OffLib.RELEASE) bad = op.amount == 0;
+            if (!bad && op.kind == OffLib.USE && op.until == OffLib.OPEN) bad = op.amount == 0;
         } else if (op.kind == OffLib.SHARE) {
             bad = op.version == 0 || certified[op.key][h.site][op.version] != op.amount;
         } else {
@@ -545,8 +563,8 @@ contract RightsRegistry {
     }
 
     /// A grant that the rights do not cover: no renewal was issued for its base, the grant reading is outside
-    /// [cq, cq + A), or the hold's form does not match the object (a bounded hold must end inside the
-    /// allowance and after the grant; an open-hold object takes only open holds).
+    /// [cq, cq + A), or the hold's form does not match the object (a bounded hold must end inside the allowance
+    /// and after the grant; an open-hold object takes only open holds).
     function proveOveruse(OffLib.Header calldata h, bytes[] calldata seals, OpProof calldata o)
         external
         returns (uint256)
@@ -563,9 +581,9 @@ contract RightsRegistry {
         return _slash(h.site, s, R_OVERUSE);
     }
 
-    /// Two operations i < j of one checkpoint that no correct ledger records in this order: attested readings
-    /// that do not strictly increase; a running total that restarts below an earlier one; or a consumption
-    /// under a share version older than one already applied or used.
+    /// Two operations i < j of one checkpoint that no correct ledger records in this order: attested readings that
+    /// do not strictly increase; a running total that restarts below an earlier one; a consumption under a share
+    /// version older than one already applied or used; or lock counters of one object that go back.
     function proveInconsistent(OffLib.Header calldata h, bytes[] calldata seals, OpProof calldata a, OpProof calldata b)
         external
         returns (uint256)
@@ -583,12 +601,17 @@ contract RightsRegistry {
         if (!bad && y.kind == OffLib.CONSUME && x.key == y.key && (x.kind == OffLib.CONSUME || x.kind == OffLib.SHARE)) {
             bad = y.version < x.version || (x.kind == OffLib.CONSUME && (y.total < y.amount || y.total - y.amount < x.total));
         }
+        if (!bad && x.key == y.key && OffLib.lockCounter(x) && OffLib.lockCounter(y)) {
+            (, uint64 xo) = _opensOf(x);
+            (, uint64 xr) = _releasesOf(x);
+            bad = _counterRegress(y, xo, xr);
+        }
         if (!bad) revert NotAViolation();
         return _slash(h.site, s, R_ORDER);
     }
 
-    /// A checkpoint whose committed state is malformed, or below one of its own operations: a total or
-    /// version below a consumption's, or a clock reading below an attested operation's.
+    /// A checkpoint whose committed state is too large, malformed, above a certified share, or below one of its
+    /// own operations: a total, version or lock counter below an operation's, or a clock below an attested one.
     function proveStateMismatch(
         OffLib.Header calldata h,
         bytes[] calldata seals,
@@ -596,8 +619,14 @@ contract RightsRegistry {
         OffLib.State calldata st
     ) external returns (uint256) {
         address[] memory s = _sealers(h, seals);
-        if (OffLib.stateHash(st) != h.stateHash) revert BadProof();
-        bool bad = !OffLib.wellFormed(st);
+        bool bad = h.stateLen > OffLib.MAX_STATE;
+        if (!bad) {
+            _state(h, st);
+            bad = !OffLib.wellFormed(st);
+            for (uint256 i = 0; !bad && i < st.resources.length; i++) {
+                bad = st.totals[i] > certified[st.resources[i]][h.site][st.versions[i]];
+            }
+        }
         if (!bad) {
             _contains(h, o);
             OffLib.Op calldata op = o.op;
@@ -606,14 +635,20 @@ contract RightsRegistry {
                 (uint64 t, uint64 v) = OffLib.lookup(st, op.key);
                 bad = op.total > t || op.version > v;
             }
+            if (!bad && OffLib.lockCounter(op)) {
+                (uint64 so, uint64 sr) = OffLib.lookupObj(st, op.key);
+                (bool ho, uint64 vo) = _opensOf(op);
+                (bool hr, uint64 vr) = _releasesOf(op);
+                bad = (ho && vo > so) || (hr && vr > sr);
+            }
         }
         if (!bad) revert NotAViolation();
         return _slash(h.site, s, R_UNDERSTATE);
     }
 
-    /// The committed state of `h` is below that of an ancestor: a running total, a share version or the clock
-    /// went backwards (including a resource dropped from the state). Totals, versions and readings only grow on
-    /// a correct ledger, and a correct validator seals only a checkpoint whose history it verified.
+    /// The committed state of `h` is below that of an ancestor: a running total, share version, lock counter or the
+    /// clock went backwards (including an entry dropped from the state). Totals, versions, counters and readings
+    /// only grow on a correct ledger, and a correct validator seals only a checkpoint whose history it verified.
     function proveRegress(
         OffLib.Header calldata h,
         bytes[] calldata seals,
@@ -622,19 +657,32 @@ contract RightsRegistry {
     ) external returns (uint256) {
         address[] memory s = _sealers(h, seals);
         _ancestor(h, a);
-        if (OffLib.stateHash(st) != h.stateHash) revert BadProof();
+        _state(h, st);
         bool bad = OffLib.after_(a.state.epoch, a.state.reading, st.epoch, st.reading);
+        // Both key lists are strictly increasing in correct states; a two-pointer merge finds each ancestor entry.
+        uint256 j = 0;
         for (uint256 i = 0; !bad && i < a.state.resources.length; i++) {
-            (uint64 t, uint64 v) = OffLib.lookup(st, a.state.resources[i]);
+            bytes32 k = a.state.resources[i];
+            while (j < st.resources.length && st.resources[j] < k) j++;
+            bool found = j < st.resources.length && st.resources[j] == k;
+            uint64 t = found ? st.totals[j] : 0;
+            uint64 v = found ? st.versions[j] : 0;
             bad = t < a.state.totals[i] || v < a.state.versions[i];
+        }
+        j = 0;
+        for (uint256 i = 0; !bad && i < a.state.objects.length; i++) {
+            bytes32 k = a.state.objects[i];
+            while (j < st.objects.length && st.objects[j] < k) j++;
+            bool found = j < st.objects.length && st.objects[j] == k;
+            bad = (found ? st.opens[j] : 0) < a.state.opens[i] || (found ? st.releases[j] : 0) < a.state.releases[i];
         }
         if (!bad) revert NotAViolation();
         return _slash(h.site, s, R_REGRESS);
     }
 
     /// An operation of `h` below the committed state of an ancestor: a consumption that restarts below the
-    /// ancestor's total or uses an older share version, or an attested operation not newer than the ancestor's
-    /// clock (a replayed or back-dated attestation).
+    /// ancestor's total or uses an older share version, a lock counter that goes back, or an attested operation not
+    /// newer than the ancestor's clock (a replayed or back-dated attestation).
     function proveOpRegress(OffLib.Header calldata h, bytes[] calldata seals, OpProof calldata o, Ancestor calldata a)
         external
         returns (uint256)
@@ -649,14 +697,18 @@ contract RightsRegistry {
             (uint64 t, uint64 v) = OffLib.lookup(a.state, op.key);
             bad = op.version < v || op.total < op.amount || op.total - op.amount < t;
         }
+        if (!bad && OffLib.lockCounter(op)) {
+            (uint64 ao, uint64 ar) = OffLib.lookupObj(a.state, op.key);
+            bad = _counterRegress(op, ao, ar);
+        }
         if (!bad) revert NotAViolation();
         return _slash(h.site, s, R_REGRESS);
     }
 
     /// Fast path: a sealed grant, hold or release of the object under rights from before an acknowledgement
-    /// (epoch, reading) that runs past it. A correct ledger accepts the ACK only after the stop with no hold
-    /// left, and nothing of the object under those rights afterwards; so the validators that both acknowledged
-    /// and sealed the operation (at least f+1) are faulty.
+    /// (epoch, reading) that runs past it. A correct ledger accepts the ACK only after the stop with no hold left,
+    /// and nothing of the object under those rights afterwards; so the validators that both acknowledged and sealed
+    /// the operation (at least f+1) are faulty. A release refers to its hold's grant (epoch, reading).
     function proveUseAfterAck(
         OffLib.Header calldata h,
         bytes[] calldata seals,
@@ -670,17 +722,17 @@ contract RightsRegistry {
         address[] storage ackers = ackSigners[OffLib.ackKey(op.key, h.site, ackEpoch, ackReading)];
         if (ackers.length == 0) revert BadProof();
         if (op.kind != OffLib.USE && op.kind != OffLib.RELEASE) revert NotAViolation();
-        // Made under rights from before the acknowledgement (for a release: a hold started before it).
-        if (OffLib.after_(op.epoch, op.base, ackEpoch, ackReading)) revert NotAViolation();
+        uint64 grantEpoch = op.kind == OffLib.RELEASE ? op.until : op.epoch;
+        if (OffLib.after_(grantEpoch, op.base, ackEpoch, ackReading)) revert NotAViolation();
         bool late = OffLib.after_(op.epoch, op.reading, ackEpoch, ackReading)
             || (op.kind == OffLib.USE && op.until != OffLib.OPEN && op.epoch == ackEpoch && op.until > ackReading);
         if (!late) revert NotAViolation();
         return _slash(h.site, _intersect(s, ackers), R_USE_AFTER_ACK);
     }
 
-    /// Two sealed histories of one site that differ: two checkpoints at one height, or a higher checkpoint
-    /// whose history accumulator holds a different checkpoint at the lower one's height (`leaf`, with its
-    /// path). Slashes the validators that sealed both (at least f+1).
+    /// Two sealed histories of one site that differ: two checkpoints at one height, or a higher checkpoint whose
+    /// history accumulator holds a different checkpoint at the lower one's height (`leaf`, with its path).
+    /// Slashes the validators that sealed both (at least f+1).
     function proveFork(
         OffLib.Header calldata h1,
         bytes[] calldata seals1,

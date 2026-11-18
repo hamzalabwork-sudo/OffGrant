@@ -1,15 +1,15 @@
-"""RightsRegistry (contracts v5) on the public PureChain testnet: gas and confirmation latency of the global-ledger
+"""RightsRegistry (contracts v6) on the public PureChain testnet: gas and confirmation latency of the global-ledger
 side.
 
 Funded testnet keys come from a git-ignored .env file (RPC, ADMIN_KEY deploys and administers, GATEWAY_KEY
 relays), by default testbed/purechain/.env or the path in OFFGRANT_KEYS_ENV; they are read here and never
 printed. Site validators, the site clocks and the checkpoints use local throwaway keys, as on a real site.
-About 45 transactions in total.
+About 65 transactions in total.
 
 Steps: deploy and register two sites; 24 clock-attested batch renewals, with an anchor of the newest checkpoint
 after every 8 (G renews only sites whose anchored coverage is recent); no-framing checks (eth_call) of every
-applicable proof against the honest anchored operations and checkpoint pairs; a fast-path reassignment; and two
-fraud proofs by faulty quorums.
+applicable proof against the honest anchored operations and checkpoint pairs; a renewal batch-size sweep (1, 2, 4
+and 8 objects in one request); a fast-path reassignment; and two fraud proofs by faulty quorums.
 
 Writes experiments/results/pubtest_<tag>.json (addresses, gas, latencies; no keys).
 """
@@ -38,6 +38,7 @@ except ImportError:
 ENV = Path(os.environ.get("OFFGRANT_KEYS_ENV", Path(__file__).resolve().parents[2] / "testbed" / "purechain" / ".env"))
 RHO_PPM, A_MS, G_SLACK, LAG_MS = 150_000, 69_000, 2, 60_000
 SEL = {name: keccak(text=name + "()")[:4].hex() for name in ("NotAViolation", "BadProof", "BadClockSig", "NoQuorum")}
+EXTRA = [keccak(text=f"permit:feeder-{i}") for i in range(7)]   # more objects for the batch-size sweep
 
 
 def env():
@@ -63,7 +64,7 @@ def revert_reason(e):
     return "other:" + s[:60]
 
 
-def main(tag="v5"):
+def main(tag="v6"):
     e = env()
     w3 = Web3(Web3.HTTPProvider(e["RPC"], request_kwargs={"timeout": 30}))
     w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
@@ -95,6 +96,9 @@ def main(tag="v5"):
         ("createLease", reg.functions.createLease(obj, True, False, A_MS)),
         ("permit", reg.functions.permit(obj, 1)),
     ]
+    for i, o in enumerate(EXTRA):
+        setup += [(f"createLease{i}", reg.functions.createLease(o, True, False, A_MS)),
+                  (f"permit{i}", reg.functions.permit(o, 1))]
     for name, fn in setup:
         r, dt = timed(admin, fn)
         assert r.status == 1, name
@@ -152,6 +156,18 @@ def main(tag="v5"):
             anchor_newest()
     out["renew"] = {"n": len(ren_lat), "gas": int(st.median(ren_gas)), "latency_median_s": round(st.median(ren_lat), 2),
                     "latency_max_s": round(max(ren_lat), 2)}
+    # Batch-size sweep: one clock-attested request renews n objects in one transaction.
+    sweep = {}
+    for n in (1, 2, 4, 8):
+        batch = ([obj] + EXTRA)[:n]
+        cq = clock.read()
+        sig = C.sign(clock.key, C.clock_digest(dom, 1, E, cq, C.request_tag(C.objects_hash(batch))))
+        r, dt = timed(relayer, reg.functions.renew(1, batch, E, cq, sig))
+        assert r.status == 1, "renew batch"
+        sweep[n] = {"gas": r.gasUsed, "latency_s": round(dt, 2)}
+        renewals.append(cq)
+    out["renew_batch_sweep"] = sweep
+    out["renew_gas_per_extra_object"] = round((sweep[8]["gas"] - sweep[1]["gas"]) / 7)
     out["anchor"] = {"n": len(anchors), "ops_each": anchors[0]["ops"], "gas_median": int(st.median(a["gas"] for a in anchors)),
                      "latency_median_s": round(st.median(a["latency_s"] for a in anchors), 2)}
 
@@ -197,7 +213,7 @@ def main(tag="v5"):
     ra = clock.read()
     ack = C.attest_op(clock, dom, 1, C.make_op(C.ACK, obj, E, ra, base=renewals[-1]))
     acks = [C.sign(k, C.ack_digest(dom, 1, obj, E, ra)) for k in vkeys[:3]]
-    r, dt = timed(relayer, reg.functions.reassignAcked(obj, E, ra, ack[9], acks))
+    r, dt = timed(relayer, reg.functions.reassignAcked(obj, E, ra, 0, ack[9], acks))
     assert r.status == 1, "reassignAcked"
     out["gas"]["reassignAcked"], out["latency_s"]["reassignAcked"] = r.gasUsed, round(dt, 2)
 
@@ -205,7 +221,7 @@ def main(tag="v5"):
     proofs_out = {}
     # Overspend at site 2, which holds no share: any sealed consumption exceeds it (validators 0-2).
     bad = [C.attest_op(clock2, dom, 2, C.make_op(C.CONSUME, parts, clock2.epoch, clock2.read(), amount=45, total=45, version=1))]
-    hb, pr = C.make_header(clock2, dom, 2, [C.ZERO], bad, (clock2.epoch, bad[0][3], [parts], [45], [1]), C.ZERO)
+    hb, pr = C.make_header(clock2, dom, 2, [C.ZERO], bad, (clock2.epoch, bad[0][3], [parts], [45], [1], [], [], []), C.ZERO)
     r, dt = timed(relayer, reg.functions.proveOverspend(hb, seal(hb, vkeys2, (0, 1, 2)), (bad[0], 0, pr[0])), 6_000_000)
     proofs_out["overspend"] = {"status": r.status, "gas": r.gasUsed, "latency_s": round(dt, 2),
                                "slashed": len(reg.events.Slashed().process_receipt(r))}
@@ -213,7 +229,7 @@ def main(tag="v5"):
     # acknowledged are slashed.
     rd = clock.read()
     late = [C.attest_op(clock, dom, 1, C.make_op(C.USE, obj, E, rd, base=renewals[-1], until=rd + 10))]
-    hl, pr = C.make_header(clock, dom, 1, hist, late, (E, rd, [parts], [total], [1]), C.ZERO)
+    hl, pr = C.make_header(clock, dom, 1, hist, late, (E, rd, [parts], [total], [1], [], [], []), C.ZERO)
     r, dt = timed(relayer, reg.functions.proveUseAfterAck(hl, seal(hl, vkeys, (1, 2, 3)), (late[0], 0, pr[0]), E, ra),
                   6_000_000)
     proofs_out["use_after_ack"] = {"status": r.status, "gas": r.gasUsed, "latency_s": round(dt, 2),

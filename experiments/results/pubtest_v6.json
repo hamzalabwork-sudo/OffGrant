@@ -1,0 +1,107 @@
+{
+ "chain_id": 900520900520,
+ "start_block": 1952925,
+ "gas": {
+  "deploy": 5279915,
+  "setCap": 46943,
+  "registerSite": 257258,
+  "registerSite2": 257270,
+  "setShare": 122549,
+  "createLease": 51582,
+  "permit": 31930,
+  "createLease0": 51582,
+  "permit0": 31930,
+  "createLease1": 51582,
+  "permit1": 31930,
+  "createLease2": 51582,
+  "permit2": 31930,
+  "createLease3": 51558,
+  "permit3": 31906,
+  "createLease4": 51570,
+  "permit4": 31918,
+  "createLease5": 51570,
+  "permit5": 31918,
+  "createLease6": 51582,
+  "permit6": 31930,
+  "stop": 55693,
+  "reassignAcked": 173142
+ },
+ "latency_s": {
+  "deploy": 1.5,
+  "setCap": 1.14,
+  "registerSite": 2.21,
+  "registerSite2": 1.95,
+  "setShare": 1.94,
+  "createLease": 1.94,
+  "permit": 1.97,
+  "createLease0": 2.22,
+  "permit0": 1.94,
+  "createLease1": 1.94,
+  "permit1": 1.97,
+  "createLease2": 1.98,
+  "permit2": 1.95,
+  "createLease3": 2.22,
+  "permit3": 2.25,
+  "createLease4": 1.67,
+  "permit4": 2.21,
+  "createLease5": 1.94,
+  "permit5": 1.68,
+  "createLease6": 2.22,
+  "permit6": 1.94,
+  "stop": 1.13,
+  "reassignAcked": 1.13
+ },
+ "registry": "0xeCD9df26d3D9b59f90E5c89C2DE7C085DF210c33",
+ "renew": {
+  "n": 24,
+  "gas": 73696,
+  "latency_median_s": 1.95,
+  "latency_max_s": 2.5
+ },
+ "renew_batch_sweep": {
+  "1": {
+   "gas": 73696,
+   "latency_s": 1.93
+  },
+  "2": {
+   "gas": 126631,
+   "latency_s": 2.22
+  },
+  "4": {
+   "gas": 215552,
+   "latency_s": 1.94
+  },
+  "8": {
+   "gas": 393233,
+   "latency_s": 1.95
+  }
+ },
+ "renew_gas_per_extra_object": 45648,
+ "anchor": {
+  "n": 3,
+  "ops_each": 24,
+  "gas_median": 147869,
+  "latency_median_s": 1.95
+ },
+ "no_framing": {
+  "attempts": 313,
+  "verdicts": {
+   "NotAViolation": 313
+  }
+ },
+ "proofs": {
+  "overspend": {
+   "status": 1,
+   "gas": 152137,
+   "latency_s": 2.5,
+   "slashed": 3
+  },
+  "use_after_ack": {
+   "status": 1,
+   "gas": 138288,
+   "latency_s": 1.95,
+   "slashed": 2
+  }
+ },
+ "end_block": 1953052
+}

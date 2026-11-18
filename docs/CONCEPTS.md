@@ -195,10 +195,14 @@ older checkpoint first does no harm, because the newest one still contains it in
   2. `G` frees the capacity when a sealed checkpoint's state shows the new version applied and the total within
      it (`confirmShare`). Later consumption under the old version, or above the new amount, is provable.
 
-**Recovery.** Headquarters can install a new clock key after a TPM is replaced or cleared (`rotateClock`), and
-replace a failed or slashed validator (`replaceValidator`). As a last resort, `forceReassign` moves a stopped
-object at once, for example a lockout whose holder site is lost. It is logged, and it is **outside the safety
-guarantee**: the site must first clear the hold physically.
+**Recovery.** A site's clock key and validators never change, because every old attestation and seal is judged
+against them. When a TPM is replaced or cleared, or validators are lost, headquarters retires the site
+(`retireSite`: no further renewals) and registers a new site incarnation with the new clock and validator set. The
+old incarnation's history stays judgeable, so faults in it are still provable and its honest signers still cannot
+be framed. Its objects move to the new incarnation by the normal paths. As a last resort, `forceReassign` moves a
+stopped object once the holder's allowance has run out (after `W`), for example a lockout whose holder site is
+lost. It is logged, and for open holds it is **outside the safety guarantee**: the site must first clear the hold
+physically.
 
 ## 8. Fraud proofs and sanctions
 
