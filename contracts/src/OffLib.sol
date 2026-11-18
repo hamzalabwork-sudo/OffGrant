@@ -4,36 +4,52 @@ pragma solidity 0.8.30;
 /// Shared encodings for the global RightsRegistry and the per-site SiteRights contracts.
 library OffLib {
     // Operation kinds recorded on a site ledger.
-    uint8 internal constant CONSUME = 1; // bounded resource: key = resource, a = amount, b = running total after the op
-    uint8 internal constant USE = 2;     // lease or credential: key = object, a = renewal base (clock ms), b = clock reading (ms), e = clock epoch
-    uint8 internal constant LOG = 3;     // commutative record: key = payload hash
+    uint8 internal constant CONSUME = 1; // bounded resource: key = resource, a = amount, b = running total, c = share version
+    uint8 internal constant USE = 2; // grant of an object or credential: key = object, a = renewal base cq, b = grant
+    // reading, c = end of the hold (site clock; c = b for an instantaneous use, OPEN for an open hold), e = epoch
+    uint8 internal constant LOG = 3; // commutative record: key = payload hash
+    uint8 internal constant RELEASE = 4; // end of an open hold: key = object, a = base cq of the hold, b = reading, e = epoch
+
+    uint64 internal constant OPEN = type(uint64).max; // hold that lasts until it is released (e.g. a lockout)
 
     struct Op {
         uint8 kind;
         bytes32 key;
         uint64 a;
         uint64 b;
-        uint64 e; // USE only: trusted-clock epoch (TPM resetCount << 32 | restartCount); any reset expires allowances
-        bytes clockSig; // USE only: trusted-clock signature over (site, epoch, reading)
+        uint64 c;
+        uint64 e; // trusted-clock epoch (TPM resetCount << 32 | restartCount); any reset expires allowances
+        bytes clockSig; // USE/RELEASE: trusted-clock attestation of (site, e, b) bound to the operation
     }
 
-    /// A site checkpoint: one per batch of site-ledger operations, hash-chained. `closeReading` is the site's
-    /// trusted-clock reading at which the checkpoint closes: every operation before it is covered.
+    /// A site checkpoint: one per batch of site-ledger operations, hash-chained. The trusted clock attests the
+    /// closing reading (closeEpoch, closeReading) over the checkpoint's content, so the coverage a checkpoint
+    /// claims cannot run ahead of the site's clock.
     struct Header {
         uint64 site;
         uint64 height;
         bytes32 prev;
         bytes32 opsRoot;
         uint64 opCount;
+        uint64 closeEpoch;
         uint64 closeReading;
+        bytes closeSig;
+    }
+
+    function contentTag(Header memory h) internal pure returns (bytes32) {
+        return keccak256(abi.encode("OFFGRANT-CLOSE", h.site, h.height, h.prev, h.opsRoot, h.opCount));
     }
 
     function headerHash(Header memory h) internal pure returns (bytes32) {
-        return keccak256(abi.encode(h.site, h.height, h.prev, h.opsRoot, h.opCount, h.closeReading));
+        return keccak256(abi.encode(contentTag(h), h.closeEpoch, h.closeReading));
     }
 
     function leaf(Op memory op) internal pure returns (bytes32) {
-        return keccak256(abi.encode(op.kind, op.key, op.a, op.b, op.e, keccak256(op.clockSig)));
+        return keccak256(abi.encode(op.kind, op.key, op.a, op.b, op.c, op.e, keccak256(op.clockSig)));
+    }
+
+    function releaseTag(bytes32 object) internal pure returns (bytes32) {
+        return keccak256(abi.encode("OFFGRANT-RELEASE", object));
     }
 
     // Domain-separated digests. `registry` is the RightsRegistry address on the global ledger.
@@ -41,8 +57,8 @@ library OffLib {
         return keccak256(abi.encode("OFFGRANT-CKPT", registry, hh));
     }
 
-    /// Trusted-clock attestation bound to what it is used for (`tag`: the object or credential), as a TPM quote's
-    /// qualifying data, so a reading attested for one operation cannot be replayed for another.
+    /// Trusted-clock attestation bound to what it is used for (`tag`), as a TPM quote's qualifying data, so a
+    /// reading attested for one operation cannot be replayed for another.
     function clockDigest(uint64 site, uint64 epoch, uint64 reading, bytes32 tag) internal pure returns (bytes32) {
         return keccak256(abi.encode("OFFGRANT-CLOCK", site, epoch, reading, tag));
     }
@@ -64,8 +80,7 @@ library OffLib {
     }
 
     /// Global certificate that a site must stop using an object or credential (reassignment or revocation).
-    /// It cancels every renewal up to (epoch, cq), the last one G issued to the site, so it cannot be replayed
-    /// against renewals granted after a later re-assignment.
+    /// It cancels every renewal up to (epoch, cq), the last one G issued to the site.
     function stopDigest(address registry, uint64 site, bytes32 object, uint64 epoch, uint64 cq)
         internal
         pure
@@ -74,7 +89,8 @@ library OffLib {
         return keccak256(abi.encode("OFFGRANT-STOP", registry, site, object, epoch, cq));
     }
 
-    /// Site validators acknowledge that their ledger executed the stop at trusted-clock time (epoch, reading).
+    /// Site validators acknowledge that, at trusted-clock time (epoch, reading), their ledger had executed the
+    /// stop and every hold of the object had ended.
     function ackDigest(address registry, uint64 site, bytes32 object, uint64 epoch, uint64 reading)
         internal
         pure
@@ -83,20 +99,30 @@ library OffLib {
         return keccak256(abi.encode("OFFGRANT-ACK", registry, site, object, epoch, reading));
     }
 
-    function shareDigest(address registry, uint64 site, bytes32 resource, uint64 amount)
+    /// Share certificates are versioned: a site applies only a newer version, so an old one cannot be replayed.
+    function shareDigest(address registry, uint64 site, bytes32 resource, uint64 amount, uint64 version)
         internal
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encode("OFFGRANT-SHARE", registry, site, resource, amount));
+        return keccak256(abi.encode("OFFGRANT-SHARE", registry, site, resource, amount, version));
     }
 
-    function leaseDigest(address registry, uint64 site, bytes32 object, uint64 allowanceMs)
+    /// Site validators acknowledge that their ledger applied share `version` and its running total is within it.
+    function shareAckDigest(address registry, uint64 site, bytes32 resource, uint64 version)
         internal
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encode("OFFGRANT-LEASE", registry, site, object, allowanceMs));
+        return keccak256(abi.encode("OFFGRANT-SHARE-ACK", registry, site, resource, version));
+    }
+
+    function leaseDigest(address registry, uint64 site, bytes32 object, uint64 allowanceMs, bool openHold)
+        internal
+        pure
+        returns (bytes32)
+    {
+        return keccak256(abi.encode("OFFGRANT-LEASE", registry, site, object, allowanceMs, openHold));
     }
 
     /// ecrecover with low-s and length checks; returns address(0) on any malformed signature.
