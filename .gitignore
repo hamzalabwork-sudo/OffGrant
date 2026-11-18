@@ -1,0 +1,18 @@
+# secrets
+.env
+*.env
+.venv/
+__pycache__/
+*.pyc
+# datasets and runtime state
+data/
+testbed/*/network/
+experiments/cache/
+# manuscript, literature and design notes stay private (double-blind)
+paper/
+research/
+design/
+backup/
+contracts/.solc/
+contracts/out/
+contracts/cache/
