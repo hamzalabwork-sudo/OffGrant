@@ -24,21 +24,23 @@ contract OffgrantTest is Test {
     bytes32 constant PERMIT = keccak256("loto:pump-7");
     uint64 constant A = 99_000; // allowance, ms
     uint64 constant EPOCH = 1; // trusted-clock epoch (TPM resetCount/restartCount)
+    uint64 constant LAG = 60_000; // anchor lag (ms)
+    uint64 constant START = 5_000; // site clock reading at registration
 
     function setUp() public {
         vm.warp(1_000_000);
-        reg = new RightsRegistry(RHO, SLACK);
+        reg = new RightsRegistry(RHO, SLACK, LAG);
         address[] memory vs = new address[](4);
         for (uint256 i = 0; i < 4; i++) {
             va[i] = vm.addr(vk[i]);
             vs[i] = va[i];
         }
-        reg.registerSite(SITE, 1, vm.addr(CLOCK), vs);
+        reg.registerSite(SITE, 1, vm.addr(CLOCK), vs, START);
         address[] memory vs2 = new address[](4);
         for (uint256 i = 0; i < 4; i++) {
             vs2[i] = vm.addr(0xD1 + i);
         }
-        reg.registerSite(SITE2, 1, vm.addr(CLOCK2), vs2);
+        reg.registerSite(SITE2, 1, vm.addr(CLOCK2), vs2, START);
         reg.setCap(PARTS, 100);
         reg.setShare(PARTS, SITE, 40);
         reg.setShare(PARTS, SITE2, 60);
@@ -115,7 +117,7 @@ contract OffgrantTest is Test {
     }
 
     function _useE(uint64 epoch, uint64 cq, uint64 reading) internal pure returns (OffLib.Op memory) {
-        return OffLib.Op(OffLib.USE, PERMIT, cq, reading, epoch, _sig(CLOCK, OffLib.clockDigest(SITE, epoch, reading)));
+        return OffLib.Op(OffLib.USE, PERMIT, cq, reading, epoch, _sig(CLOCK, OffLib.clockDigest(SITE, epoch, reading, PERMIT)));
     }
 
     function _use(uint64 cq, uint64 reading) internal pure returns (OffLib.Op memory) {
@@ -123,7 +125,7 @@ contract OffgrantTest is Test {
     }
 
     function _clk(uint64 epoch, uint64 reading) internal pure returns (bytes memory) {
-        return _sig(CLOCK, OffLib.clockDigest(SITE, epoch, reading));
+        return _sig(CLOCK, OffLib.clockDigest(SITE, epoch, reading, PERMIT));
     }
 
     function _header(uint64 height, bytes32 prev, OffLib.Op[] memory ops)
@@ -135,7 +137,7 @@ contract OffgrantTest is Test {
         for (uint256 i = 0; i < ops.length; i++) {
             leaves[i] = OffLib.leaf(ops[i]);
         }
-        h = OffLib.Header(SITE, height, prev, _root(leaves), uint64(ops.length));
+        h = OffLib.Header(SITE, height, prev, _root(leaves), uint64(ops.length), 0);
     }
 
     function _renew(uint64 cq) internal returns (uint64) {
@@ -151,7 +153,7 @@ contract OffgrantTest is Test {
     function testFuzz_waitCoversSlowClock(uint64 a, uint32 rho) public {
         a = uint64(bound(a, 1, 1e12));
         rho = uint32(bound(rho, 0, 999_999));
-        RightsRegistry r = new RightsRegistry(rho, 0);
+        RightsRegistry r = new RightsRegistry(rho, 0, LAG);
         r.createLease(PERMIT, true, a);
         uint256 w = r.waitSeconds(PERMIT);
         // A slow clock (1 - rho) needs A / (1 - rho) real time to advance A: the wait must cover it.
@@ -220,7 +222,7 @@ contract OffgrantTest is Test {
     function test_siteRejectsForgedOrStaleClock() public {
         _provisionSite(5_000);
         vm.expectRevert(SiteRights.BadClockSig.selector);
-        siteC.use(PERMIT, EPOCH, 6_000, _sig(vk[0], OffLib.clockDigest(SITE, EPOCH, 6_000)));
+        siteC.use(PERMIT, EPOCH, 6_000, _sig(vk[0], OffLib.clockDigest(SITE, EPOCH, 6_000, PERMIT)));
         siteC.use(PERMIT, EPOCH, 7_000, _clk(EPOCH, 7_000));
         vm.expectRevert(SiteRights.StaleReading.selector);
         siteC.use(PERMIT, EPOCH, 6_500, _clk(EPOCH, 6_500));
@@ -389,5 +391,57 @@ contract OffgrantTest is Test {
         assertEq(reg.proveUseAfterAck(h, seals, ops[1], 1, _proof(lv, 1)), 2);
         assertEq(reg.bond(SITE, va[0]), reg.BOND()); // acked but did not seal
         assertEq(reg.bond(SITE, va[3]), reg.BOND()); // sealed but did not ack
+    }
+
+    // ------------------------------------------------------------ review fixes: anchor before renew, stale acks, quorum
+    function test_renewNeedsAnchoredCoverage() public {
+        _renew(START + LAG); // within the lag after registration
+        uint64 far = START + LAG + 1;
+        vm.expectRevert(abi.encodeWithSelector(RightsRegistry.AnchorDebt.selector, START, far - LAG));
+        reg.renew(SITE, PERMIT, EPOCH, far, _sig(CLOCK, OffLib.requestDigest(SITE, PERMIT, EPOCH, far)));
+        // Anchoring a checkpoint that closes later restores renewals.
+        OffLib.Op[] memory ops = new OffLib.Op[](1);
+        ops[0] = OffLib.Op(OffLib.LOG, keccak256("x"), 0, 0, 0, "");
+        bytes32[] memory leaves = new bytes32[](1);
+        leaves[0] = OffLib.leaf(ops[0]);
+        OffLib.Header memory h = OffLib.Header(SITE, 1, bytes32(0), _root(leaves), 1, far);
+        reg.anchor(h, _seal(h, _idx(0, 1, 2)));
+        _renew(far);
+    }
+
+    function test_staleAckIsRejected() public {
+        _renew(5_000);
+        reg.stop(PERMIT, SITE2);
+        // An acknowledgement older than the last renewal (e.g. replayed from an earlier hand-over) is refused.
+        vm.expectRevert(RightsRegistry.StaleAck.selector);
+        reg.reassignAcked(PERMIT, EPOCH, 4_999, _clk(EPOCH, 4_999), _ack(4_999, _idx(0, 1, 2)));
+    }
+
+    function test_quorumForLargerSites() public {
+        uint64 S5 = 5;
+        address[] memory v5 = new address[](5);
+        uint256[5] memory k5 = [uint256(0xE1), 0xE2, 0xE3, 0xE4, 0xE5];
+        for (uint256 i = 0; i < 5; i++) {
+            v5[i] = vm.addr(k5[i]);
+        }
+        reg.registerSite(S5, 1, vm.addr(CLOCK2), v5, START);
+        OffLib.Op[] memory ops = new OffLib.Op[](1);
+        ops[0] = _consume(50, 50); // site 5 has no share
+        bytes32[] memory leaves = new bytes32[](1);
+        leaves[0] = OffLib.leaf(ops[0]);
+        OffLib.Header memory h = OffLib.Header(S5, 1, bytes32(0), _root(leaves), 1, 0);
+        bytes32 d = OffLib.checkpointDigest(address(reg), OffLib.headerHash(h));
+        bytes[] memory three = new bytes[](3);
+        for (uint256 i = 0; i < 3; i++) {
+            three[i] = _sig(k5[i], d);
+        }
+        // n = 5, f = 1: quorum floor(6/2)+1 = 4, so three seals are not enough.
+        vm.expectRevert(RightsRegistry.NoQuorum.selector);
+        reg.proveOverspend(h, three, ops[0], 0, _proof(leaves, 0));
+        bytes[] memory four = new bytes[](4);
+        for (uint256 i = 0; i < 4; i++) {
+            four[i] = _sig(k5[i], d);
+        }
+        assertEq(reg.proveOverspend(h, four, ops[0], 0, _proof(leaves, 0)), 4);
     }
 }

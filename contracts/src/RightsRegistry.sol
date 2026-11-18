@@ -17,14 +17,17 @@ contract RightsRegistry {
     address public immutable admin;
     uint32 public immutable rhoPpm; // bound on site-clock drift, parts per million
     uint32 public immutable gSlack; // seconds: G block-timestamp uncertainty
+    uint64 public immutable anchorLagMs; // renewals need anchored coverage up to (request reading - lag)
     uint256 public constant BOND = 1 ether; // per site validator (accounting unit)
 
     struct Site {
         bool exists;
         uint8 f;
+        uint8 n; // number of site validators
         address clockKey; // trusted clock (e.g. TPM 2.0) of the site
         uint64 anchoredHeight;
         bytes32 anchoredHash;
+        uint64 coveredReading; // site-clock reading up to which every operation is in an anchored checkpoint
     }
 
     mapping(uint64 => Site) public sites;
@@ -97,23 +100,39 @@ contract RightsRegistry {
     error NoQuorum();
     error BadProof();
     error NotAViolation();
+    error AnchorDebt(uint64 covered, uint64 needed);
+    error StaleAck();
 
     modifier onlyAdmin() {
         if (msg.sender != admin) revert NotAdmin();
         _;
     }
 
-    constructor(uint32 rhoPpm_, uint32 gSlack_) {
+    constructor(uint32 rhoPpm_, uint32 gSlack_, uint64 anchorLagMs_) {
         require(rhoPpm_ < 1_000_000, "rho");
         admin = msg.sender;
         rhoPpm = rhoPpm_;
         gSlack = gSlack_;
+        anchorLagMs = anchorLagMs_;
     }
 
     // ---------------------------------------------------------------- administration
-    function registerSite(uint64 site, uint8 f, address clockKey, address[] calldata validators) external onlyAdmin {
-        if (sites[site].exists || validators.length < 3 * uint256(f) + 1 || clockKey == address(0)) revert BadSite();
-        sites[site] = Site({exists: true, f: f, clockKey: clockKey, anchoredHeight: 0, anchoredHash: bytes32(0)});
+    /// `startReading` is the site clock's reading at registration: coverage starts there.
+    function registerSite(uint64 site, uint8 f, address clockKey, address[] calldata validators, uint64 startReading)
+        external
+        onlyAdmin
+    {
+        if (sites[site].exists || validators.length < 3 * uint256(f) + 1 || validators.length > 255) revert BadSite();
+        if (clockKey == address(0)) revert BadSite();
+        sites[site] = Site({
+            exists: true,
+            f: f,
+            n: uint8(validators.length),
+            clockKey: clockKey,
+            anchoredHeight: 0,
+            anchoredHash: bytes32(0),
+            coveredReading: startReading
+        });
         for (uint256 i = 0; i < validators.length; i++) {
             if (isValidator[site][validators[i]]) revert BadSite();
             isValidator[site][validators[i]] = true;
@@ -192,6 +211,10 @@ contract RightsRegistry {
         if (OffLib.recover(OffLib.requestDigest(site, object, epoch, cq), clockSig) != sites[site].clockKey) {
             revert BadClockSig();
         }
+        // Anchor before renew: a site that withholds checkpoints stops receiving rights. Claiming an older cq
+        // to pass this check only shortens the site's own allowance (it is counted from cq).
+        uint64 covered = sites[site].coveredReading;
+        if (covered + anchorLagMs < cq) revert AnchorDebt(covered, cq - anchorLagMs);
         issued = uint64(block.timestamp);
         renewalIssued[OffLib.renewalKey(site, object, epoch, cq)] = issued;
         lastRenewal[object][site] = Base(epoch, cq);
@@ -231,9 +254,13 @@ contract RightsRegistry {
         Lease storage l = leases[object];
         if (!l.exists || !l.exclusive || !l.stopped) revert BadLease();
         uint64 site = l.holder;
-        if (OffLib.recover(OffLib.clockDigest(site, epoch, reading), clockSig) != sites[site].clockKey) {
+        if (OffLib.recover(OffLib.clockDigest(site, epoch, reading, object), clockSig) != sites[site].clockKey) {
             revert BadClockSig();
         }
+        // The acknowledgement must postdate the site's last renewal, so an old one cannot be replayed after
+        // the object has returned to the site.
+        Base memory b = lastRenewal[object][site];
+        if (epoch < b.epoch || (epoch == b.epoch && reading < b.cq)) revert StaleAck();
         address[] memory s = _quorum(site, OffLib.ackDigest(address(this), site, object, epoch, reading), acks);
         lastAck[object] = Ack(site, epoch, reading);
         ackSigners[object] = s;
@@ -272,7 +299,8 @@ contract RightsRegistry {
             }
             if (!dup) s[n++] = v;
         }
-        if (n < 2 * uint256(st.f) + 1) revert NoQuorum();
+        // Quorum floor((n+f)/2)+1: any two quorums share at least f+1 validators (2f+1 when n = 3f+1).
+        if (n < (uint256(st.n) + st.f) / 2 + 1) revert NoQuorum();
         assembly {
             mstore(s, n)
         }
@@ -303,6 +331,7 @@ contract RightsRegistry {
         if (h.height != st.anchoredHeight + 1 || h.prev != st.anchoredHash) revert BadProof();
         st.anchoredHeight = h.height;
         st.anchoredHash = hh;
+        if (h.closeReading > st.coveredReading) st.coveredReading = h.closeReading;
         emit Anchored(h.site, h.height, hh);
     }
 
@@ -359,7 +388,7 @@ contract RightsRegistry {
         _contains(h, op, idx, proof);
         if (op.kind != OffLib.USE) revert NotAViolation();
         bool covered = renewalIssued[OffLib.renewalKey(h.site, op.key, op.e, op.a)] != 0
-            && OffLib.recover(OffLib.clockDigest(h.site, op.e, op.b), op.clockSig) == sites[h.site].clockKey
+            && OffLib.recover(OffLib.clockDigest(h.site, op.e, op.b, op.key), op.clockSig) == sites[h.site].clockKey
             && op.b >= op.a && op.b - op.a < leases[op.key].allowanceMs;
         if (covered) revert NotAViolation();
         return _slash(h.site, s, R_OVERUSE);

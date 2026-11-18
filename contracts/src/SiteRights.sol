@@ -116,7 +116,7 @@ contract SiteRights {
 
     /// Exercise an exclusive object or accept a credential at trusted-clock time (epoch, reading).
     function use(bytes32 object, uint64 epoch, uint64 reading, bytes calldata clockSig) external {
-        if (OffLib.recover(OffLib.clockDigest(site, epoch, reading), clockSig) != clockKey) revert BadClockSig();
+        if (OffLib.recover(OffLib.clockDigest(site, epoch, reading, object), clockSig) != clockKey) revert BadClockSig();
         if (epoch < lastEpoch || (epoch == lastEpoch && reading < lastReading)) revert StaleReading();
         Base memory b = base[object];
         if (b.cq == 0 || b.epoch != epoch || reading < b.cq) revert NoRenewal();

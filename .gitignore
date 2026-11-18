@@ -21,3 +21,4 @@ testbed/purechain/bin/
 testbed/*/net*/
 *.env
 experiments/results/*.jsonl
+reviews/

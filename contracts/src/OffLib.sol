@@ -17,17 +17,19 @@ library OffLib {
         bytes clockSig; // USE only: trusted-clock signature over (site, epoch, reading)
     }
 
-    /// A site checkpoint: one per batch of site-ledger operations, hash-chained.
+    /// A site checkpoint: one per batch of site-ledger operations, hash-chained. `closeReading` is the site's
+    /// trusted-clock reading at which the checkpoint closes: every operation before it is covered.
     struct Header {
         uint64 site;
         uint64 height;
         bytes32 prev;
         bytes32 opsRoot;
         uint64 opCount;
+        uint64 closeReading;
     }
 
     function headerHash(Header memory h) internal pure returns (bytes32) {
-        return keccak256(abi.encode(h.site, h.height, h.prev, h.opsRoot, h.opCount));
+        return keccak256(abi.encode(h.site, h.height, h.prev, h.opsRoot, h.opCount, h.closeReading));
     }
 
     function leaf(Op memory op) internal pure returns (bytes32) {
@@ -39,8 +41,10 @@ library OffLib {
         return keccak256(abi.encode("OFFGRANT-CKPT", registry, hh));
     }
 
-    function clockDigest(uint64 site, uint64 epoch, uint64 reading) internal pure returns (bytes32) {
-        return keccak256(abi.encode("OFFGRANT-CLOCK", site, epoch, reading));
+    /// Trusted-clock attestation bound to what it is used for (`tag`: the object or credential), as a TPM quote's
+    /// qualifying data, so a reading attested for one operation cannot be replayed for another.
+    function clockDigest(uint64 site, uint64 epoch, uint64 reading, bytes32 tag) internal pure returns (bytes32) {
+        return keccak256(abi.encode("OFFGRANT-CLOCK", site, epoch, reading, tag));
     }
 
     function requestDigest(uint64 site, bytes32 object, uint64 epoch, uint64 cq) internal pure returns (bytes32) {
